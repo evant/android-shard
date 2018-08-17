@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FragmentNavigator">
+        <attr name="android:name" />
+    </declare-styleable>
+    <declare-styleable name="FragmentNavHost">
+        <attr name="graphId" format="reference" />
+        <attr name="fragmentFactory" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/simple_host">
+
+    <fragment
+        android:id="@+id/simple_host"
+        android:name="me.tatarka.betterfragment.sample.SimpleHostFragment"
+        android:label="Simple Host"
+        tools:layout="@layout/simple_host" />
+
+    <fragment
+        android:id="@+id/view_pager"
+        android:name="me.tatarka.betterfragment.sample.ViewPagerFragment"
+        android:label="View Pager"
+        tools:layout="@layout/view_pager" />
+
+    <fragment
+        android:id="@+id/navigation"
+        android:name="me.tatarka.betterfragment.sample.NavigationFragment"
+        android:label="Navigation"
+        tools:layout="@layout/navigation" />
+</navigation>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/my_fragment1">
+
+    <fragment
+        android:id="@+id/my_fragment1"
+        android:name="me.tatarka.betterfragment.sample.MyFragment"
+        android:label="Simple Host"
+        tools:layout="@layout/fragment">
+
+        <argument
+            android:name="number"
+            android:defaultValue="0"
+            app:argType="int" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/my_fragment2"
+        android:name="me.tatarka.betterfragment.sample.MyFragment"
+        android:label="Simple Host"
+        tools:layout="@layout/fragment">
+
+        <argument
+            android:name="number"
+            android:defaultValue="1"
+            app:argType="int" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/my_fragment3"
+        android:name="me.tatarka.betterfragment.sample.MyFragment"
+        android:label="Simple Host"
+        tools:layout="@layout/fragment">
+
+        <argument
+            android:name="number"
+            android:defaultValue="2"
+            app:argType="int" />
+    </fragment>
+
+    <action
+        android:id="@+id/root"
+        app:destination="@id/my_fragment1"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/my_fragment1"
+        app:popUpToInclusive="false" />
+
+    <action
+        android:id="@+id/dest1"
+        app:destination="@id/my_fragment2"
+        app:popUpTo="@id/my_fragment1"
+        app:popUpToInclusive="false" />
+
+    <action
+        android:id="@+id/dest2"
+        app:destination="@id/my_fragment3"
+        app:popUpTo="@id/my_fragment1"
+        app:popUpToInclusive="false" />
+</navigation>

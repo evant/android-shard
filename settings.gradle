@@ -1,0 +1,1 @@
+include ':app', ':betterfragment', ':betterfragment-nav', ':betterfragment-pager'

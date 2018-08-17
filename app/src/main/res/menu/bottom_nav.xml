@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/simple_host"
+        android:title="Simple Host" />
+
+    <item
+        android:id="@+id/view_pager"
+        android:title="ViewPager" />
+
+    <item
+        android:id="@+id/navigation"
+        android:title="Navigation" />
+</menu>
