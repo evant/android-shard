@@ -12,14 +12,14 @@ public class SimpleHostFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedState) {
         super.onCreate(savedState);
         setContentView(R.layout.simple_host);
-        final FragmentHost host = findViewForId(R.id.host);
-        findViewForId(R.id.one).setOnClickListener(new View.OnClickListener() {
+        final FragmentHost host = findViewById(R.id.host);
+        findViewById(R.id.one).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 host.setFragment(MyFragment.newInstance(1));
             }
         });
-        findViewForId(R.id.two).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.two).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 host.setFragment(MyFragment.newInstance(2));

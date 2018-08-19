@@ -24,6 +24,14 @@ class FragmentManagerViewModel extends ViewModel {
 
     private final SparseArray<ViewModelStore> viewModelStores = new SparseArray<>();
 
+    int nextId() {
+        int size = viewModelStores.size();
+        if (size == 0) {
+            return 0;
+        }
+        return viewModelStores.keyAt(size - 1) + 1;
+    }
+
     ViewModelStore get(int id) {
         ViewModelStore store = viewModelStores.get(id);
         if (store == null) {

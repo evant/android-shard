@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -44,7 +43,8 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
     @CallSuper
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         Fragment.State state = pageState.get(position);
-        Page page = new Page(owner, container, position, state);
+        Fragment fragment = getItem(position);
+        Page page = new Page(owner, container, fragment, state);
         pages.put(position, page);
         return page;
     }
@@ -53,19 +53,46 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
     @CallSuper
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         Page page = (Page) object;
-        pages.remove(position);
-        pageState.put(position, page.destroy());
+        if (pages.indexOfKey(position) >= 0) {
+            pages.remove(position);
+            pageState.put(position, page.saveState());
+        }
+        page.destroy();
         container.removeView(page.fragment.getView());
     }
 
     @Override
     public final int getItemPosition(@NonNull Object object) {
         Page page = (Page) object;
-        return getItemForPosition(page.fragment);
+        int position = getItemPosition(page.fragment);
+        if (position == POSITION_UNCHANGED) {
+            return position;
+        }
+        int index = pages.indexOfValue(page);
+        pages.removeAt(index);
+        if (position != POSITION_NONE) {
+            pages.put(position, page);
+        }
+        return position;
     }
 
-    public final int getItemForPosition(@NonNull Fragment fragment) {
-        return fragment.getId();
+    /**
+     * Called when the host view is attempting to determine if an item's position
+     * has changed. Returns {@link #POSITION_UNCHANGED} if the position of the given
+     * item has not changed or {@link #POSITION_NONE} if the item is no longer present
+     * in the adapter.
+     *
+     * <p>The default implementation assumes that items will never
+     * change position and always returns {@link #POSITION_UNCHANGED}.
+     *
+     * @param fragment Fragment representing an item, previously returned by a call to
+     *                 {@link #instantiateItem(View, int)}.
+     * @return fragment's new position index from [0, {@link #getCount()}),
+     * {@link #POSITION_UNCHANGED} if the object's position has not changed,
+     * or {@link #POSITION_NONE} if the item is no longer present.
+     */
+    public int getItemPosition(Fragment fragment) {
+        return POSITION_UNCHANGED;
     }
 
     @Override
@@ -108,31 +135,23 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
         return state;
     }
 
-    class Page implements FragmentOwner, LifecycleObserver {
+    static class Page implements FragmentOwner, LifecycleObserver {
         private final FragmentOwner parentOwner;
         private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
         final Fragment fragment;
-        final int position;
         private boolean isPrimary;
         private boolean isReallyResumed;
 
-        Page(FragmentOwner parentOwner, ViewGroup container, final int position, @Nullable final Fragment.State savedState) {
+        Page(FragmentOwner parentOwner, ViewGroup container, Fragment fragment, @Nullable final Fragment.State savedState) {
             this.parentOwner = parentOwner;
-            fragment = getItem(position);
-            if (savedState == null) {
-                fragment.create(this, container, position);
-            } else {
-                fragment.create(this, container, savedState);
-            }
-            this.position = position;
+            this.fragment = fragment;
+            fragment.create(this, container, savedState);
             parentOwner.getLifecycle().addObserver(this);
         }
 
-        Fragment.State destroy() {
+        void destroy() {
             parentOwner.getLifecycle().removeObserver(this);
-            Fragment.State state = fragment.saveState();
             fragment.destroy();
-            return state;
         }
 
         Fragment.State saveState() {
@@ -181,7 +200,7 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
 
         @Override
         public boolean willRestoreState() {
-            return owner.willRestoreState();
+            return parentOwner.willRestoreState();
         }
     }
 }

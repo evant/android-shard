@@ -3,7 +3,6 @@ package me.tatarka.betterfragment.nav;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -16,7 +15,7 @@ import androidx.navigation.NavGraph;
 import androidx.navigation.NavHost;
 import androidx.navigation.Navigation;
 import me.tatarka.betterfragment.DefaultFragmentFactory;
-import me.tatarka.betterfragment.FragmentFactory;
+import me.tatarka.betterfragment.Fragment;
 import me.tatarka.betterfragment.FragmentOwner;
 import me.tatarka.betterfragment.FragmentOwners;
 
@@ -28,7 +27,7 @@ public class FragmentNavHost extends FrameLayout implements NavHost {
         this(context, graph, DefaultFragmentFactory.getInstance());
     }
 
-    public FragmentNavHost(Context context, NavGraph graph, FragmentFactory fragmentFactory) {
+    public FragmentNavHost(Context context, NavGraph graph, Fragment.Factory fragmentFactory) {
         super(context);
         navController = new NavController(context);
         init(fragmentFactory);
@@ -38,13 +37,13 @@ public class FragmentNavHost extends FrameLayout implements NavHost {
     public FragmentNavHost(Context context, AttributeSet attrs) {
         super(context, attrs);
         navController = new NavController(context);
-        FragmentFactory factory = DefaultFragmentFactory.getInstance();
+        Fragment.Factory factory = DefaultFragmentFactory.getInstance();
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentNavHost);
         int graphId = a.getResourceId(R.styleable.FragmentNavHost_graphId, View.NO_ID);
         String factoryName = a.getString(R.styleable.FragmentNavHost_fragmentFactory);
         if (factoryName != null) {
             try {
-                factory = (FragmentFactory) Class.forName(factoryName).newInstance();
+                factory = (Fragment.Factory) Class.forName(factoryName).newInstance();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -57,7 +56,7 @@ public class FragmentNavHost extends FrameLayout implements NavHost {
         }
     }
 
-    private void init(FragmentFactory fragmentFactory) {
+    private void init(Fragment.Factory fragmentFactory) {
         Navigation.setViewNavController(this, navController);
         FragmentNavigator fragmentNavigator = new FragmentNavigator(this, fragmentFactory);
         navController.getNavigatorProvider().addNavigator(fragmentNavigator);

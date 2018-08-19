@@ -30,7 +30,6 @@ public abstract class OptomizingNavigator<Destination extends NavDestination, Pa
     @Nullable
     private Op op;
 
-    @SuppressLint("NewApi")
     private final Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -172,8 +171,8 @@ public abstract class OptomizingNavigator<Destination extends NavDestination, Pa
         return backStack.get(backStack.size() - 1);
     }
 
-    static int OP_PUSH = 1;
-    static int OP_POP = 2;
+    private static int OP_PUSH = 1;
+    private static int OP_POP = 2;
 
     class Op {
         int which;

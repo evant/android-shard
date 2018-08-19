@@ -13,7 +13,7 @@ public class ViewPagerFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedState) {
         super.onCreate(savedState);
         setContentView(R.layout.view_pager);
-        ViewPager pager = findViewForId(R.id.pager);
+        ViewPager pager = findViewById(R.id.pager);
         pager.setAdapter(new FragmentPagerAdapter(this) {
             @NonNull
             @Override

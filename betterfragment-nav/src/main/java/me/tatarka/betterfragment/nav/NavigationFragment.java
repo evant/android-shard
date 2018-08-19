@@ -9,7 +9,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavHost;
 import androidx.navigation.Navigation;
 import me.tatarka.betterfragment.Fragment;
-import me.tatarka.betterfragment.FragmentFactory;
 
 public class NavigationFragment extends Fragment implements NavHost {
 
@@ -21,7 +20,7 @@ public class NavigationFragment extends Fragment implements NavHost {
         return newInstance(graphId, null);
     }
 
-    public static NavigationFragment newInstance(@NavigationRes int graphId, @Nullable Class<? extends FragmentFactory> fragmentFactoryClass) {
+    public static NavigationFragment newInstance(@NavigationRes int graphId, @Nullable Class<? extends Factory> fragmentFactoryClass) {
         NavigationFragment fragment = new NavigationFragment();
         fragment.getArgs().putInt(ARG_GRAPH_ID, graphId);
         if (fragmentFactoryClass != null) {
@@ -47,7 +46,7 @@ public class NavigationFragment extends Fragment implements NavHost {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle(STATE_NAV_CONTROLLER, navController.saveState());
     }

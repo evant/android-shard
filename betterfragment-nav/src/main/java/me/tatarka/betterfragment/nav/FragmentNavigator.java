@@ -13,7 +13,6 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
 import me.tatarka.betterfragment.DefaultFragmentFactory;
 import me.tatarka.betterfragment.Fragment;
-import me.tatarka.betterfragment.FragmentFactory;
 import me.tatarka.betterfragment.FragmentOwner;
 import me.tatarka.betterfragment.FragmentOwners;
 
@@ -22,13 +21,13 @@ public class FragmentNavigator extends OptomizingNavigator<FragmentNavigator.Des
 
     private final FragmentOwner owner;
     private final ViewGroup container;
-    private final FragmentFactory fragmentFactory;
+    private final Fragment.Factory fragmentFactory;
 
     public FragmentNavigator(ViewGroup container) {
         this(container, DefaultFragmentFactory.getInstance());
     }
 
-    public FragmentNavigator(ViewGroup container, FragmentFactory fragmentFactory) {
+    public FragmentNavigator(ViewGroup container, Fragment.Factory fragmentFactory) {
         this.owner = FragmentOwners.get(container);
         this.container = container;
         this.fragmentFactory = fragmentFactory;
@@ -51,11 +50,7 @@ public class FragmentNavigator extends OptomizingNavigator<FragmentNavigator.Des
             oldPage.destroy();
         }
         if (newPage != null) {
-            if (newState != null) {
-                newPage.create(owner, container, newState);
-            } else {
-                newPage.create(owner, container, newPage.getId());
-            }
+            newPage.create(owner, container, newState);
         }
     }
 
@@ -72,10 +67,10 @@ public class FragmentNavigator extends OptomizingNavigator<FragmentNavigator.Des
     public static class Destination extends NavDestination {
 
         private String name;
-        private FragmentFactory fragmentFactory;
+        private Fragment.Factory fragmentFactory;
         private Fragment fragment;
 
-        Destination(Navigator<? extends NavDestination> navigator, FragmentFactory fragmentFactory) {
+        Destination(Navigator<? extends NavDestination> navigator, Fragment.Factory fragmentFactory) {
             super(navigator);
             this.fragmentFactory = fragmentFactory;
         }

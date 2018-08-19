@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.tatarka.betterfragment.Fragment;
 import me.tatarka.betterfragment.ViewModelProviders;
@@ -23,12 +24,12 @@ public class MyFragment extends Fragment {
         getLifecycle().addObserver(new LifecycleLogger());
         ViewModelProviders.of(this).get(MyViewModel.class);
         setContentView(R.layout.fragment);
-        TextView number = findViewForId(R.id.number);
+        TextView number = findViewById(R.id.number);
         number.setText("" + getArgs().getInt(KEY_NUMBER));
     }
 
     @Override
-    public void onSaveInstanceState(Bundle state) {
+    public void onSaveInstanceState(@NonNull Bundle state) {
         super.onSaveInstanceState(state);
         Log.d("LIFECYCLE", "ON_SAVE_INSTANCE_STATE " + this);
     }

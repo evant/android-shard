@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 public class FragmentHost extends FrameLayout {
 
     private final FragmentOwner owner;
-    private final FragmentFactory factory;
+    private final Fragment.Factory factory;
     @Nullable
     private Fragment fragment;
     @Nullable
@@ -24,7 +24,7 @@ public class FragmentHost extends FrameLayout {
     }
 
     @SuppressLint("WrongConstant")
-    public FragmentHost(Context context, FragmentFactory fragmentFactory) {
+    public FragmentHost(Context context, Fragment.Factory fragmentFactory) {
         super(context);
         owner = FragmentOwners.get(this);
         factory = fragmentFactory;
@@ -34,18 +34,18 @@ public class FragmentHost extends FrameLayout {
     public FragmentHost(Context context, AttributeSet attrs) {
         super(context, attrs);
         owner = FragmentOwners.get(this);
-        FragmentFactory factory = DefaultFragmentFactory.getInstance();
+        Fragment.Factory factory = DefaultFragmentFactory.getInstance();
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentHost);
         String factoryName = a.getString(R.styleable.FragmentHost_fragmentFactory);
         String fragmentName = a.getString(R.styleable.FragmentHost_android_name);
         try {
             if (factoryName != null) {
-                factory = (FragmentFactory) Class.forName(factoryName).newInstance();
+                factory = (Fragment.Factory) Class.forName(factoryName).newInstance();
             }
             if (fragmentName != null) {
                 initialFragmentClass = (Class<? extends Fragment>) Class.forName(fragmentName);
             }
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
         a.recycle();
@@ -53,7 +53,7 @@ public class FragmentHost extends FrameLayout {
         if (!isInEditMode()) {
             if (initialFragmentClass != null && !owner.willRestoreState()) {
                 fragment = this.factory.newInstance(initialFragmentClass);
-                fragment.create(owner, this, getId());
+                fragment.create(owner, this);
             }
         }
     }
@@ -64,7 +64,7 @@ public class FragmentHost extends FrameLayout {
         }
         this.fragment = fragment;
         if (fragment != null) {
-            fragment.create(owner, this, getId());
+            fragment.create(owner, this);
         }
     }
 

@@ -16,22 +16,22 @@ public class NavigationFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedState) {
         super.onCreate(savedState);
         setContentView(R.layout.navigation);
-        final NavController controller = findNavController(findViewForId(R.id.nav));
-        Toolbar toolbar = findViewForId(R.id.toolbar);
+        final NavController controller = findNavController(findViewById(R.id.nav));
+        Toolbar toolbar = findViewById(R.id.toolbar);
         NavigationUI.setupWithNavController(toolbar, controller);
-        findViewForId(R.id.root).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.root).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 controller.navigate(R.id.root);
             }
         });
-        findViewForId(R.id.dest1).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.dest1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 controller.navigate(R.id.dest1);
             }
         });
-        findViewForId(R.id.dest2).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.dest2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 controller.navigate(R.id.dest2);
