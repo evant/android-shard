@@ -17,11 +17,25 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
 import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import me.tatarka.betterfragment.Fragment;
 import me.tatarka.betterfragment.FragmentManager;
 import me.tatarka.betterfragment.FragmentOwner;
 import me.tatarka.betterfragment.FragmentOwners;
 
+/**
+ * Implementation of {@link PagerAdapter} that represents each page as a {@link Fragment}.
+ *
+ * <p>Subclasses only need to implement {@link #getItem(int)}
+ * and {@link #getCount()} to have a working adapter.
+ *
+ * <p>
+ * {@link ViewPager#getOffscreenPageLimit()} number of fragments will be kept in memory. Otherwise
+ * their state will be saved and the fragment destroyed. The current fragment will be in the resumed
+ * state and all other fragments will be in the started state. You must override
+ * {@link #getItemPosition(Fragment)} if you want to be able to dynamically change the contents on a
+ * {@link #notifyDataSetChanged()}.
+ */
 public abstract class FragmentPagerAdapter extends PagerAdapter {
 
     private static final String STATE_FRAGMENTS = "fragments";
@@ -113,7 +127,7 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
     public abstract Fragment getItem(int position);
 
     @Override
-    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+    public final boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == ((Page) object).fragment.getView();
     }
 

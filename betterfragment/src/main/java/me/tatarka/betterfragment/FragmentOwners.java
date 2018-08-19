@@ -37,10 +37,6 @@ public class FragmentOwners {
         return (FragmentOwner) context.getSystemService(FragmentContextWrapper.FRAGMENT_OWNER);
     }
 
-    public static Context wrap(Context context, FragmentOwner owner) {
-        return new FragmentContextWrapper(context, owner);
-    }
-
     static class FakeOwner implements FragmentOwner {
         @Override
         public boolean willRestoreState() {

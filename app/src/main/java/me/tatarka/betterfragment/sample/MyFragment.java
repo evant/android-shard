@@ -21,7 +21,7 @@ public class MyFragment extends Fragment {
     }
 
     public Fragment withNumber(int number) {
-        getArgs().putInt(KEY_NUMBER, number)
+        getArgs().putInt(KEY_NUMBER, number);
         return this;
     }
 

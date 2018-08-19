@@ -1,4 +1,4 @@
-package me.tatarka.betterfragment_pager;
+package me.tatarka.test;
 
 import org.junit.Test;
 
