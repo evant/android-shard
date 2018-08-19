@@ -22,7 +22,7 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <me.tatarka.betterfragment.FragmentHost
+        <me.tatarka.betterfragment.sample.dagger.DaggerFragmentHost
             android:id="@+id/host"
             android:name="me.tatarka.betterfragment.sample.MyFragment"
             android:layout_width="0dp"

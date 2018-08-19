@@ -9,12 +9,13 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.annotation.CallSuper;
+import androidx.annotation.NavigationRes;
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavHost;
 import androidx.navigation.Navigation;
-import me.tatarka.betterfragment.DefaultFragmentFactory;
 import me.tatarka.betterfragment.Fragment;
 import me.tatarka.betterfragment.FragmentOwner;
 import me.tatarka.betterfragment.FragmentOwners;
@@ -22,44 +23,50 @@ import me.tatarka.betterfragment.FragmentOwners;
 public class FragmentNavHost extends FrameLayout implements NavHost {
 
     private final NavController navController;
+    private final FragmentOwner owner;
+    private int graphId = 0;
 
-    public FragmentNavHost(Context context, NavGraph graph) {
-        this(context, graph, DefaultFragmentFactory.getInstance());
-    }
-
-    public FragmentNavHost(Context context, NavGraph graph, Fragment.Factory fragmentFactory) {
-        super(context);
-        navController = new NavController(context);
-        init(fragmentFactory);
-        navController.setGraph(graph);
+    public FragmentNavHost(Context context) {
+        this(context, null);
     }
 
     public FragmentNavHost(Context context, AttributeSet attrs) {
         super(context, attrs);
+        owner = FragmentOwners.get(this);
         navController = new NavController(context);
-        Fragment.Factory factory = DefaultFragmentFactory.getInstance();
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentNavHost);
-        int graphId = a.getResourceId(R.styleable.FragmentNavHost_graphId, View.NO_ID);
-        String factoryName = a.getString(R.styleable.FragmentNavHost_fragmentFactory);
-        if (factoryName != null) {
-            try {
-                factory = (Fragment.Factory) Class.forName(factoryName).newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        a.recycle();
-        init(factory);
-        FragmentOwner owner = FragmentOwners.get(this);
-        if (!owner.willRestoreState()) {
-            navController.setGraph(graphId);
+        if (attrs != null) {
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentNavHost);
+            graphId = a.getResourceId(R.styleable.FragmentNavHost_graphId, View.NO_ID);
+            a.recycle();
+            Navigation.setViewNavController(this, navController);
+            FragmentNavigator fragmentNavigator = new FragmentNavigator(this);
+            navController.getNavigatorProvider().addNavigator(fragmentNavigator);
         }
     }
 
-    private void init(Fragment.Factory fragmentFactory) {
-        Navigation.setViewNavController(this, navController);
-        FragmentNavigator fragmentNavigator = new FragmentNavigator(this, fragmentFactory);
-        navController.getNavigatorProvider().addNavigator(fragmentNavigator);
+    public void setGraph(NavGraph graph) {
+        navController.setGraph(graph);
+    }
+
+    public void setGraph(@NavigationRes int graphId) {
+        navController.setGraph(graphId);
+    }
+
+    public void setFragmentFactory(Fragment.Factory factory) {
+        navController.getNavigatorProvider().getNavigator(FragmentNavigator.class).setFragmentFactory(factory);
+    }
+
+    public Fragment.Factory getFragmentFactory() {
+        return navController.getNavigatorProvider().getNavigator(FragmentNavigator.class).getFragmentFactory();
+    }
+
+    @Override
+    @CallSuper
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (navController.getGraph() == null && graphId != 0 && !owner.willRestoreState()) {
+            navController.setGraph(graphId);
+        }
     }
 
     @Override

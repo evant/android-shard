@@ -2,7 +2,6 @@
 <resources>
     <attr name="fragmentFactory" format="string" />
     <declare-styleable name="FragmentHost">
-        <attr name="fragmentFactory" />
         <attr name="android:name" />
     </declare-styleable>
 </resources>

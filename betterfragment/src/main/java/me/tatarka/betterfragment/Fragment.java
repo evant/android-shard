@@ -46,23 +46,7 @@ public class Fragment implements FragmentOwner {
     private boolean destroyed;
     private boolean willRestoreState;
 
-    /**
-     * Sets of the fragment, attaching is to the given container and calling {@link #onCreate(Bundle)}.
-     * This method is a no-op if the fragment is already destroyed.
-     */
-    public void create(@NonNull FragmentOwner owner, @NonNull ViewGroup container) {
-        create(owner, container, null);
-    }
-
-    /**
-     * Sets of the fragment, attaching is to the given container and calling {@link #onCreate(Bundle)}.
-     * If state is not null, it will restore itself from the given state. This method is a no-op if
-     * the fragment is already destroyed.
-     *
-     * @throws IllegalStateException    If the fragment has already been created or has been created.
-     * @throws IllegalArgumentException If the state is not for this fragment.
-     */
-    public void create(@NonNull FragmentOwner owner, @NonNull ViewGroup container, @Nullable State state) {
+    void create(@NonNull FragmentOwner owner, @NonNull ViewGroup container, @Nullable State state) {
         if (this.owner != null) {
             throw new IllegalStateException("Fragment is already created");
         }
@@ -93,15 +77,8 @@ public class Fragment implements FragmentOwner {
         owner.getLifecycle().addObserver(observer);
     }
 
-    /**
-     * Saves the fragment's state and returns it. This will move the fragment to the stopped state
-     * so that when {@link #onSaveInstanceState(Bundle)} is called is consistent. Therefore you
-     * should only call this method when the fragment is being stopped or destroyed.
-     *
-     * @throws IllegalStateException If the fragment is destroyed.
-     */
     @NonNull
-    public Fragment.State saveState() {
+    Fragment.State saveState() {
         checkDestroyed();
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
         SparseArray<Parcelable> viewState = new SparseArray<>();
@@ -113,14 +90,7 @@ public class Fragment implements FragmentOwner {
         return state;
     }
 
-    /**
-     * Destroys the fragment. After this most operations on this instance will throw an exception.
-     * Note: you should not call this on configuration changes, only when you are actually done with
-     * it.
-     *
-     * @throws IllegalStateException If the fragment is already destroyed.
-     */
-    public void destroy() {
+    void destroy() {
         checkDestroyed();
         destroyed = true;
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);

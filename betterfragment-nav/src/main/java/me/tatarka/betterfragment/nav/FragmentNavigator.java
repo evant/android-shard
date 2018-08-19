@@ -13,24 +13,28 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
 import me.tatarka.betterfragment.DefaultFragmentFactory;
 import me.tatarka.betterfragment.Fragment;
-import me.tatarka.betterfragment.FragmentOwner;
+import me.tatarka.betterfragment.FragmentManager;
 import me.tatarka.betterfragment.FragmentOwners;
 
 @Navigator.Name("fragment")
 public class FragmentNavigator extends OptomizingNavigator<FragmentNavigator.Destination, Fragment, Fragment.State> {
 
-    private final FragmentOwner owner;
+    private final FragmentManager fm;
     private final ViewGroup container;
-    private final Fragment.Factory fragmentFactory;
+    private Fragment.Factory fragmentFactory = DefaultFragmentFactory.getInstance();
 
     public FragmentNavigator(ViewGroup container) {
-        this(container, DefaultFragmentFactory.getInstance());
+        this.fm = new FragmentManager(FragmentOwners.get(container));
+        this.container = container;
     }
 
-    public FragmentNavigator(ViewGroup container, Fragment.Factory fragmentFactory) {
-        this.owner = FragmentOwners.get(container);
-        this.container = container;
-        this.fragmentFactory = fragmentFactory;
+    public void setFragmentFactory(@NonNull Fragment.Factory factory) {
+        fragmentFactory = factory;
+    }
+
+    @NonNull
+    public Fragment.Factory getFragmentFactory() {
+        return fragmentFactory;
     }
 
     @NonNull
@@ -47,16 +51,16 @@ public class FragmentNavigator extends OptomizingNavigator<FragmentNavigator.Des
     @Override
     public void replace(@Nullable Fragment oldPage, @Nullable Fragment newPage, @Nullable Fragment.State newState, int backStackEffect) {
         if (oldPage != null) {
-            oldPage.destroy();
+            fm.destroy(oldPage);
         }
         if (newPage != null) {
-            newPage.create(owner, container, newState);
+            fm.create(newPage, container, newState);
         }
     }
 
     @Override
     public Fragment.State savePageState(Fragment fragment) {
-        return fragment.saveState();
+        return fm.saveState(fragment);
     }
 
     @Override

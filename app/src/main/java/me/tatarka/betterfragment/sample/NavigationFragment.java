@@ -3,6 +3,8 @@ package me.tatarka.betterfragment.sample;
 import android.os.Bundle;
 import android.view.View;
 
+import javax.inject.Inject;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
@@ -12,26 +14,31 @@ import me.tatarka.betterfragment.Fragment;
 import static androidx.navigation.Navigation.findNavController;
 
 public class NavigationFragment extends Fragment {
+
+    @Inject
+    public NavigationFragment() {
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedState) {
         super.onCreate(savedState);
         setContentView(R.layout.navigation);
-        final NavController controller = findNavController(findViewById(R.id.nav));
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        final NavController controller = findNavController(requireViewById(R.id.nav));
+        Toolbar toolbar = requireViewById(R.id.toolbar);
         NavigationUI.setupWithNavController(toolbar, controller);
-        findViewById(R.id.root).setOnClickListener(new View.OnClickListener() {
+        requireViewById(R.id.root).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 controller.navigate(R.id.root);
             }
         });
-        findViewById(R.id.dest1).setOnClickListener(new View.OnClickListener() {
+        requireViewById(R.id.dest1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 controller.navigate(R.id.dest1);
             }
         });
-        findViewById(R.id.dest2).setOnClickListener(new View.OnClickListener() {
+        requireViewById(R.id.dest2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 controller.navigate(R.id.dest2);

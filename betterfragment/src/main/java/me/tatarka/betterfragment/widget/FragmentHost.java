@@ -1,4 +1,4 @@
-package me.tatarka.betterfragment;
+package me.tatarka.betterfragment.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,63 +8,63 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import me.tatarka.betterfragment.DefaultFragmentFactory;
+import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.FragmentManager;
+import me.tatarka.betterfragment.FragmentOwners;
+import me.tatarka.betterfragment.R;
 
 public class FragmentHost extends FrameLayout {
 
-    private final FragmentOwner owner;
-    private final Fragment.Factory factory;
+    private final FragmentManager fm;
+    private Fragment.Factory factory = DefaultFragmentFactory.getInstance();
     @Nullable
     private Fragment fragment;
     @Nullable
     private Class<? extends Fragment> initialFragmentClass;
 
     public FragmentHost(Context context) {
-        this(context, DefaultFragmentFactory.getInstance());
-    }
-
-    @SuppressLint("WrongConstant")
-    public FragmentHost(Context context, Fragment.Factory fragmentFactory) {
-        super(context);
-        owner = FragmentOwners.get(this);
-        factory = fragmentFactory;
+        this(context, null);
     }
 
     @SuppressLint("WrongConstant")
     public FragmentHost(Context context, AttributeSet attrs) {
         super(context, attrs);
-        owner = FragmentOwners.get(this);
-        Fragment.Factory factory = DefaultFragmentFactory.getInstance();
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentHost);
-        String factoryName = a.getString(R.styleable.FragmentHost_fragmentFactory);
-        String fragmentName = a.getString(R.styleable.FragmentHost_android_name);
-        try {
-            if (factoryName != null) {
-                factory = (Fragment.Factory) Class.forName(factoryName).newInstance();
+        fm = new FragmentManager(FragmentOwners.get(this));
+        if (attrs != null) {
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentHost);
+            String fragmentName = a.getString(R.styleable.FragmentHost_android_name);
+            try {
+                if (fragmentName != null) {
+                    initialFragmentClass = (Class<? extends Fragment>) Class.forName(fragmentName);
+                }
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
-            if (fragmentName != null) {
-                initialFragmentClass = (Class<? extends Fragment>) Class.forName(fragmentName);
-            }
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException(e);
+            a.recycle();
         }
-        a.recycle();
-        this.factory = factory;
-        if (!isInEditMode()) {
-            if (initialFragmentClass != null && !owner.willRestoreState()) {
-                fragment = this.factory.newInstance(initialFragmentClass);
-                fragment.create(owner, this);
-            }
+    }
+
+    @Override
+    @CallSuper
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (fragment == null && initialFragmentClass != null && !fm.willRestoreState()) {
+            fragment = factory.newInstance(initialFragmentClass);
+            fm.create(fragment, this);
         }
     }
 
     public void setFragment(@Nullable Fragment fragment) {
         if (this.fragment != null) {
-            this.fragment.destroy();
+            fm.destroy(this.fragment);
         }
         this.fragment = fragment;
         if (fragment != null) {
-            fragment.create(owner, this);
+            fm.create(fragment, this);
         }
     }
 
@@ -73,9 +73,18 @@ public class FragmentHost extends FrameLayout {
         return fragment;
     }
 
+    public void setFragmentFactory(@NonNull Fragment.Factory factory) {
+        this.factory = factory;
+    }
+
+    @NonNull
+    public Fragment.Factory getFragmentFactory() {
+        return factory;
+    }
+
     @Override
     protected Parcelable onSaveInstanceState() {
-        return new SavedState(super.onSaveInstanceState(), fragment != null ? fragment.saveState() : null);
+        return new SavedState(super.onSaveInstanceState(), fragment != null ? fm.saveState(fragment) : null);
     }
 
     @Override
@@ -85,7 +94,7 @@ public class FragmentHost extends FrameLayout {
         final Fragment.State fragmentState = savedState.fragmentState;
         if (fragmentState != null) {
             fragment = factory.newInstance(fragmentState.getFragmentClass());
-            fragment.create(owner, this, fragmentState);
+            fm.create(fragment, this, fragmentState);
         }
     }
 

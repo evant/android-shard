@@ -18,6 +18,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
 import androidx.viewpager.widget.PagerAdapter;
 import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.FragmentManager;
 import me.tatarka.betterfragment.FragmentOwner;
 import me.tatarka.betterfragment.FragmentOwners;
 
@@ -138,6 +139,7 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
     static class Page implements FragmentOwner, LifecycleObserver {
         private final FragmentOwner parentOwner;
         private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+        private final FragmentManager fm;
         final Fragment fragment;
         private boolean isPrimary;
         private boolean isReallyResumed;
@@ -145,17 +147,18 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
         Page(FragmentOwner parentOwner, ViewGroup container, Fragment fragment, @Nullable final Fragment.State savedState) {
             this.parentOwner = parentOwner;
             this.fragment = fragment;
-            fragment.create(this, container, savedState);
+            fm = new FragmentManager(this);
+            fm.create(fragment, container, savedState);
             parentOwner.getLifecycle().addObserver(this);
         }
 
         void destroy() {
             parentOwner.getLifecycle().removeObserver(this);
-            fragment.destroy();
+            fm.destroy(fragment);
         }
 
         Fragment.State saveState() {
-            return fragment.saveState();
+            return fm.saveState(fragment);
         }
 
         void setPrimary(boolean value) {

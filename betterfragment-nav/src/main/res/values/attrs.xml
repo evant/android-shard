@@ -5,6 +5,5 @@
     </declare-styleable>
     <declare-styleable name="FragmentNavHost">
         <attr name="graphId" format="reference" />
-        <attr name="fragmentFactory" />
     </declare-styleable>
 </resources>
