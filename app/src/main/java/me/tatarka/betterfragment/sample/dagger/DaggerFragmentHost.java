@@ -17,7 +17,7 @@ public class DaggerFragmentHost extends FragmentHost {
 
     public DaggerFragmentHost(Context context, AttributeSet attrs) {
         super(context, attrs);
-        DaggerAppComponent.create().inject(this);
+        DaggerAppComponent.INSTANCE.inject(this);
         setFragmentFactory(factory);
     }
 }

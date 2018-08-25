@@ -3,12 +3,14 @@ package me.tatarka.betterfragment.sample;
 import android.util.Log;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
+@Singleton
 public class LifecycleLogger implements LifecycleObserver {
 
     @Inject

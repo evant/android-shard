@@ -58,6 +58,14 @@ public class FragmentHost extends FrameLayout {
         }
     }
 
+    public void setFragmentClass(@Nullable Class<? extends Fragment> fragmentClass) {
+        if (fragmentClass == null) {
+            setFragment(null);
+        } else {
+            setFragment(factory.newInstance(fragmentClass));
+        }
+    }
+
     public void setFragment(@Nullable Fragment fragment) {
         if (this.fragment != null) {
             fm.destroy(this.fragment);

@@ -9,6 +9,7 @@ import me.tatarka.betterfragment.sample.SimpleHostFragment;
 @Component(modules = FragmentModule.class)
 public interface AppComponent {
     void inject(SimpleHostFragment fragment);
+    AppComponent INSTANCE = DaggerAppComponent.create();
 
     void inject(DaggerFragmentHost host);
 

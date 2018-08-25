@@ -19,7 +19,7 @@ public class DaggerFragmentNavHost extends FragmentNavHost {
 
     public DaggerFragmentNavHost(Context context, AttributeSet attrs) {
         super(context, attrs);
-        DaggerAppComponent.create().inject(this);
+        DaggerAppComponent.INSTANCE.inject(this);
         setFragmentFactory(fragmentFactory);
     }
 }

@@ -26,12 +26,11 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
     implementation "android.arch.navigation:navigation-ui:1.0.0-alpha05"
 
-
-    compile 'com.google.dagger:dagger:2.16'
+    implementation 'com.google.android.material:material:1.0.0-rc01'
+    implementation 'com.google.dagger:dagger:2.16'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
-    compile 'com.google.android.material:material:1.0.0-rc01'
 }
