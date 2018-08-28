@@ -7,8 +7,7 @@
     <fragment
         android:id="@+id/simple_host"
         android:name="me.tatarka.betterfragment.sample.SimpleHostFragment"
-        android:label="Simple Host"
-        tools:layout="@layout/simple_host" />
+        android:label="Simple Host" />
 
     <fragment
         android:id="@+id/view_pager"
@@ -21,4 +20,28 @@
         android:name="me.tatarka.betterfragment.sample.NavigationFragment"
         android:label="Navigation"
         tools:layout="@layout/navigation" />
+
+    <action
+        android:id="@+id/simple_host_action"
+        app:destination="@+id/simple_host"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    <action
+        android:id="@+id/view_pager_action"
+        app:destination="@+id/view_pager"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    <action
+        android:id="@+id/navigation_action"
+        app:destination="@+id/navigation"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 </navigation>

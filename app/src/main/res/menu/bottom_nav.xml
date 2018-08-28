@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/simple_host"
+        android:id="@+id/simple_host_action"
         android:title="Simple Host" />
 
     <item
-        android:id="@+id/view_pager"
+        android:id="@+id/view_pager_action"
         android:title="ViewPager" />
 
     <item
-        android:id="@+id/navigation"
+        android:id="@+id/navigation_action"
         android:title="Navigation" />
 </menu>

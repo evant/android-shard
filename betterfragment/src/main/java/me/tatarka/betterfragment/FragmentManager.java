@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class FragmentManager {
+public final class FragmentManager {
 
     private final FragmentOwner owner;
 
@@ -56,4 +56,20 @@ public class FragmentManager {
     public void remove(Fragment fragment) {
         fragment.remove();
     }
+
+    /**
+     * Replaces the fragment.
+     *
+     * @param oldFragment The fragment to remove, if present.
+     * @param newFragment The fragment to add, if present.
+     */
+    public void replace(@Nullable Fragment oldFragment, @Nullable Fragment newFragment, @NonNull ViewGroup container) {
+        if (oldFragment != null) {
+            oldFragment.remove();
+        }
+        if (newFragment != null) {
+            newFragment.add(owner, container);
+        }
+    }
+
 }

@@ -87,7 +87,7 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
     @NonNull
     protected abstract Page createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions);
 
-    protected abstract void replace(@Nullable Page oldPage, @Nullable Page newPage, @BackStackEffect int backStackEffect);
+    protected abstract void replace(@Nullable Page oldPage, @NonNull Page newPage, @BackStackEffect int backStackEffect);
 
     @NonNull
     protected abstract State savePageState(Page page);
