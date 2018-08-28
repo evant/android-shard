@@ -106,7 +106,8 @@ public class FragmentTest {
         fragment.state = 1;
         Fragment.State state = fm.saveState(fragment);
         TestFragment newFragment = new TestFragment();
-        fm.add(newFragment, container, state);
+        fm.restoreState(newFragment, state);
+        fm.add(newFragment, container);
 
         assertTrue(fragment.saveInstanceStateCalled);
         assertEquals(1, newFragment.state);

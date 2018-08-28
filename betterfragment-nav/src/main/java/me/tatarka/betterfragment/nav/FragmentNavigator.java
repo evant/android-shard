@@ -22,8 +22,6 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
     private final FragmentManager fm;
     private final ViewGroup container;
     private Fragment.Factory fragmentFactory = DefaultFragmentFactory.getInstance();
-    @Nullable
-    private Fragment.State pendingState;
 
     public FragmentNavigator(ViewGroup container) {
         this.fm = new FragmentManager(FragmentOwners.get(container));
@@ -59,8 +57,7 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
             fm.remove(oldPage);
         }
         if (newPage != null) {
-            fm.add(newPage, container, pendingState);
-            pendingState = null;
+            fm.add(newPage, container);
         }
     }
 
@@ -73,8 +70,9 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
     @NonNull
     @Override
     protected Fragment restorePageState(final Fragment.State state) {
-        pendingState = state;
-        return fragmentFactory.newInstance(state.getFragmentClass());
+        Fragment fragment = fragmentFactory.newInstance(state.getFragmentClass());
+        fm.restoreState(fragment, state);
+        return fragment;
     }
 
     public static class Destination extends NavDestination {

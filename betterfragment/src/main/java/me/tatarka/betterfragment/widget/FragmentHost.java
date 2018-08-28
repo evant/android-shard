@@ -108,7 +108,8 @@ public class FragmentHost extends FrameLayout {
         final Fragment.State fragmentState = savedState.fragmentState;
         if (fragmentState != null) {
             fragment = factory.newInstance(fragmentState.getFragmentClass());
-            fm.add(fragment, this, fragmentState);
+            fm.restoreState(fragment, fragmentState);
+            fm.add(fragment, this);
         }
     }
 

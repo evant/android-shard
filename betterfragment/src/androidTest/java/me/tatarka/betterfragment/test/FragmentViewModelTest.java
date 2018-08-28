@@ -45,7 +45,8 @@ public class FragmentViewModelTest {
         TestViewModel viewModel = ViewModelProviders.of(fragment).get(TestViewModel.class);
         Fragment.State state = fm.saveState(fragment);
         Fragment newFragment = new Fragment();
-        fm.add(newFragment, container, state);
+        fm.restoreState(newFragment, state);
+        fm.add(newFragment, container);
         TestViewModel newViewModel = ViewModelProviders.of(newFragment).get(TestViewModel.class);
 
         assertSame(viewModel, newViewModel);
@@ -59,7 +60,8 @@ public class FragmentViewModelTest {
         Fragment.State state = fm.saveState(fragment);
         fm.remove(fragment);
         Fragment newFragment = new Fragment();
-        fm.add(newFragment, container, state);
+        fm.restoreState(newFragment, state);
+        fm.add(newFragment, container);
         TestViewModel newViewModel = ViewModelProviders.of(newFragment).get(TestViewModel.class);
 
         assertNotSame(viewModel, newViewModel);

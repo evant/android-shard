@@ -158,11 +158,12 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
         private boolean isPrimary;
         private boolean isReallyResumed;
 
-        Page(FragmentOwner parentOwner, ViewGroup container, Fragment fragment, @Nullable final Fragment.State savedState) {
+        Page(FragmentOwner parentOwner, ViewGroup container, Fragment fragment, @Nullable Fragment.State state) {
             this.parentOwner = parentOwner;
             this.fragment = fragment;
             fm = new FragmentManager(this);
-            fm.add(fragment, container, savedState);
+            fm.restoreState(fragment, state);
+            fm.add(fragment, container);
             parentOwner.getLifecycle().addObserver(this);
         }
 

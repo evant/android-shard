@@ -45,36 +45,43 @@ public class Fragment implements FragmentOwner {
     private Bundle args;
     private boolean destroyed;
     private boolean willRestoreState;
+    @Nullable
+    private State state;
 
-    void add(@NonNull FragmentOwner owner, @NonNull ViewGroup container, @Nullable State state) {
-        if (this.owner != null) {
-            throw new IllegalStateException("Fragment is already created");
-        }
+    void restoreState(@Nullable State state) {
+        checkNotCreated();
         if (state != null && !state.isFor(this)) {
             throw new IllegalArgumentException("wrong state for fragment: " + toString());
         }
-        if (destroyed) {
-            return;
-        }
-        this.owner = owner;
+        this.state = state;
         if (state != null) {
             if (state.args != null) {
                 this.args = state.args;
             }
             viewModelId = state.viewModelId;
         }
+        willRestoreState = state != null;
+    }
+
+    void add(@NonNull FragmentOwner owner, @NonNull ViewGroup container) {
+        checkNotCreated();
+        if (destroyed) {
+            return;
+        }
+        this.owner = owner;
         context = new FragmentContextWrapper(container.getContext(), this);
         frame = new FrameLayout(context);
         frame.setSaveFromParentEnabled(false);
         container.addView(frame, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        willRestoreState = state != null;
         onCreate(state != null ? state.savedState : null);
+
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
         if (state != null && state.viewState != null) {
             frame.restoreHierarchyState(state.viewState);
         }
         owner.getLifecycle().addObserver(observer);
+        state = null;
     }
 
     @NonNull
@@ -109,6 +116,12 @@ public class Fragment implements FragmentOwner {
     private void checkCreated() {
         if (owner == null) {
             throw new IllegalStateException("Fragment is not created");
+        }
+    }
+
+    private void checkNotCreated() {
+        if (this.owner != null) {
+            throw new IllegalStateException("Fragment is already created");
         }
     }
 

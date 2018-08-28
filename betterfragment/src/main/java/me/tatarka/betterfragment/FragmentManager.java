@@ -17,21 +17,21 @@ public class FragmentManager {
     /**
      * Adds the fragment, attaching is to the given container and calling {@link Fragment#onCreate(Bundle)}.
      * This method is a no-op if the fragment is already destroyed.
+     *
+     * @throws IllegalStateException If the fragment has already been created or has been created.
      */
     public void add(@NonNull Fragment fragment, @NonNull ViewGroup container) {
-        add(fragment, container, null);
+        fragment.add(owner, container);
     }
 
     /**
-     * Adds the fragment, attaching is to the given container and calling {@link Fragment#onCreate(Bundle)}.
-     * If state is not null, it will restore itself from the given state. This method is a no-op if
-     * the fragment is already destroyed.
+     * Restores the fragment's state. This must be called <em>before</em> the fragment is added.
      *
-     * @throws IllegalStateException    If the fragment has already been created or has been created.
+     * @throws IllegalStateException    If the fragment has already been created.
      * @throws IllegalArgumentException If the state is not for this fragment.
      */
-    public void add(@NonNull Fragment fragment, @NonNull ViewGroup container, @Nullable Fragment.State state) {
-        fragment.add(owner, container, state);
+    public void restoreState(@NonNull Fragment fragment, @Nullable Fragment.State state) {
+        fragment.restoreState(state);
     }
 
     /**
