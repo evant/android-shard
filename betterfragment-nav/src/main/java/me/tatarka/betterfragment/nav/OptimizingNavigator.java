@@ -3,7 +3,6 @@ package me.tatarka.betterfragment.nav;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -21,7 +20,7 @@ import androidx.navigation.Navigator;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
-public abstract class OptomizingNavigator<Destination extends NavDestination, Page, State extends Parcelable> extends Navigator<Destination> {
+abstract class OptimizingNavigator<Destination extends NavDestination, Page, State extends Parcelable> extends Navigator<Destination> {
 
     private static final String STATE_BACK_STACK = "back_stack";
     private static final String STATE_BACK_STACK_STATE = "back_stack_state";
@@ -30,7 +29,7 @@ public abstract class OptomizingNavigator<Destination extends NavDestination, Pa
     @Nullable
     private Op op;
 
-    private final Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
+    private final Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             if (op != null) {
@@ -39,11 +38,11 @@ public abstract class OptomizingNavigator<Destination extends NavDestination, Pa
                         backStackPush(op.id, savePageState(op.oldPage));
                     }
                     currentPage = op.newPage;
-                    replace(op.oldPage, op.newPage, null, BACK_STACK_DESTINATION_ADDED);
+                    replace(op.oldPage, op.newPage, BACK_STACK_DESTINATION_ADDED);
                 } else if (op.which == OP_POP) {
                     State newState = backStackPop();
                     currentPage = restorePageState(newState);
-                    replace(op.oldPage, currentPage, newState, BACK_STACK_DESTINATION_POPPED);
+                    replace(op.oldPage, currentPage, BACK_STACK_DESTINATION_POPPED);
                 }
                 op = null;
             }
@@ -58,7 +57,7 @@ public abstract class OptomizingNavigator<Destination extends NavDestination, Pa
 
     @Override
     public void navigate(@NonNull Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions) {
-        push(currentPage, newPage(destination, args, navOptions), destination.getId());
+        push(currentPage, createPage(destination, args, navOptions), destination.getId());
         dispatchOps();
         dispatchOnNavigatorNavigated(destination.getId(), BACK_STACK_DESTINATION_ADDED);
     }
@@ -85,13 +84,16 @@ public abstract class OptomizingNavigator<Destination extends NavDestination, Pa
         }
     }
 
-    public abstract Page newPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions);
+    @NonNull
+    protected abstract Page createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions);
 
-    public abstract void replace(@Nullable Page oldPage, @Nullable Page newPage, @Nullable State newState, @BackStackEffect int backStackEffect);
+    protected abstract void replace(@Nullable Page oldPage, @Nullable Page newPage, @BackStackEffect int backStackEffect);
 
-    public abstract State savePageState(Page page);
+    @NonNull
+    protected abstract State savePageState(Page page);
 
-    public abstract Page restorePageState(State state);
+    @NonNull
+    protected abstract Page restorePageState(State state);
 
     @Override
     @CallSuper
@@ -114,7 +116,7 @@ public abstract class OptomizingNavigator<Destination extends NavDestination, Pa
         State state = savedState.getParcelable(STATE_CURRENT_DESTINATION);
         if (state != null) {
             currentPage = restorePageState(state);
-            replace(null, currentPage, state, BACK_STACK_UNCHANGED);
+            replace(null, currentPage, BACK_STACK_UNCHANGED);
         }
     }
 

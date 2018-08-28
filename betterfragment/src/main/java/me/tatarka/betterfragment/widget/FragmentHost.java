@@ -14,11 +14,13 @@ import androidx.annotation.Nullable;
 import me.tatarka.betterfragment.DefaultFragmentFactory;
 import me.tatarka.betterfragment.Fragment;
 import me.tatarka.betterfragment.FragmentManager;
+import me.tatarka.betterfragment.FragmentOwner;
 import me.tatarka.betterfragment.FragmentOwners;
 import me.tatarka.betterfragment.R;
 
 public class FragmentHost extends FrameLayout {
 
+    private final FragmentOwner owner;
     private final FragmentManager fm;
     private Fragment.Factory factory = DefaultFragmentFactory.getInstance();
     @Nullable
@@ -33,7 +35,8 @@ public class FragmentHost extends FrameLayout {
     @SuppressLint("WrongConstant")
     public FragmentHost(Context context, AttributeSet attrs) {
         super(context, attrs);
-        fm = new FragmentManager(FragmentOwners.get(this));
+        owner = FragmentOwners.get(this);
+        fm = new FragmentManager(owner);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentHost);
             String fragmentName = a.getString(R.styleable.FragmentHost_android_name);
@@ -52,12 +55,15 @@ public class FragmentHost extends FrameLayout {
     @CallSuper
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (fragment == null && initialFragmentClass != null && !fm.willRestoreState()) {
+        if (fragment == null && initialFragmentClass != null && !owner.willRestoreState()) {
             fragment = factory.newInstance(initialFragmentClass);
-            fm.create(fragment, this);
+            fm.add(fragment, this);
         }
     }
 
+    /**
+     * A convenience method for {@code host.setFragment(host.getFragmentFactory().newInstance(fragmentClass))}
+     */
     public void setFragmentClass(@Nullable Class<? extends Fragment> fragmentClass) {
         if (fragmentClass == null) {
             setFragment(null);
@@ -68,11 +74,11 @@ public class FragmentHost extends FrameLayout {
 
     public void setFragment(@Nullable Fragment fragment) {
         if (this.fragment != null) {
-            fm.destroy(this.fragment);
+            fm.remove(this.fragment);
         }
         this.fragment = fragment;
         if (fragment != null) {
-            fm.create(fragment, this);
+            fm.add(fragment, this);
         }
     }
 
@@ -102,7 +108,7 @@ public class FragmentHost extends FrameLayout {
         final Fragment.State fragmentState = savedState.fragmentState;
         if (fragmentState != null) {
             fragment = factory.newInstance(fragmentState.getFragmentClass());
-            fm.create(fragment, this, fragmentState);
+            fm.add(fragment, this, fragmentState);
         }
     }
 

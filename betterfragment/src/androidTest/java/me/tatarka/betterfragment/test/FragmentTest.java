@@ -34,7 +34,7 @@ public class FragmentTest {
     @Test
     public void createCallsOnCreate() {
         TestFragment fragment = new TestFragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
 
         assertTrue(fragment.createCalled);
     }
@@ -42,7 +42,7 @@ public class FragmentTest {
     @Test
     public void createAddsViewToContainer() {
         TestFragment fragment = new TestFragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
 
         assertNotNull(container.getChildAt(0));
     }
@@ -50,7 +50,7 @@ public class FragmentTest {
     @Test
     public void saveStateCallsOnSaveInstanceState() {
         TestFragment fragment = new TestFragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         fm.saveState(fragment);
 
         assertTrue(fragment.saveInstanceStateCalled);
@@ -59,7 +59,7 @@ public class FragmentTest {
     @Test
     public void setContentViewAddsToFragmentView() {
         TestFragment fragment = new TestFragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         View view = new View(container.getContext());
         fragment.setContentView(view);
 
@@ -69,10 +69,10 @@ public class FragmentTest {
     @Test
     public void destroyRemovesContentViewFromContainer() {
         TestFragment fragment = new TestFragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         View view = new View(container.getContext());
         fragment.setContentView(view);
-        fm.destroy(fragment);
+        fm.remove(fragment);
 
         assertNull(container.getChildAt(0));
     }
@@ -80,7 +80,7 @@ public class FragmentTest {
     @Test
     public void findViewByIdFindsFragmentView() {
         TestFragment fragment = new TestFragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         View view = new View(container.getContext());
         view.setId(2);
         fragment.setContentView(view);
@@ -91,7 +91,7 @@ public class FragmentTest {
     @Test
     public void requireViewByIdFindsFragmentView() {
         TestFragment fragment = new TestFragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         View view = new View(container.getContext());
         view.setId(2);
         fragment.setContentView(view);
@@ -102,11 +102,11 @@ public class FragmentTest {
     @Test
     public void fragmentSavesAndRestoresState() {
         TestFragment fragment = new TestFragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         fragment.state = 1;
         Fragment.State state = fm.saveState(fragment);
         TestFragment newFragment = new TestFragment();
-        fm.create(newFragment, container, state);
+        fm.add(newFragment, container, state);
 
         assertTrue(fragment.saveInstanceStateCalled);
         assertEquals(1, newFragment.state);

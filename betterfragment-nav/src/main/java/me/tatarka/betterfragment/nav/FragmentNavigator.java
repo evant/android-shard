@@ -17,11 +17,13 @@ import me.tatarka.betterfragment.FragmentManager;
 import me.tatarka.betterfragment.FragmentOwners;
 
 @Navigator.Name("fragment")
-public class FragmentNavigator extends OptomizingNavigator<FragmentNavigator.Destination, Fragment, Fragment.State> {
+public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Destination, Fragment, Fragment.State> {
 
     private final FragmentManager fm;
     private final ViewGroup container;
     private Fragment.Factory fragmentFactory = DefaultFragmentFactory.getInstance();
+    @Nullable
+    private Fragment.State pendingState;
 
     public FragmentNavigator(ViewGroup container) {
         this.fm = new FragmentManager(FragmentOwners.get(container));
@@ -43,28 +45,35 @@ public class FragmentNavigator extends OptomizingNavigator<FragmentNavigator.Des
         return new Destination(this, fragmentFactory);
     }
 
+    @NonNull
     @Override
-    public Fragment newPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions) {
-        return destination.newFragment(args);
+    protected Fragment createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions) {
+        Fragment fragment = destination.newFragment();
+        fragment.setArgs(args);
+        return fragment;
     }
 
     @Override
-    public void replace(@Nullable Fragment oldPage, @Nullable Fragment newPage, @Nullable Fragment.State newState, int backStackEffect) {
+    protected void replace(@Nullable Fragment oldPage, @Nullable Fragment newPage, int backStackEffect) {
         if (oldPage != null) {
-            fm.destroy(oldPage);
+            fm.remove(oldPage);
         }
         if (newPage != null) {
-            fm.create(newPage, container, newState);
+            fm.add(newPage, container, pendingState);
+            pendingState = null;
         }
     }
 
+    @NonNull
     @Override
-    public Fragment.State savePageState(Fragment fragment) {
+    protected Fragment.State savePageState(Fragment fragment) {
         return fm.saveState(fragment);
     }
 
+    @NonNull
     @Override
-    public Fragment restorePageState(final Fragment.State state) {
+    protected Fragment restorePageState(final Fragment.State state) {
+        pendingState = state;
         return fragmentFactory.newInstance(state.getFragmentClass());
     }
 
@@ -72,7 +81,6 @@ public class FragmentNavigator extends OptomizingNavigator<FragmentNavigator.Des
 
         private String name;
         private Fragment.Factory fragmentFactory;
-        private Fragment fragment;
 
         Destination(Navigator<? extends NavDestination> navigator, Fragment.Factory fragmentFactory) {
             super(navigator);
@@ -83,8 +91,17 @@ public class FragmentNavigator extends OptomizingNavigator<FragmentNavigator.Des
             return name;
         }
 
-        public Fragment getFragment() {
-            return fragment;
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <T extends Fragment> T newFragment() {
+            try {
+                return fragmentFactory.newInstance((Class<T>) Class.forName(name));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
@@ -93,17 +110,6 @@ public class FragmentNavigator extends OptomizingNavigator<FragmentNavigator.Des
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentNavigator);
             name = a.getString(R.styleable.FragmentNavigator_android_name);
             a.recycle();
-        }
-
-        @SuppressWarnings("unchecked")
-        <T extends Fragment> T newFragment(Bundle args) {
-            try {
-                fragment = fragmentFactory.newInstance((Class<T>) Class.forName(name));
-                fragment.setArgs(args);
-                return (T) fragment;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 }

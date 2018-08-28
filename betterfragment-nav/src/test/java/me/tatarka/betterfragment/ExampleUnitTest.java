@@ -1,4 +1,4 @@
-package me.tatarka.betterfragment_nav;
+package me.tatarka.betterfragment;
 
 import org.junit.Test;
 

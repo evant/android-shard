@@ -37,7 +37,7 @@ public class FragmentLifecycleTest {
         Fragment fragment = new Fragment();
         TestLifecycleObserver observer = new TestLifecycleObserver();
         fragment.getLifecycle().addObserver(observer);
-        fm.create(fragment, container);
+        fm.add(fragment, container);
 
         assertEquals(Lifecycle.State.CREATED, observer.getCurrentState());
         assertArrayEquals(new Lifecycle.Event[]{Lifecycle.Event.ON_CREATE}, observer.getEvents());
@@ -48,8 +48,8 @@ public class FragmentLifecycleTest {
         Fragment fragment = new Fragment();
         TestLifecycleObserver observer = new TestLifecycleObserver();
         fragment.getLifecycle().addObserver(observer);
-        fm.create(fragment, container);
-        fm.destroy(fragment);
+        fm.add(fragment, container);
+        fm.remove(fragment);
 
         assertEquals(Lifecycle.State.DESTROYED, observer.getCurrentState());
         assertArrayEquals(new Lifecycle.Event[]{Lifecycle.Event.ON_CREATE, Lifecycle.Event.ON_DESTROY}, observer.getEvents());
@@ -61,7 +61,7 @@ public class FragmentLifecycleTest {
         Fragment fragment = new Fragment();
         TestLifecycleObserver observer = new TestLifecycleObserver();
         fragment.getLifecycle().addObserver(observer);
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         registry.handleLifecycleEvent(Lifecycle.Event.ON_START);
         fm.saveState(fragment);
 
@@ -74,7 +74,7 @@ public class FragmentLifecycleTest {
         Fragment fragment = new Fragment();
         TestLifecycleObserver observer = new TestLifecycleObserver();
         fragment.getLifecycle().addObserver(observer);
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         registry.handleLifecycleEvent(Lifecycle.Event.ON_START);
 
         assertEquals(Lifecycle.State.STARTED, observer.getCurrentState());
@@ -86,7 +86,7 @@ public class FragmentLifecycleTest {
         Fragment fragment = new Fragment();
         TestLifecycleObserver observer = new TestLifecycleObserver();
         fragment.getLifecycle().addObserver(observer);
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         registry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
 
         assertEquals(Lifecycle.State.RESUMED, observer.getCurrentState());
@@ -98,7 +98,7 @@ public class FragmentLifecycleTest {
         Fragment fragment = new Fragment();
         TestLifecycleObserver observer = new TestLifecycleObserver();
         fragment.getLifecycle().addObserver(observer);
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         registry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
         registry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
 
@@ -111,7 +111,7 @@ public class FragmentLifecycleTest {
         Fragment fragment = new Fragment();
         TestLifecycleObserver observer = new TestLifecycleObserver();
         fragment.getLifecycle().addObserver(observer);
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         registry.handleLifecycleEvent(Lifecycle.Event.ON_START);
         registry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
 
@@ -124,7 +124,7 @@ public class FragmentLifecycleTest {
         Fragment fragment = new Fragment();
         TestLifecycleObserver observer = new TestLifecycleObserver();
         fragment.getLifecycle().addObserver(observer);
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         registry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
         registry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
 

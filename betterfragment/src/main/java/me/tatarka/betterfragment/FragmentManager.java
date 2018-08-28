@@ -15,23 +15,23 @@ public class FragmentManager {
     }
 
     /**
-     * Sets of the fragment, attaching is to the given container and calling {@link Fragment#onCreate(Bundle)}.
+     * Adds the fragment, attaching is to the given container and calling {@link Fragment#onCreate(Bundle)}.
      * This method is a no-op if the fragment is already destroyed.
      */
-    public void create(@NonNull Fragment fragment, @NonNull ViewGroup container) {
-        create(fragment, container, null);
+    public void add(@NonNull Fragment fragment, @NonNull ViewGroup container) {
+        add(fragment, container, null);
     }
 
     /**
-     * Sets of the fragment, attaching is to the given container and calling {@link Fragment#onCreate(Bundle)}.
+     * Adds the fragment, attaching is to the given container and calling {@link Fragment#onCreate(Bundle)}.
      * If state is not null, it will restore itself from the given state. This method is a no-op if
      * the fragment is already destroyed.
      *
      * @throws IllegalStateException    If the fragment has already been created or has been created.
      * @throws IllegalArgumentException If the state is not for this fragment.
      */
-    public void create(@NonNull Fragment fragment, @NonNull ViewGroup container, @Nullable Fragment.State state) {
-        fragment.create(owner, container, state);
+    public void add(@NonNull Fragment fragment, @NonNull ViewGroup container, @Nullable Fragment.State state) {
+        fragment.add(owner, container, state);
     }
 
     /**
@@ -47,17 +47,13 @@ public class FragmentManager {
     }
 
     /**
-     * Destroys the fragment. After this most operations on this instance will throw an exception.
+     * Removes the fragment. After this most operations on this instance will throw an exception.
      * Note: you should not call this on configuration changes, only when you are actually done with
      * it.
      *
      * @throws IllegalStateException If the fragment is already destroyed.
      */
-    public void destroy(Fragment fragment) {
-        fragment.destroy();
-    }
-
-    public boolean willRestoreState() {
-        return owner.willRestoreState();
+    public void remove(Fragment fragment) {
+        fragment.remove();
     }
 }

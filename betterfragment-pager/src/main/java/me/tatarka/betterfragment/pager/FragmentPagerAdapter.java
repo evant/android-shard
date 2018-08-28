@@ -162,13 +162,13 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
             this.parentOwner = parentOwner;
             this.fragment = fragment;
             fm = new FragmentManager(this);
-            fm.create(fragment, container, savedState);
+            fm.add(fragment, container, savedState);
             parentOwner.getLifecycle().addObserver(this);
         }
 
         void destroy() {
             parentOwner.getLifecycle().removeObserver(this);
-            fm.destroy(fragment);
+            fm.remove(fragment);
         }
 
         Fragment.State saveState() {

@@ -46,7 +46,7 @@ public class Fragment implements FragmentOwner {
     private boolean destroyed;
     private boolean willRestoreState;
 
-    void create(@NonNull FragmentOwner owner, @NonNull ViewGroup container, @Nullable State state) {
+    void add(@NonNull FragmentOwner owner, @NonNull ViewGroup container, @Nullable State state) {
         if (this.owner != null) {
             throw new IllegalStateException("Fragment is already created");
         }
@@ -90,7 +90,7 @@ public class Fragment implements FragmentOwner {
         return state;
     }
 
-    void destroy() {
+    void remove() {
         checkDestroyed();
         destroyed = true;
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);

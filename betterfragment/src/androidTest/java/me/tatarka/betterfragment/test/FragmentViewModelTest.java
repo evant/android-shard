@@ -32,7 +32,7 @@ public class FragmentViewModelTest {
     @Test
     public void canObtainViewModelAfterFragmentIsCreated() {
         Fragment fragment = new Fragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         TestViewModel viewModel = ViewModelProviders.of(fragment).get(TestViewModel.class);
 
         assertNotNull(viewModel);
@@ -41,11 +41,11 @@ public class FragmentViewModelTest {
     @Test
     public void viewModelIsRetainedAcrossConfigurationChange() {
         Fragment fragment = new Fragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         TestViewModel viewModel = ViewModelProviders.of(fragment).get(TestViewModel.class);
         Fragment.State state = fm.saveState(fragment);
         Fragment newFragment = new Fragment();
-        fm.create(newFragment, container, state);
+        fm.add(newFragment, container, state);
         TestViewModel newViewModel = ViewModelProviders.of(newFragment).get(TestViewModel.class);
 
         assertSame(viewModel, newViewModel);
@@ -54,12 +54,12 @@ public class FragmentViewModelTest {
     @Test
     public void viewModelIsNotRetainedWhenFragmentIsDestroyed() {
         Fragment fragment = new Fragment();
-        fm.create(fragment, container);
+        fm.add(fragment, container);
         TestViewModel viewModel = ViewModelProviders.of(fragment).get(TestViewModel.class);
         Fragment.State state = fm.saveState(fragment);
-        fm.destroy(fragment);
+        fm.remove(fragment);
         Fragment newFragment = new Fragment();
-        fm.create(newFragment, container, state);
+        fm.add(newFragment, container, state);
         TestViewModel newViewModel = ViewModelProviders.of(newFragment).get(TestViewModel.class);
 
         assertNotSame(viewModel, newViewModel);
