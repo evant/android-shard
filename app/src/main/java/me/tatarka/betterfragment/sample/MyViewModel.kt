@@ -1,7 +1,6 @@
 package me.tatarka.betterfragment.sample
 
 import android.util.Log
-
 import androidx.lifecycle.ViewModel
 
 class MyViewModel : ViewModel() {
