@@ -18,7 +18,6 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import me.tatarka.betterfragment.app.ActivityCallbacks;
 import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.app.FragmentManager;
 import me.tatarka.betterfragment.app.FragmentOwner;
