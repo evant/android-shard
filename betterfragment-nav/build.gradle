@@ -3,8 +3,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 28
 
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 28
@@ -12,7 +10,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -21,14 +18,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
     def nav_version = '1.0.0-alpha05'
 
     api project(':betterfragment')
-    api "android.arch.navigation:navigation-ui:$nav_version"
+    api "android.arch.navigation:navigation-runtime:$nav_version"
 
     testImplementation 'junit:junit:4.12'
 

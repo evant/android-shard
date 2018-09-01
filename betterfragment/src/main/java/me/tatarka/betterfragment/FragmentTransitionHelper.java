@@ -42,13 +42,17 @@ public final class FragmentTransitionHelper {
                         @AnimRes @AnimatorRes int exitAnim,
                         @ZOrder int zOrder) {
 
-        Object enter = enterAnim != 0 ? AnimUtil.loadAnim(container.getContext(), enterAnim) : null;
-        Object exit = exitAnim != 0 ? AnimUtil.loadAnim(container.getContext(), exitAnim) : null;
+        Object enter = hasAnim(enterAnim) ? AnimUtil.loadAnim(container.getContext(), enterAnim) : null;
+        Object exit = hasAnim(exitAnim) ? AnimUtil.loadAnim(container.getContext(), exitAnim) : null;
         if (enter instanceof Animation) {
             replace(oldFragment, newFragment, container, (Animation) enter, (Animation) exit, zOrder);
         } else {
             replace(oldFragment, newFragment, container, (Animator) enter, (Animator) exit, zOrder);
         }
+    }
+
+    private static boolean hasAnim(int anim) {
+        return anim != 0 && anim != -1;
     }
 
     /**

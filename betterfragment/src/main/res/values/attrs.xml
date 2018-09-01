@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <attr name="fragmentFactory" format="string" />
-    <declare-styleable name="FragmentHost">
-        <attr name="android:name" />
-        <attr name="enterAnim" format="reference" />
-        <attr name="exitAnim" format="reference" />
-    </declare-styleable>
-</resources>

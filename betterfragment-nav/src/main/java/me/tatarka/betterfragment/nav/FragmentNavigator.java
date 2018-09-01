@@ -63,8 +63,8 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
     protected void replace(@Nullable Page oldPage, @NonNull Page newPage, int backStackEffect) {
         Fragment oldFragment = oldPage != null ? oldPage.fragment : null;
         Fragment newFragment = newPage.fragment;
-        int enterAnim = 0;
-        int exitAnim = 0;
+        int enterAnim = -1;
+        int exitAnim = -1;
         int zOrder = FragmentTransitionHelper.NEW_FRAGMENT_ON_TOP;
         switch (backStackEffect) {
             case Navigator.BACK_STACK_DESTINATION_ADDED:

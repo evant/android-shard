@@ -1,0 +1,37 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:1:1-2:51
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:1:1-2:51
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:1:1-2:51
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:1:1-2:51
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:1:1-2:51
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:1:1-2:51
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:1:1-2:51
+	package
+		ADDED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:2:5-48
+		INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+		INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+		ADDED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:1:1-2:51
+		INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+		ADDED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:1:1-2:51
+		INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml:1:11-69
+uses-sdk
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+		ADDED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+		INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+		ADDED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml
+		INJECTED from /home/evan/AndroidStudioProjects/BetterFragment/betterfragment-host-ui/src/main/AndroidManifest.xml

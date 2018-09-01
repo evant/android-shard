@@ -3,6 +3,7 @@ package me.tatarka.betterfragment.sample.dagger;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import me.tatarka.betterfragment.sample.MainActivity;
 import me.tatarka.betterfragment.sample.SimpleHostFragment;
 
 @Singleton
@@ -15,4 +16,6 @@ public interface AppComponent {
     void inject(DaggerFragmentHost host);
 
     void inject(DaggerFragmentNavHost navHost);
+
+    void inject(MainActivity activity);
 }
