@@ -12,7 +12,7 @@ import androidx.test.InstrumentationRegistry;
 import androidx.test.runner.AndroidJUnit4;
 import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.app.FragmentManager;
-import me.tatarka.betterfragment.app.ViewModelProviders;
+import me.tatarka.betterfragment.lifecycle.ViewModelProviders;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
