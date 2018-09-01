@@ -12,7 +12,7 @@ public final class FragmentPageHostUI {
     private FragmentPageHostUI() {
     }
 
-    public static void setupWithNavigationView(final FragmentPageHost host, final NavigationView view) {
+    public static void setupWithPageHost(final NavigationView view, final FragmentPageHost host) {
         view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -28,7 +28,7 @@ public final class FragmentPageHostUI {
         });
     }
 
-    public static void setupWithBottomNavigationView(final FragmentPageHost host, final BottomNavigationView view) {
+    public static void setupWithPageHost(final BottomNavigationView view, final FragmentPageHost host) {
         view.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {

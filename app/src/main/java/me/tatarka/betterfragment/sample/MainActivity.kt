@@ -1,9 +1,10 @@
 package me.tatarka.betterfragment.sample
 
 import android.os.Bundle
+import androidx.lifecycle.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import me.tatarka.betterfragment.appcompat.app.AppCompatActivity
-import me.tatarka.betterfragment.host.FragmentPageHostUI
+import me.tatarka.betterfragment.lifecycle.ViewModelProviders
 import me.tatarka.betterfragment.sample.dagger.injector
 import me.tatarka.betterfragment.widget.FragmentPageHost
 
@@ -15,20 +16,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val fragmentFactory = injector.fragmentFactory
 
-        viewModel<MyViewModel>()
+        ViewModelProviders.of(this).get<MyViewModel>()
 
         setContentView(R.layout.activity_main)
         pageHost = findViewById(R.id.page_host)
         val bottomNav: BottomNavigationView = findViewById(R.id.bottom_nav)!!
         pageHost.adapter = FragmentPageHost.Adapter { id ->
-            return@Adapter when (id) {
+            when (id) {
                 R.id.simple_host -> fragmentFactory.newInstance<SimpleHostFragment>()
                 R.id.view_pager -> fragmentFactory.newInstance<ViewPagerFragment>()
                 R.id.navigation -> fragmentFactory.newInstance<NavigationFragment>()
                 else -> null
             }
         }
-        FragmentPageHostUI.setupWithBottomNavigationView(pageHost, bottomNav)
+        bottomNav.setupWithPageHost(pageHost)
     }
 
     override fun onBackPressed() {
