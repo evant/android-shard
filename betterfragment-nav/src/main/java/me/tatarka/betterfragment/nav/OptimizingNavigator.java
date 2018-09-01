@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
+import android.transition.TransitionInflater;
+import android.transition.TransitionManager;
 import android.util.SparseArray;
 
 import java.lang.annotation.Retention;

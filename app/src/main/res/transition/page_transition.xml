@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+    <fade>
+        <targets>
+            <target android:targetId="@+id/number" />
+            <target android:targetId="@+id/saved_text" />
+        </targets>
+    </fade>
+    <explode>
+        <targets>
+            <target android:targetId="@+id/one" />
+            <target android:targetId="@+id/two" />
+            <target android:targetId="@+id/root" />
+            <target android:targetId="@+id/dest1" />
+            <target android:targetId="@+id/dest2" />
+        </targets>
+    </explode>
+</transitionSet>

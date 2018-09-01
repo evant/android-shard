@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.AttributeSet;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -35,6 +37,8 @@ public class FragmentHost extends FrameLayout {
     private Animation exitAnimation;
     @Nullable
     private Animation enterAnimation;
+    @Nullable
+    private Transition transition;
 
     public FragmentHost(Context context) {
         this(context, null);
@@ -64,7 +68,10 @@ public class FragmentHost extends FrameLayout {
             if (exitAnimId != 0) {
                 exitAnimation = AnimationUtils.loadAnimation(context, exitAnimId);
             }
-
+            int transitionId = a.getResourceId(R.styleable.FragmentHost_transition, 0);
+            if (transitionId != 0) {
+                transition = TransitionInflater.from(context).inflateTransition(transitionId);
+            }
             a.recycle();
         }
     }
@@ -91,8 +98,13 @@ public class FragmentHost extends FrameLayout {
     }
 
     public void setFragment(@Nullable Fragment fragment) {
-        th.replace(this.fragment, fragment, this, enterAnimation, exitAnimation, FragmentTransitionHelper.NEW_FRAGMENT_ON_TOP);
+        Fragment oldFragment = this.fragment;
         this.fragment = fragment;
+        if (transition != null) {
+            th.replace(oldFragment, fragment, this, transition);
+        } else {
+            th.replace(oldFragment, fragment, this, enterAnimation, exitAnimation, FragmentTransitionHelper.NEW_FRAGMENT_ON_TOP);
+        }
     }
 
     @Nullable
@@ -125,6 +137,15 @@ public class FragmentHost extends FrameLayout {
     @Nullable
     public Animation getExitAnimation() {
         return exitAnimation;
+    }
+
+    public void setTransition(@Nullable Transition transition) {
+        this.transition = transition;
+    }
+
+    @Nullable
+    public Transition getTransition() {
+        return transition;
     }
 
     @Override

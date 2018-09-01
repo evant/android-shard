@@ -3,14 +3,17 @@
     <attr name="fragmentFactory" format="string" />
     <attr name="enterAnim" format="reference" />
     <attr name="exitAnim" format="reference" />
+    <attr name="transition" format="reference" />
     <declare-styleable name="FragmentHost">
         <attr name="android:name" />
         <attr name="enterAnim" />
         <attr name="exitAnim" />
+        <attr name="transition" />
     </declare-styleable>
     <declare-styleable name="FragmentPageHost">
         <attr name="startPage" format="reference" />
         <attr name="enterAnim" />
         <attr name="exitAnim" />
+        <attr name="transition" />
     </declare-styleable>
 </resources>

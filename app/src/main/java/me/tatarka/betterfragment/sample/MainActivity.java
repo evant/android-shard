@@ -1,20 +1,15 @@
 package me.tatarka.betterfragment.sample;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.view.MenuItem;
-import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 import javax.inject.Inject;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NavUtils;
-import androidx.navigation.ui.NavigationUI;
+import androidx.drawerlayout.widget.DrawerLayout;
 import me.tatarka.betterfragment.Fragment;
 import me.tatarka.betterfragment.host.FragmentPageHostUI;
 import me.tatarka.betterfragment.sample.dagger.DaggerAppComponent;
@@ -35,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         pageHost = findViewById(R.id.page_host);
-        final BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         pageHost.setAdapter(new FragmentPageHost.Adapter() {
             @Nullable
             @Override

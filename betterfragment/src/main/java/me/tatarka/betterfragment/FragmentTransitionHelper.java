@@ -2,6 +2,8 @@ package me.tatarka.betterfragment;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -157,6 +159,11 @@ public final class FragmentTransitionHelper {
                 enterAnimation.start();
             }
         }
+    }
+
+    public void replace(@Nullable Fragment oldFragment, @Nullable Fragment newFragment, @NonNull ViewGroup container, @Nullable Transition transition) {
+        TransitionManager.beginDelayedTransition(container, transition);
+        fm.replace(oldFragment, newFragment, container);
     }
 
     @IntDef({NEW_FRAGMENT_ON_TOP, OLD_FRAGMENT_ON_TOP})

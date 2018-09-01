@@ -1,7 +1,0 @@
-me.tatarka.betterfragment.host
-attr enterAnim
-attr exitAnim
-attr fragmentFactory
-attr startPage
-styleable FragmentHost android_name enterAnim exitAnim
-styleable FragmentPageHost enterAnim exitAnim startPage

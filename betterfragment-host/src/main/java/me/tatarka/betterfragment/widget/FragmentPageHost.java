@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.animation.Animation;
@@ -41,6 +44,8 @@ public class FragmentPageHost extends FrameLayout {
     private Animation exitAnimation;
     @Nullable
     private Animation enterAnimation;
+    @Nullable
+    private Transition transition;
 
     public FragmentPageHost(@NonNull Context context) {
         this(context, null);
@@ -61,6 +66,10 @@ public class FragmentPageHost extends FrameLayout {
             int exitAnimId = a.getResourceId(R.styleable.FragmentPageHost_exitAnim, 0);
             if (exitAnimId != 0) {
                 exitAnimation = AnimationUtils.loadAnimation(context, exitAnimId);
+            }
+            int transitionId = a.getResourceId(R.styleable.FragmentPageHost_transition, 0);
+            if (transitionId != 0) {
+                transition = TransitionInflater.from(context).inflateTransition(transitionId);
             }
             a.recycle();
         }
@@ -96,7 +105,11 @@ public class FragmentPageHost extends FrameLayout {
             fm.restoreState(fragment, fragmentStates.get(newId));
         }
         if (animate) {
-            th.replace(oldFragment, fragment, this, enterAnimation, exitAnimation, FragmentTransitionHelper.NEW_FRAGMENT_ON_TOP);
+            if (transition != null) {
+                th.replace(oldFragment, fragment, this, transition);
+            } else {
+                th.replace(oldFragment, fragment, this, enterAnimation, exitAnimation, FragmentTransitionHelper.NEW_FRAGMENT_ON_TOP);
+            }
         } else {
             fm.replace(oldFragment, fragment, this);
         }
@@ -157,6 +170,15 @@ public class FragmentPageHost extends FrameLayout {
     @Nullable
     public Animation getExitAnimation() {
         return exitAnimation;
+    }
+
+    public void setTransition(@Nullable Transition transition) {
+        this.transition = transition;
+    }
+
+    @Nullable
+    public Transition getTransition() {
+        return transition;
     }
 
     public interface Adapter {
