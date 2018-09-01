@@ -18,10 +18,11 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import me.tatarka.betterfragment.Fragment;
-import me.tatarka.betterfragment.FragmentManager;
-import me.tatarka.betterfragment.FragmentOwner;
-import me.tatarka.betterfragment.FragmentOwners;
+import me.tatarka.betterfragment.app.ActivityCallbacks;
+import me.tatarka.betterfragment.app.Fragment;
+import me.tatarka.betterfragment.app.FragmentManager;
+import me.tatarka.betterfragment.app.FragmentOwner;
+import me.tatarka.betterfragment.app.FragmentOwners;
 
 /**
  * Implementation of {@link PagerAdapter} that represents each page as a {@link Fragment}.

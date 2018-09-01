@@ -8,8 +8,8 @@ import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import me.tatarka.betterfragment.Fragment;
-import me.tatarka.betterfragment.ViewModelProviders;
+import me.tatarka.betterfragment.app.Fragment;
+import me.tatarka.betterfragment.lifecycle.ViewModelProviders;
 
 public class MyFragment extends Fragment {
     private static final String KEY_NUMBER = "number";

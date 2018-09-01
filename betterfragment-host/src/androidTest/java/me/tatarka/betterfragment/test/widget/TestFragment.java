@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.app.Fragment;
 
 public class TestFragment extends Fragment {
     private static final String STATE = "state";

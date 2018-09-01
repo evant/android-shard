@@ -15,12 +15,11 @@ import android.widget.FrameLayout;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import me.tatarka.betterfragment.DefaultFragmentFactory;
-import me.tatarka.betterfragment.Fragment;
-import me.tatarka.betterfragment.FragmentManager;
-import me.tatarka.betterfragment.FragmentOwner;
-import me.tatarka.betterfragment.FragmentOwners;
-import me.tatarka.betterfragment.FragmentTransitionHelper;
+import me.tatarka.betterfragment.app.Fragment;
+import me.tatarka.betterfragment.app.FragmentManager;
+import me.tatarka.betterfragment.app.FragmentOwner;
+import me.tatarka.betterfragment.app.FragmentOwners;
+import me.tatarka.betterfragment.app.FragmentTransitionHelper;
 import me.tatarka.betterfragment.host.R;
 
 public class FragmentHost extends FrameLayout {
@@ -28,7 +27,7 @@ public class FragmentHost extends FrameLayout {
     private final FragmentOwner owner;
     private final FragmentManager fm;
     private final FragmentTransitionHelper th;
-    private Fragment.Factory factory = DefaultFragmentFactory.getInstance();
+    private Fragment.Factory factory = Fragment.DefaultFactory.getInstance();
     @Nullable
     private Fragment fragment;
     @Nullable

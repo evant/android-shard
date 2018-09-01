@@ -1,4 +1,4 @@
-package me.tatarka.betterfragment;
+package me.tatarka.betterfragment.app;
 
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -8,7 +8,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 class FragmentContextWrapper extends ContextWrapper {
-    static final String FRAGMENT_OWNER = "me.tatarka.betterfragment.FragmentOwner";
+    static final String FRAGMENT_OWNER = "me.tatarka.betterfragment.app.FragmentOwner";
     private final Object owner;
     private LayoutInflater inflater;
 

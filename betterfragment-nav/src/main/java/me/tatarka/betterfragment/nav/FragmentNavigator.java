@@ -7,20 +7,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-
-import java.security.spec.PSSParameterSpec;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
-import me.tatarka.betterfragment.DefaultFragmentFactory;
-import me.tatarka.betterfragment.Fragment;
-import me.tatarka.betterfragment.FragmentManager;
-import me.tatarka.betterfragment.FragmentOwners;
-import me.tatarka.betterfragment.FragmentTransitionHelper;
+import me.tatarka.betterfragment.app.Fragment;
+import me.tatarka.betterfragment.app.FragmentManager;
+import me.tatarka.betterfragment.app.FragmentOwners;
+import me.tatarka.betterfragment.app.FragmentTransitionHelper;
 
 @Navigator.Name("fragment")
 public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Destination, FragmentNavigator.Page, FragmentNavigator.PageState> {
@@ -28,7 +24,7 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
     private final FragmentManager fm;
     private final FragmentTransitionHelper th;
     private final ViewGroup container;
-    private Fragment.Factory fragmentFactory = DefaultFragmentFactory.getInstance();
+    private Fragment.Factory fragmentFactory = Fragment.DefaultFactory.getInstance();
 
     public FragmentNavigator(ViewGroup container) {
         this.container = container;

@@ -1,4 +1,4 @@
-package me.tatarka.betterfragment;
+package me.tatarka.betterfragment.app;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -24,6 +24,11 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
 
+/**
+ * A simpler 'Fragment' that lies on the android architecture components for most of the heavy-lifting.
+ * <p>
+ * It is a {@link LifecycleOwner} and {@link androidx.lifecycle.ViewModelStoreOwner}.
+ */
 public class Fragment implements FragmentOwner {
 
     /**
@@ -297,5 +302,21 @@ public class Fragment implements FragmentOwner {
     public interface Factory {
         @NonNull
         <T extends Fragment> T newInstance(@NonNull Class<T> fragmentClass);
+    }
+
+    public static class DefaultFactory implements Factory {
+
+        private static final Factory INSTANCE = new DefaultFactory();
+
+        @NonNull
+        public static Factory getInstance() {
+            return INSTANCE;
+        }
+
+        @NonNull
+        @Override
+        public <T extends Fragment> T newInstance(@NonNull Class<T> fragmentClass) {
+            return Fragment.newInstance(fragmentClass);
+        }
     }
 }

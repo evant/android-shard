@@ -1,7 +1,7 @@
 package me.tatarka.betterfragment.test.widget;
 
 import androidx.annotation.NonNull;
-import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.app.Fragment;
 
 public class TestFragmentFactory implements Fragment.Factory {
 

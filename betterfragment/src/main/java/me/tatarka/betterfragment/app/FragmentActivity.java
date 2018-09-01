@@ -1,4 +1,4 @@
-package me.tatarka.betterfragment;
+package me.tatarka.betterfragment.app;
 
 import android.app.Activity;
 import android.os.Bundle;

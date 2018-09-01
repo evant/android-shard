@@ -7,7 +7,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import androidx.annotation.NonNull;
-import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.app.Fragment;
 
 @Singleton
 public class DaggerFragmentFactory implements Fragment.Factory {

@@ -3,7 +3,7 @@ package me.tatarka.betterfragment.sample.dagger;
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
-import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.sample.MyFragment;
 import me.tatarka.betterfragment.sample.NavigationFragment;
 import me.tatarka.betterfragment.sample.SimpleHostFragment;

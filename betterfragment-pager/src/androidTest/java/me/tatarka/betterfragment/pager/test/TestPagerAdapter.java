@@ -3,7 +3,7 @@ package me.tatarka.betterfragment.pager.test;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.pager.FragmentPagerAdapter;
 
 public class TestPagerAdapter extends FragmentPagerAdapter {

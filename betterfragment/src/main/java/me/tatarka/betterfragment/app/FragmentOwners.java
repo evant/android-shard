@@ -1,4 +1,4 @@
-package me.tatarka.betterfragment;
+package me.tatarka.betterfragment.app;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,7 +16,13 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
-public class FragmentOwners {
+/**
+ * Utilities to obtain a {@link FragmentOwner}.
+ */
+public final class FragmentOwners {
+
+    private FragmentOwners() {
+    }
 
     public static FragmentOwner get(View view) {
         if (view.isInEditMode()) {

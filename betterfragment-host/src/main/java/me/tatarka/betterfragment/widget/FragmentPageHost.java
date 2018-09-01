@@ -6,7 +6,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.animation.Animation;
@@ -17,11 +16,11 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import me.tatarka.betterfragment.Fragment;
-import me.tatarka.betterfragment.FragmentManager;
-import me.tatarka.betterfragment.FragmentOwner;
-import me.tatarka.betterfragment.FragmentOwners;
-import me.tatarka.betterfragment.FragmentTransitionHelper;
+import me.tatarka.betterfragment.app.Fragment;
+import me.tatarka.betterfragment.app.FragmentManager;
+import me.tatarka.betterfragment.app.FragmentOwner;
+import me.tatarka.betterfragment.app.FragmentOwners;
+import me.tatarka.betterfragment.app.FragmentTransitionHelper;
 import me.tatarka.betterfragment.host.R;
 
 public class FragmentPageHost extends FrameLayout {

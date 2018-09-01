@@ -11,8 +11,8 @@ import org.junit.runner.RunWith;
 
 import androidx.test.InstrumentationRegistry;
 import androidx.test.runner.AndroidJUnit4;
-import me.tatarka.betterfragment.Fragment;
-import me.tatarka.betterfragment.FragmentManager;
+import me.tatarka.betterfragment.app.Fragment;
+import me.tatarka.betterfragment.app.FragmentManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

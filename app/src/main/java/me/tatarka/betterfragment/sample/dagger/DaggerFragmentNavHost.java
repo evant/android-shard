@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 
 import javax.inject.Inject;
 
-import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.nav.FragmentNavHost;
 
 public class DaggerFragmentNavHost extends FragmentNavHost {

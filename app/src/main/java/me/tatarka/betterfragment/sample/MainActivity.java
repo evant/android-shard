@@ -1,16 +1,16 @@
 package me.tatarka.betterfragment.sample;
 
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 
 import javax.inject.Inject;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
-import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.app.Fragment;
+import me.tatarka.betterfragment.appcompat.app.AppCompatActivity;
 import me.tatarka.betterfragment.host.FragmentPageHostUI;
 import me.tatarka.betterfragment.sample.dagger.DaggerAppComponent;
 import me.tatarka.betterfragment.sample.dagger.DaggerFragmentFactory;

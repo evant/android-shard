@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
-import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.pager.FragmentPagerAdapter;
 
 public class ViewPagerFragment extends Fragment {

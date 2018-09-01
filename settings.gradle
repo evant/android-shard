@@ -1,1 +1,7 @@
-include ':app', ':betterfragment', ':betterfragment-host', ':betterfragment-host-ui', ':betterfragment-nav', ':betterfragment-pager'
+include ':app',
+        ':betterfragment',
+        ':betterfragment-appcompat',
+        ':betterfragment-host',
+        ':betterfragment-host-ui',
+        ':betterfragment-nav',
+        ':betterfragment-pager'

@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
-import me.tatarka.betterfragment.FragmentOwner;
+import me.tatarka.betterfragment.app.FragmentOwner;
 
 public class TestFragmentOwner implements FragmentOwner {
 

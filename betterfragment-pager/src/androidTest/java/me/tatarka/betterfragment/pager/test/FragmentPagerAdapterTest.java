@@ -14,7 +14,7 @@ import androidx.test.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 import androidx.viewpager.widget.ViewPager;
-import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.app.Fragment;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -16,9 +16,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavHost;
 import androidx.navigation.Navigation;
-import me.tatarka.betterfragment.Fragment;
-import me.tatarka.betterfragment.FragmentOwner;
-import me.tatarka.betterfragment.FragmentOwners;
+import me.tatarka.betterfragment.app.Fragment;
+import me.tatarka.betterfragment.app.FragmentOwner;
+import me.tatarka.betterfragment.app.FragmentOwners;
 
 public class FragmentNavHost extends FrameLayout implements NavHost {
 

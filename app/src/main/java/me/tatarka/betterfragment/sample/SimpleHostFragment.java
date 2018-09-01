@@ -6,7 +6,7 @@ import android.view.View;
 import javax.inject.Inject;
 
 import androidx.annotation.Nullable;
-import me.tatarka.betterfragment.Fragment;
+import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.widget.FragmentHost;
 
 public class SimpleHostFragment extends Fragment {
