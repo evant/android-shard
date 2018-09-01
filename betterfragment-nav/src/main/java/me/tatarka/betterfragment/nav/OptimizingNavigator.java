@@ -108,7 +108,6 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
         if (state != null) {
             currentPage = restorePageState(state);
             replace(null, currentPage, BACK_STACK_UNCHANGED);
-            dispatchOnNavigatorNavigated(currentId, BACK_STACK_DESTINATION_ADDED);
         }
     }
 
