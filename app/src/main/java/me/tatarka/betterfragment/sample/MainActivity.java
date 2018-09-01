@@ -1,6 +1,7 @@
 package me.tatarka.betterfragment.sample;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -25,13 +26,15 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     DaggerFragmentFactory fragmentFactory;
 
+    private FragmentPageHost pageHost;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DaggerAppComponent.create().inject(this);
 
         setContentView(R.layout.activity_main);
-        final FragmentPageHost pageHost = findViewById(R.id.page_host);
+        pageHost = findViewById(R.id.page_host);
         final BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         pageHost.setAdapter(new FragmentPageHost.Adapter() {
             @Nullable
@@ -52,12 +55,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public <T extends View> T findViewById(int id) {
-        return super.findViewById(id);
+    public void onBackPressed() {
+        Fragment fragment = pageHost.getFragment();
+        if (!(fragment instanceof NavInterface && ((NavInterface) fragment).onBackPressed())) {
+            super.onBackPressed();
+        }
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public boolean onNavigateUp() {
+        Fragment fragment = pageHost.getFragment();
+        if (fragment instanceof NavInterface && ((NavInterface) fragment).onNavigateUp()) {
+            return true;
+        } else {
+            return super.onNavigateUp();
+        }
     }
 }

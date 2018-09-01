@@ -170,6 +170,9 @@ public class FragmentPageHost extends FrameLayout {
 
     @Override
     protected Parcelable onSaveInstanceState() {
+        if (fragment != null) {
+            fragmentStates.put(currentPage, fm.saveState(fragment));
+        }
         return new SavedState(super.onSaveInstanceState(), currentPage, fragmentStates);
     }
 

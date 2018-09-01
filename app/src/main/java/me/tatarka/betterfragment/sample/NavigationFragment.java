@@ -13,7 +13,9 @@ import me.tatarka.betterfragment.Fragment;
 
 import static androidx.navigation.Navigation.findNavController;
 
-public class NavigationFragment extends Fragment {
+public class NavigationFragment extends Fragment implements NavInterface {
+
+    private NavController controller;
 
     @Inject
     public NavigationFragment() {
@@ -23,7 +25,7 @@ public class NavigationFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedState) {
         super.onCreate(savedState);
         setContentView(R.layout.navigation);
-        final NavController controller = findNavController(requireViewById(R.id.nav));
+        controller = findNavController(requireViewById(R.id.nav));
         Toolbar toolbar = requireViewById(R.id.toolbar);
         NavigationUI.setupWithNavController(toolbar, controller);
         requireViewById(R.id.root).setOnClickListener(new View.OnClickListener() {
@@ -44,5 +46,15 @@ public class NavigationFragment extends Fragment {
                 controller.navigate(R.id.dest2);
             }
         });
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return controller.popBackStack();
+    }
+
+    @Override
+    public boolean onNavigateUp() {
+        return controller.navigateUp();
     }
 }
