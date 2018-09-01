@@ -8,7 +8,6 @@ import android.os.Parcelable;
 import android.util.SparseArray;
 
 import java.lang.annotation.Retention;
-import java.util.ArrayList;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.IntDef;
@@ -25,50 +24,37 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
     private static final String STATE_BACK_STACK = "back_stack";
     private static final String STATE_BACK_STACK_STATE = "back_stack_state";
     private static final String STATE_CURRENT_DESTINATION = "current";
+    private static final String STATE_CURRENT_ID = "currentId";
     private static final int MSG_OPS = 0;
-    @Nullable
-    private Op op;
+    private final Op op = new Op();
+    private final Handler handler = new Handler(op);
 
-    private final Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            if (op != null) {
-                if (op.which == OP_PUSH) {
-                    if (op.oldPage != null) {
-                        backStackPush(op.id, savePageState(op.oldPage));
-                    }
-                    currentPage = op.newPage;
-                    replace(op.oldPage, op.newPage, BACK_STACK_DESTINATION_ADDED);
-                } else if (op.which == OP_POP) {
-                    State newState = backStackPop();
-                    currentPage = restorePageState(newState);
-                    replace(op.oldPage, currentPage, BACK_STACK_DESTINATION_POPPED);
-                }
-                op = null;
-            }
-            return true;
-        }
-    });
-
-    private ArrayList<Integer> backStack = new ArrayList<>();
+    private IntArrayStack backStack = new IntArrayStack();
     private SparseArray<State> backStackState = new SparseArray<>();
+    private int currentId;
     @Nullable
     private Page currentPage;
 
     @Override
     public void navigate(@NonNull Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions) {
-        push(currentPage, createPage(destination, args, navOptions), destination.getId());
-        dispatchOps();
+        boolean singleTop = navOptions != null && navOptions.shouldLaunchSingleTop();
+
+        if (singleTop && currentId == destination.getId()) {
+            dispatchOnNavigatorNavigated(destination.getId(), BACK_STACK_UNCHANGED);
+            return;
+        }
+
+        Page newPage = createPage(destination, args, navOptions);
+        push(newPage, destination.getId());
+
         dispatchOnNavigatorNavigated(destination.getId(), BACK_STACK_DESTINATION_ADDED);
     }
 
     @Override
     public boolean popBackStack() {
         if (backStack.size() > 0) {
-            int id = backStackPeek();
-            pop(currentPage, id);
-            dispatchOps();
-            dispatchOnNavigatorNavigated(id, BACK_STACK_DESTINATION_POPPED);
+            pop();
+            dispatchOnNavigatorNavigated(currentId, BACK_STACK_DESTINATION_POPPED);
             return true;
         }
         return false;
@@ -99,10 +85,11 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
     @CallSuper
     public Bundle onSaveState() {
         Bundle state = new Bundle();
-        state.putIntegerArrayList(STATE_BACK_STACK, backStack);
+        state.putParcelable(STATE_BACK_STACK, backStack);
         state.putSparseParcelableArray(STATE_BACK_STACK_STATE, backStackState);
         if (currentPage != null) {
             state.putParcelable(STATE_CURRENT_DESTINATION, savePageState(currentPage));
+            state.putInt(STATE_CURRENT_ID, currentId);
         }
         return state;
     }
@@ -111,80 +98,100 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
     @CallSuper
     public void onRestoreState(@NonNull Bundle savedState) {
         super.onRestoreState(savedState);
-        backStack = savedState.getIntegerArrayList(STATE_BACK_STACK);
+        savedState.setClassLoader(getClass().getClassLoader());
+        backStack = savedState.getParcelable(STATE_BACK_STACK);
         backStackState = savedState.getSparseParcelableArray(STATE_BACK_STACK_STATE);
         State state = savedState.getParcelable(STATE_CURRENT_DESTINATION);
+        currentId = savedState.getInt(STATE_CURRENT_ID);
         if (state != null) {
             currentPage = restorePageState(state);
             replace(null, currentPage, BACK_STACK_UNCHANGED);
         }
     }
 
-    private void push(@Nullable Page oldPage, Page newPage, int id) {
-        if (op == null) {
-            op = new Op();
-            op.id = id;
-            op.which = OP_PUSH;
-            op.oldPage = oldPage;
-            op.newPage = newPage;
-        } else if (op.which == OP_PUSH) {
-            backStackPush(id, savePageState(op.newPage));
-            op.id = id;
-            op.newPage = newPage;
-        } else if (op.which == OP_POP) {
-            if (backStack.size() > 0) {
-                backStackPop();
-            }
-            op.which = OP_PUSH;
-            op.id = id;
-            op.newPage = newPage;
-            op.newPageState = null;
+    private void push(Page newPage, int newId) {
+        int oldId = currentId;
+        currentId = newId;
+        if (oldId != 0) {
+            backStack.push(oldId);
         }
+
+        if (op.which == OP_UNSET) {
+            op.oldId = oldId;
+            op.oldPage = currentPage;
+        } else if (op.which == OP_PUSH) {
+            op.pagesToSave.put(op.newId, op.newPage);
+        }
+        op.which = OP_PUSH;
+        op.newId = newId;
+        op.newPage = newPage;
+        dispatchOps();
     }
 
-    private void pop(Page oldPage, int id) {
-        if (op == null) {
-            op = new Op();
-            op.id = id;
-            op.which = OP_POP;
-            op.oldPage = oldPage;
-        } else if (op.which == OP_POP) {
-            backStackPop();
-            op.id = id;
-        } else if (op.which == OP_PUSH) {
-            op = null;
+    private void pop() {
+        int oldId = currentId;
+        currentId = backStack.pop();
+
+        if (op.which == OP_PUSH) {
+            op.clear();
             handler.removeMessages(MSG_OPS);
+            return;
         }
+        if (op.which == OP_UNSET) {
+            op.oldId = oldId;
+            op.oldPage = currentPage;
+        } else if (op.which == OP_POP) {
+            backStackState.remove(op.newId);
+        }
+        op.which = OP_POP;
+        op.newId = currentId;
+        dispatchOps();
     }
 
-    private void backStackPush(int id, State state) {
-        backStackState.put(id, state);
-        backStack.add(id);
-    }
+    private static final int OP_UNSET = 0;
+    private static final int OP_PUSH = 1;
+    private static final int OP_POP = 2;
 
-    private State backStackPop() {
-        int id = backStack.remove(backStack.size() - 1);
-        State state = backStackState.get(id);
-        backStackState.remove(id);
-        return state;
-    }
-
-    private int backStackPeek() {
-        return backStack.get(backStack.size() - 1);
-    }
-
-    private static int OP_PUSH = 1;
-    private static int OP_POP = 2;
-
-    class Op {
-        int which;
-        int id;
-        @Nullable
+    class Op implements Handler.Callback {
+        int which = 0;
+        int newId;
+        int oldId;
         Page oldPage;
-        @Nullable
         Page newPage;
-        @Nullable
-        State newPageState;
+        final SparseArray<Page> pagesToSave = new SparseArray<>();
+
+        void clear() {
+            which = OP_UNSET;
+            newId = 0;
+            oldId = 0;
+            oldPage = null;
+            newPage = null;
+            pagesToSave.clear();
+        }
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            execute();
+            return true;
+        }
+
+        void execute() {
+            if (which == OP_PUSH) {
+                currentPage = newPage;
+                if (oldPage != null) {
+                    backStackState.put(oldId, savePageState(oldPage));
+                }
+                for (int i = 0; i < pagesToSave.size(); i++) {
+                    backStackState.put(pagesToSave.keyAt(i), savePageState(pagesToSave.valueAt(i)));
+                }
+                replace(oldPage, newPage, BACK_STACK_DESTINATION_ADDED);
+            } else if (which == OP_POP) {
+                currentPage = restorePageState(backStackState.get(newId));
+                backStackState.remove(newId);
+                replace(oldPage, currentPage, BACK_STACK_DESTINATION_POPPED);
+            }
+            clear();
+        }
     }
 
     @Retention(SOURCE)

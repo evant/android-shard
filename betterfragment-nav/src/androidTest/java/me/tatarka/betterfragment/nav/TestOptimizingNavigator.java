@@ -14,9 +14,16 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
 
 @Navigator.Name("test")
-public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingNavigator.TestDestination, TestOptimizingNavigator.TestPage, TestOptimizingNavigator.TestState> {
+public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingNavigator.TestDestination, TestOptimizingNavigator.TestPage, TestOptimizingNavigator.TestState> implements Navigator.OnNavigatorNavigatedListener {
 
     public final List<Transaction> transactions = new ArrayList<>();
+    public final List<Integer> destinations = new ArrayList<>();
+    public final List<TestPage> savedPages = new ArrayList<>();
+    public final List<TestState> restoredStates = new ArrayList<>();
+
+    public TestOptimizingNavigator() {
+        addOnNavigatorNavigatedListener(this);
+    }
 
     @NonNull
     @Override
@@ -32,12 +39,14 @@ public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingN
     @NonNull
     @Override
     protected TestState savePageState(TestPage testPage) {
+        savedPages.add(testPage);
         return new TestState(testPage.name);
     }
 
     @NonNull
     @Override
     protected TestPage restorePageState(TestState testState) {
+        restoredStates.add(testState);
         return new TestPage(testState.name);
     }
 
@@ -45,6 +54,11 @@ public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingN
     @Override
     public TestDestination createDestination() {
         return new TestDestination(this);
+    }
+
+    @Override
+    public void onNavigatorNavigated(@NonNull Navigator navigator, int destId, int backStackEffect) {
+        destinations.add(destId);
     }
 
     public static class Transaction {
@@ -84,6 +98,13 @@ public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingN
 
         public TestPage(String name) {
             this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "TestPage{" +
+                    "name='" + name + '\'' +
+                    '}';
         }
     }
 

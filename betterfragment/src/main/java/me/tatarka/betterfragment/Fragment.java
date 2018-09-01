@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import java.lang.reflect.InvocationTargetException;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
@@ -30,8 +32,8 @@ public class Fragment implements FragmentOwner {
     @SuppressWarnings("unchecked")
     public static <T extends Fragment> T newInstance(Class<T> fragmentClass) {
         try {
-            return fragmentClass.newInstance();
-        } catch (IllegalAccessException | InstantiationException e) {
+            return fragmentClass.getConstructor().newInstance();
+        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
@@ -87,13 +89,16 @@ public class Fragment implements FragmentOwner {
     @NonNull
     Fragment.State saveState() {
         checkDestroyed();
-        lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
-        SparseArray<Parcelable> viewState = new SparseArray<>();
-        if (frame != null) {
-            frame.saveHierarchyState(viewState);
+        State state = new State(getClass(), viewModelId, args);
+        if (lifecycleRegistry.getCurrentState().isAtLeast(Lifecycle.State.CREATED)) {
+            lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+            if (frame != null) {
+                state.viewState = new SparseArray();
+                frame.saveHierarchyState(state.viewState);
+            }
+            state.savedState = new Bundle();
+            onSaveInstanceState(state.savedState);
         }
-        State state = new State(getClass(), viewModelId, args, new Bundle(), viewState);
-        onSaveInstanceState(state.savedState);
         return state;
     }
 
@@ -226,8 +231,8 @@ public class Fragment implements FragmentOwner {
         final Class<? extends Fragment> fragmentClass;
         final int viewModelId;
         final Bundle args;
-        final Bundle savedState;
-        final SparseArray viewState;
+        Bundle savedState;
+        SparseArray viewState;
 
         @NonNull
         public Class<? extends Fragment> getFragmentClass() {
@@ -238,12 +243,10 @@ public class Fragment implements FragmentOwner {
             return fragmentClass.equals(fragment.getClass());
         }
 
-        State(Class<? extends Fragment> fragmentClass, int viewModelId, Bundle args, Bundle savedState, SparseArray<Parcelable> viewState) {
+        State(Class<? extends Fragment> fragmentClass, int viewModelId, Bundle args) {
             this.fragmentClass = fragmentClass;
             this.viewModelId = viewModelId;
             this.args = args;
-            this.savedState = savedState;
-            this.viewState = viewState;
         }
 
         @SuppressWarnings("unchecked")

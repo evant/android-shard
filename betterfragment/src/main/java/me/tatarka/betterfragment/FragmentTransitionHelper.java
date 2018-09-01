@@ -144,7 +144,7 @@ public final class FragmentTransitionHelper {
             if (newFragment != null && oldFragment != null && zOrder == OLD_FRAGMENT_ON_TOP) {
                 oldView.bringToFront();
             }
-            if (exitAnimation != null) {
+            if (oldFragment != null && exitAnimation != null) {
                 oldView.startAnimation(exitAnimation);
                 exitAnimation.start();
             }
