@@ -1,6 +1,8 @@
 package me.tatarka.betterfragment.app;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.CallSuper;
@@ -13,6 +15,7 @@ import androidx.lifecycle.ViewModelStore;
 public class FragmentActivity extends Activity implements FragmentOwner {
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+    private final ActivityCallbackRegistry activityCallbacks = new ActivityCallbackRegistry();
     private ViewModelStore viewModelStore;
     private boolean isRetaining;
     private boolean willRestoreState;
@@ -77,6 +80,42 @@ public class FragmentActivity extends Activity implements FragmentOwner {
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
     }
 
+    @Override
+    @CallSuper
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        activityCallbacks.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    @CallSuper
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        activityCallbacks.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    @CallSuper
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
+        activityCallbacks.onMultiWindowModeChanged(isInMultiWindowMode);
+    }
+
+    @Override
+    @CallSuper
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        activityCallbacks.onPictureInPictureModeChanged(isInPictureInPictureMode);
+    }
+
+    @Override
+    @CallSuper
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        activityCallbacks.onConfigurationChanged(newConfig);
+    }
+
+    @CallSuper
+    public void onLowMemory() {
+        activityCallbacks.onLowMemory();
+    }
+
     @NonNull
     @Override
     public Lifecycle getLifecycle() {
@@ -95,5 +134,11 @@ public class FragmentActivity extends Activity implements FragmentOwner {
     @Override
     public boolean willRestoreState() {
         return willRestoreState;
+    }
+
+    @NonNull
+    @Override
+    public ActivityCallbacks getActivityCallbacks() {
+        return activityCallbacks;
     }
 }

@@ -1,5 +1,6 @@
 package me.tatarka.betterfragment.app;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStoreOwner;
 import me.tatarka.betterfragment.app.FragmentActivity;
@@ -14,4 +15,7 @@ public interface FragmentOwner extends LifecycleOwner, ViewModelStoreOwner {
      * be {@code savedInstanceState != null}.
      */
     boolean willRestoreState();
+
+    @NonNull
+    ActivityCallbacks getActivityCallbacks();
 }

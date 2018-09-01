@@ -221,5 +221,11 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
         public boolean willRestoreState() {
             return parentOwner.willRestoreState();
         }
+
+        @NonNull
+        @Override
+        public ActivityCallbacks getActivityCallbacks() {
+            return parentOwner.getActivityCallbacks();
+        }
     }
 }

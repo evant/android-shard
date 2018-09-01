@@ -43,10 +43,17 @@ public final class FragmentOwners {
         return (FragmentOwner) context.getSystemService(FragmentContextWrapper.FRAGMENT_OWNER);
     }
 
+    @SuppressWarnings("ConstantConditions")
     static class FakeOwner implements FragmentOwner {
         @Override
         public boolean willRestoreState() {
             return false;
+        }
+
+        @NonNull
+        @Override
+        public ActivityCallbacks getActivityCallbacks() {
+            return null;
         }
 
         @NonNull
@@ -100,6 +107,12 @@ public final class FragmentOwners {
         @Override
         public boolean willRestoreState() {
             return willRestoreState;
+        }
+
+        @NonNull
+        @Override
+        public ActivityCallbacks getActivityCallbacks() {
+            throw new IllegalStateException("Activity does not implement ActivityCallbacks");
         }
     }
 

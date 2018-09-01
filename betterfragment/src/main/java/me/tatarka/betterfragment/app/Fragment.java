@@ -44,6 +44,7 @@ public class Fragment implements FragmentOwner {
     }
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+    private final ActivityCallbackRegistry activityCallbacks = new ActivityCallbackRegistry();
     private final Observer observer = new Observer();
     private int viewModelId = -1;
     private ViewGroup frame;
@@ -85,6 +86,8 @@ public class Fragment implements FragmentOwner {
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 
         owner.getLifecycle().addObserver(observer);
+        owner.getActivityCallbacks().addObserver(activityCallbacks);
+
         state = null;
     }
 
@@ -111,6 +114,7 @@ public class Fragment implements FragmentOwner {
         removeViewModelStore(viewModelId);
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         owner.getLifecycle().removeObserver(observer);
+        owner.getActivityCallbacks().removeObserver(activityCallbacks);
         ((ViewGroup) frame.getParent()).removeView(frame);
     }
 
@@ -225,6 +229,12 @@ public class Fragment implements FragmentOwner {
     @Override
     public boolean willRestoreState() {
         return willRestoreState;
+    }
+
+    @NonNull
+    @Override
+    public ActivityCallbacks getActivityCallbacks() {
+        return activityCallbacks;
     }
 
     class Observer implements LifecycleObserver {
