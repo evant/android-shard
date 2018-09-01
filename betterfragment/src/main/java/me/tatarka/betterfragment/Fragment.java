@@ -77,11 +77,8 @@ public class Fragment implements FragmentOwner {
         container.addView(frame, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         onCreate(state != null ? state.savedState : null);
-
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
-        if (state != null && state.viewState != null) {
-            frame.restoreHierarchyState(state.viewState);
-        }
+
         owner.getLifecycle().addObserver(observer);
         state = null;
     }
@@ -153,6 +150,7 @@ public class Fragment implements FragmentOwner {
         ViewGroup frame = getView();
         frame.removeAllViews();
         frame.addView(view);
+        restoreViewState();
     }
 
     @Nullable
@@ -171,6 +169,13 @@ public class Fragment implements FragmentOwner {
 
     public void setContentView(@LayoutRes int layoutId) {
         LayoutInflater.from(getContext()).inflate(layoutId, getView(), true);
+        restoreViewState();
+    }
+
+    private void restoreViewState() {
+        if (state != null && state.viewState != null) {
+            frame.restoreHierarchyState(state.viewState);
+        }
     }
 
     @CallSuper
