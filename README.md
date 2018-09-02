@@ -68,7 +68,7 @@ host.adapter = FragmentPageHost.Adapter { id ->
         else -> null
     }
 }
-bottomNav.setupWithPageHost(host)
+FragmentPageHostUI.setupWithPageHost(bottomNav, host)
 ```
 
 Navigation
@@ -117,3 +117,21 @@ class MainActivity: AppCompatActivity() {
     override fun onNavigateUp(): Boolean = findNavController(R.id.nav).navigateUp()
 }
 ```
+
+ViewPager
+```kotlin
+val pager: ViewPager = requireViewById(R.id.pager)
+pager.adapter = object : FragmentPagerAdapter(this) {
+    override fun getItem(position: Int): Fragment {
+        return when (position) {
+            case 0 -> MyFragment1()
+            case 1 -> MyFragment2()
+            case 2 -> MyFragment3()
+            else -> throw AssertionError()
+        }
+    }
+
+    override fun getCount(): Int = 3
+}
+```
+The current page will be resumed, other pages will be started.
