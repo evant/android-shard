@@ -1,28 +1,4 @@
-apply plugin: 'com.android.library'
-
-android {
-    compileSdkVersion 28
-
-
-
-    defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-}
+apply from: '../library.gradle'
 
 dependencies {
     def lifecycle_version = "2.0.0-rc01"
