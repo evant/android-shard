@@ -1,5 +1,6 @@
 package me.tatarka.betterfragment.sample
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.lifecycle.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,6 +31,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
         bottomNav.setupWithPageHost(pageHost)
+    }
+
+    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration?) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
+    }
+
+    override fun onPictureInPictureModeChanged(
+        isInPictureInPictureMode: Boolean,
+        newConfig: Configuration?
+    ) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     }
 
     override fun onBackPressed() {

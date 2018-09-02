@@ -23,6 +23,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
+import me.tatarka.betterfragment.state.StateStore;
 
 /**
  * A simpler 'Fragment' that lies on the android architecture components for most of the heavy-lifting.
@@ -44,6 +45,7 @@ public class Fragment implements FragmentOwner {
     }
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+    private final StateStore stateStore = new StateStore();
     private final Observer observer = new Observer();
     private int viewModelId = -1;
     private ViewGroup frame;
@@ -51,7 +53,6 @@ public class Fragment implements FragmentOwner {
     private Context context;
     private Bundle args;
     private boolean destroyed;
-    private boolean willRestoreState;
     @Nullable
     private State state;
 
@@ -66,8 +67,8 @@ public class Fragment implements FragmentOwner {
                 this.args = state.args;
             }
             viewModelId = state.viewModelId;
+            stateStore.restoreState(state.savedState);
         }
-        willRestoreState = state != null;
     }
 
     void add(@NonNull FragmentOwner owner, @NonNull ViewGroup container) {
@@ -81,7 +82,7 @@ public class Fragment implements FragmentOwner {
         frame.setSaveFromParentEnabled(false);
         container.addView(frame, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        onCreate(state != null ? state.savedState : null);
+        onCreate();
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 
         owner.getLifecycle().addObserver(observer);
@@ -98,8 +99,7 @@ public class Fragment implements FragmentOwner {
                 state.viewState = new SparseArray();
                 frame.saveHierarchyState(state.viewState);
             }
-            state.savedState = new Bundle();
-            onSaveInstanceState(state.savedState);
+            state.savedState = stateStore.saveState();
         }
         return state;
     }
@@ -184,11 +184,7 @@ public class Fragment implements FragmentOwner {
     }
 
     @CallSuper
-    public void onCreate(@Nullable Bundle savedState) {
-    }
-
-    @CallSuper
-    public void onSaveInstanceState(@NonNull Bundle outState) {
+    public void onCreate() {
     }
 
     @NonNull
@@ -222,9 +218,10 @@ public class Fragment implements FragmentOwner {
         return lifecycleRegistry;
     }
 
+    @NonNull
     @Override
-    public boolean willRestoreState() {
-        return willRestoreState;
+    public StateStore getStateStore() {
+        return stateStore;
     }
 
     class Observer implements LifecycleObserver {

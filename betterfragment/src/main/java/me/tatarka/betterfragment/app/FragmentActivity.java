@@ -9,19 +9,24 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
+import me.tatarka.betterfragment.state.StateStore;
 
 public class FragmentActivity extends Activity implements FragmentOwner {
 
+    private static final String STATE_FRAGMENT = "me.tatarka.betterfragment.app.Fragment";
+
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+    private final StateStore stateStore = new StateStore();
     private ViewModelStore viewModelStore;
     private boolean isRetaining;
-    private boolean willRestoreState;
 
     @Override
     @CallSuper
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        willRestoreState = savedInstanceState != null;
+        if (savedInstanceState != null) {
+            stateStore.restoreState(savedInstanceState.getBundle(STATE_FRAGMENT));
+        }
         viewModelStore = (ViewModelStore) getLastNonConfigurationInstance();
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
     }
@@ -59,6 +64,7 @@ public class FragmentActivity extends Activity implements FragmentOwner {
     protected void onSaveInstanceState(Bundle outState) {
         lifecycleRegistry.markState(Lifecycle.State.CREATED);
         super.onSaveInstanceState(outState);
+        outState.putBundle(STATE_FRAGMENT, stateStore.saveState());
     }
 
     @Override
@@ -92,8 +98,9 @@ public class FragmentActivity extends Activity implements FragmentOwner {
         return viewModelStore;
     }
 
+    @NonNull
     @Override
-    public boolean willRestoreState() {
-        return willRestoreState;
+    public StateStore getStateStore() {
+        return stateStore;
     }
 }

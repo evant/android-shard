@@ -22,6 +22,7 @@ import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.app.FragmentManager;
 import me.tatarka.betterfragment.app.FragmentOwner;
 import me.tatarka.betterfragment.app.FragmentOwners;
+import me.tatarka.betterfragment.state.StateStore;
 
 /**
  * Implementation of {@link PagerAdapter} that represents each page as a {@link Fragment}.
@@ -216,9 +217,10 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
             }
         }
 
+        @NonNull
         @Override
-        public boolean willRestoreState() {
-            return parentOwner.willRestoreState();
+        public StateStore getStateStore() {
+            return parentOwner.getStateStore();
         }
     }
 }

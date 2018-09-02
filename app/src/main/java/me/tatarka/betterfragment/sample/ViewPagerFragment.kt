@@ -1,18 +1,16 @@
 package me.tatarka.betterfragment.sample
 
-import android.os.Bundle
-
-import javax.inject.Inject
 import androidx.viewpager.widget.ViewPager
 import me.tatarka.betterfragment.app.Fragment
 import me.tatarka.betterfragment.pager.FragmentPagerAdapter
+import javax.inject.Inject
 
 class ViewPagerFragment @Inject constructor(
     private val fragmentFactory: Fragment.Factory
 ) : Fragment() {
 
-    override fun onCreate(savedState: Bundle?) {
-        super.onCreate(savedState)
+    override fun onCreate() {
+        super.onCreate()
         setContentView(R.layout.view_pager)
         val pager: ViewPager = requireViewById(R.id.pager)
         pager.adapter = object : FragmentPagerAdapter(this) {

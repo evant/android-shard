@@ -78,7 +78,7 @@ public class FragmentPageHost extends FrameLayout {
     @CallSuper
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (fragment == null && startPage != 0 && !owner.willRestoreState()) {
+        if (fragment == null && startPage != 0 && !owner.getStateStore().isStateRestored()) {
             setCurrentPage(startPage, false);
         }
     }

@@ -79,7 +79,7 @@ public class FragmentHost extends FrameLayout {
     @CallSuper
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (fragment == null && initialFragmentClass != null && !owner.willRestoreState()) {
+        if (fragment == null && initialFragmentClass != null && !owner.getStateStore().isStateRestored()) {
             fragment = factory.newInstance(initialFragmentClass);
             fm.add(fragment, this);
         }

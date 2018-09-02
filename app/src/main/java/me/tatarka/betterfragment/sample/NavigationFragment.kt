@@ -1,6 +1,5 @@
 package me.tatarka.betterfragment.sample
 
-import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
@@ -13,8 +12,8 @@ class NavigationFragment @Inject constructor() : Fragment(), NavInterface {
 
     lateinit var controller: NavController
 
-    override fun onCreate(savedState: Bundle?) {
-        super.onCreate(savedState)
+    override fun onCreate() {
+        super.onCreate()
         setContentView(R.layout.navigation)
         controller = findNavController(requireViewById(R.id.nav))
         requireViewById<Toolbar>(R.id.toolbar).setupWithNavController(controller)

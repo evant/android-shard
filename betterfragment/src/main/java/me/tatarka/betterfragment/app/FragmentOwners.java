@@ -15,6 +15,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
+import me.tatarka.betterfragment.state.StateStore;
 
 /**
  * Utilities to obtain a {@link FragmentOwner}.
@@ -44,11 +45,6 @@ public final class FragmentOwners {
     }
 
     static class FakeOwner implements FragmentOwner {
-        @Override
-        public boolean willRestoreState() {
-            return false;
-        }
-
         @NonNull
         @Override
         public Lifecycle getLifecycle() {
@@ -58,6 +54,12 @@ public final class FragmentOwners {
         @NonNull
         @Override
         public ViewModelStore getViewModelStore() {
+            return null;
+        }
+
+        @NonNull
+        @Override
+        public StateStore getStateStore() {
             return null;
         }
     }
@@ -79,7 +81,7 @@ public final class FragmentOwners {
         }
 
         private final Context context;
-        boolean willRestoreState;
+        final StateStore stateStore = new StateStore();
 
         private WrappingFragmentOwner(Context context) {
             this.context = context;
@@ -97,13 +99,15 @@ public final class FragmentOwners {
             return ((ViewModelStoreOwner) context).getViewModelStore();
         }
 
+        @NonNull
         @Override
-        public boolean willRestoreState() {
-            return willRestoreState;
+        public StateStore getStateStore() {
+            return stateStore;
         }
     }
 
     static class StateCallbacks implements Application.ActivityLifecycleCallbacks {
+        private static final String STATE_FRAGMENT = "me.tatarka.betterfragment.app.Fragment";
         private static StateCallbacks INSTANCE;
 
         static StateCallbacks getInstance(Context context) {
@@ -119,7 +123,9 @@ public final class FragmentOwners {
         @Override
         public void onActivityCreated(Activity activity, @Nullable Bundle savedInstanceState) {
             WrappingFragmentOwner owner = WrappingFragmentOwner.of(activity);
-            owner.willRestoreState = savedInstanceState != null;
+            if (savedInstanceState != null) {
+                owner.stateStore.restoreState(savedInstanceState.getBundle(STATE_FRAGMENT));
+            }
         }
 
         @Override
@@ -144,7 +150,8 @@ public final class FragmentOwners {
 
         @Override
         public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
+            WrappingFragmentOwner owner = WrappingFragmentOwner.of(activity);
+            outState.putBundle(STATE_FRAGMENT, owner.stateStore.saveState());
         }
 
         @Override
