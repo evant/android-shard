@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 private const val KEY_NUMBER = "number"
 
-class MyFragment @Inject constructor(
+open class MyFragment @Inject constructor(
     private val lifecycleLogger: LifecycleLogger,
     private val stateLogger: StateLogger
 ) : Fragment() {

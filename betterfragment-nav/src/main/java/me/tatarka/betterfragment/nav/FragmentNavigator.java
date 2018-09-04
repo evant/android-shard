@@ -7,6 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,10 +24,10 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
 
     private final FragmentManager fm;
     private final FragmentTransitionHelper th;
-    private final ViewGroup container;
+    private final FrameLayout container;
     private Fragment.Factory fragmentFactory = Fragment.DefaultFactory.getInstance();
 
-    public FragmentNavigator(ViewGroup container) {
+    public FragmentNavigator(FrameLayout container) {
         this.container = container;
         fm = new FragmentManager(FragmentOwners.get(container));
         th = new FragmentTransitionHelper(fm);

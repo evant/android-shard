@@ -6,7 +6,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
-import me.tatarka.betterfragment.widget.FragmentPageHost;
+import me.tatarka.betterfragment.wiget.FragmentPageHost;
 
 public final class FragmentPageHostUI {
     private FragmentPageHostUI() {

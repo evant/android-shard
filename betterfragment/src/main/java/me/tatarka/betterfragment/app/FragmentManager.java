@@ -1,7 +1,9 @@
 package me.tatarka.betterfragment.app;
 
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +23,10 @@ public final class FragmentManager {
      * @throws IllegalStateException If the fragment has already been created or has been created.
      */
     public void add(@NonNull Fragment fragment, @NonNull ViewGroup container) {
+        fragment.add(owner, new ViewGroupContainer(container));
+    }
+
+    public void add(@NonNull Fragment fragment, @NonNull Fragment.Container container) {
         fragment.add(owner, container);
     }
 
@@ -63,13 +69,30 @@ public final class FragmentManager {
      * @param oldFragment The fragment to remove, if present.
      * @param newFragment The fragment to add, if present.
      */
-    public void replace(@Nullable Fragment oldFragment, @Nullable Fragment newFragment, @NonNull ViewGroup container) {
+    public void replace(@Nullable Fragment oldFragment, @Nullable Fragment newFragment, @NonNull FrameLayout container) {
         if (oldFragment != null) {
             oldFragment.remove();
         }
         if (newFragment != null) {
-            newFragment.add(owner, container);
+            newFragment.add(owner, new ViewGroupContainer(container));
         }
     }
 
+    static class ViewGroupContainer implements Fragment.Container {
+        private final ViewGroup frame;
+
+        ViewGroupContainer(ViewGroup frame) {
+            this.frame = frame;
+        }
+
+        @Override
+        public void addView(View view) {
+            frame.addView(view);
+        }
+
+        @Override
+        public void removeView(View view) {
+            frame.removeView(view);
+        }
+    }
 }

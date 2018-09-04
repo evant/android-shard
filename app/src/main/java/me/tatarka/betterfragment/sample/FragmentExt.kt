@@ -4,7 +4,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import me.tatarka.betterfragment.app.Fragment
 import me.tatarka.betterfragment.host.FragmentPageHostUI
-import me.tatarka.betterfragment.widget.FragmentPageHost
+import me.tatarka.betterfragment.wiget.FragmentPageHost
 
 inline fun <reified T : Fragment> Fragment.Factory.newInstance() = newInstance(T::class.java)
 

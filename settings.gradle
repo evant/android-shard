@@ -1,7 +1,6 @@
 include ':app',
         ':betterfragment',
         ':betterfragment-appcompat',
-        ':betterfragment-host',
         ':betterfragment-host-ui',
         ':betterfragment-nav',
         ':betterfragment-pager'

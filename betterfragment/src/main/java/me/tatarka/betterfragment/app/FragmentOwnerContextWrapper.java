@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStoreOwner;
 
-class FragmentContextWrapper extends ContextWrapper {
+public class FragmentOwnerContextWrapper extends ContextWrapper {
     static final String FRAGMENT_OWNER = "me.tatarka.betterfragment.app.FragmentOwner";
     private final Object owner;
     private LayoutInflater inflater;
 
-    public <Owner extends ViewModelStoreOwner & LifecycleOwner> FragmentContextWrapper(Context base, Owner owner) {
+    public <Owner extends ViewModelStoreOwner & LifecycleOwner> FragmentOwnerContextWrapper(Context base, Owner owner) {
         super(base);
         this.owner = owner;
     }

@@ -1,13 +1,12 @@
 package me.tatarka.betterfragment.sample
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.lifecycle.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import me.tatarka.betterfragment.appcompat.app.AppCompatActivity
 import me.tatarka.betterfragment.lifecycle.ViewModelProviders
 import me.tatarka.betterfragment.sample.dagger.injector
-import me.tatarka.betterfragment.widget.FragmentPageHost
+import me.tatarka.betterfragment.wiget.FragmentPageHost
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,21 +26,11 @@ class MainActivity : AppCompatActivity() {
                 R.id.simple_host -> fragmentFactory.newInstance<SimpleHostFragment>()
                 R.id.view_pager -> fragmentFactory.newInstance<ViewPagerFragment>()
                 R.id.navigation -> fragmentFactory.newInstance<NavigationFragment>()
+                R.id.dialogs -> fragmentFactory.newInstance<DialogHostFragment>()
                 else -> null
             }
         }
         bottomNav.setupWithPageHost(pageHost)
-    }
-
-    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration?) {
-        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
-    }
-
-    override fun onPictureInPictureModeChanged(
-        isInPictureInPictureMode: Boolean,
-        newConfig: Configuration?
-    ) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     }
 
     override fun onBackPressed() {

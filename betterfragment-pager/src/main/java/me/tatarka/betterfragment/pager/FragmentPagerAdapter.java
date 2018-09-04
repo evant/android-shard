@@ -21,6 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.app.FragmentManager;
 import me.tatarka.betterfragment.app.FragmentOwner;
+import me.tatarka.betterfragment.app.FragmentOwnerContextWrapper;
 import me.tatarka.betterfragment.app.FragmentOwners;
 import me.tatarka.betterfragment.state.StateStore;
 
@@ -74,7 +75,6 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
             pageState.put(position, page.saveState());
         }
         page.destroy();
-        container.removeView(page.fragment.getView());
     }
 
     @Override
@@ -153,6 +153,7 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
 
     static class Page implements FragmentOwner, LifecycleObserver {
         private final FragmentOwner parentOwner;
+        private final Context context;
         private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
         private final FragmentManager fm;
         final Fragment fragment;
@@ -161,6 +162,7 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
 
         Page(FragmentOwner parentOwner, ViewGroup container, Fragment fragment, @Nullable Fragment.State state) {
             this.parentOwner = parentOwner;
+            this.context = new FragmentOwnerContextWrapper(container.getContext(), this);
             this.fragment = fragment;
             fm = new FragmentManager(this);
             fm.restoreState(fragment, state);
@@ -221,6 +223,11 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
         @Override
         public StateStore getStateStore() {
             return parentOwner.getStateStore();
+        }
+
+        @Override
+        public Context getContext() {
+            return context;
         }
     }
 }

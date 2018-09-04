@@ -1,7 +1,0 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.tatarka.betterfragment.host">
-
-    <application>
-        <activity android:name="me.tatarka.betterfragment.test.widget.TestActivity" />
-    </application>
-</manifest>

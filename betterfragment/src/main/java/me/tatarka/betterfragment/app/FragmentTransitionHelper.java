@@ -7,6 +7,7 @@ import android.transition.TransitionManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.FrameLayout;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -39,7 +40,7 @@ public final class FragmentTransitionHelper {
      */
     public void replace(@Nullable Fragment oldFragment,
                         @Nullable Fragment newFragment,
-                        @NonNull final ViewGroup container,
+                        @NonNull final FrameLayout container,
                         @AnimRes @AnimatorRes int enterAnim,
                         @AnimRes @AnimatorRes int exitAnim,
                         @ZOrder int zOrder) {
@@ -68,7 +69,7 @@ public final class FragmentTransitionHelper {
      */
     public void replace(@Nullable Fragment oldFragment,
                         @Nullable Fragment newFragment,
-                        @NonNull final ViewGroup container,
+                        @NonNull final FrameLayout container,
                         @Nullable Animator enterAnimator,
                         @Nullable Animator exitAnimator,
                         @ZOrder int zOrder) {
@@ -123,7 +124,7 @@ public final class FragmentTransitionHelper {
      */
     public void replace(@Nullable Fragment oldFragment,
                         @Nullable Fragment newFragment,
-                        @NonNull final ViewGroup container,
+                        @NonNull final FrameLayout container,
                         @Nullable Animation enterAnimation,
                         @Nullable Animation exitAnimation,
                         @ZOrder int zOrder) {
@@ -161,7 +162,7 @@ public final class FragmentTransitionHelper {
         }
     }
 
-    public void replace(@Nullable Fragment oldFragment, @Nullable Fragment newFragment, @NonNull ViewGroup container, @Nullable Transition transition) {
+    public void replace(@Nullable Fragment oldFragment, @Nullable Fragment newFragment, @NonNull FrameLayout container, @Nullable Transition transition) {
         TransitionManager.beginDelayedTransition(container, transition);
         fm.replace(oldFragment, newFragment, container);
     }

@@ -4,10 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import me.tatarka.betterfragment.app.Fragment
-import me.tatarka.betterfragment.sample.MyFragment
-import me.tatarka.betterfragment.sample.NavigationFragment
-import me.tatarka.betterfragment.sample.SimpleHostFragment
-import me.tatarka.betterfragment.sample.ViewPagerFragment
+import me.tatarka.betterfragment.sample.*
 
 @Module
 abstract class FragmentModule {
@@ -34,4 +31,19 @@ abstract class FragmentModule {
     @IntoMap
     @FragmentKey(ViewPagerFragment::class)
     internal abstract fun viewPagerFragment(fragment: ViewPagerFragment): Fragment
+
+    @Binds
+    @IntoMap
+    @FragmentKey(DialogHostFragment::class)
+    internal abstract fun dialogHostFragment(fragment: DialogHostFragment): Fragment
+
+    @Binds
+    @IntoMap
+    @FragmentKey(MyAlertDialogFragment::class)
+    internal abstract fun myAlertDialogFragment(fragment: MyAlertDialogFragment): Fragment
+
+    @Binds
+    @IntoMap
+    @FragmentKey(SimpleDialogFragment::class)
+    internal abstract fun simpleDialogFragment(fragment: SimpleDialogFragment): Fragment
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/simple_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Simple Dialog" />
+
+    <Button
+        android:id="@+id/alert_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Alert Dialog" />
+
+    <Button
+        android:id="@+id/alert_dialog_custom_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Alert Dialog with Custom View" />
+</LinearLayout>

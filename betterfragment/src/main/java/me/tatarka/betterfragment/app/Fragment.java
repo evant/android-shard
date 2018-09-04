@@ -48,7 +48,9 @@ public class Fragment implements FragmentOwner {
     private final StateStore stateStore = new StateStore();
     private final Observer observer = new Observer();
     private int viewModelId = -1;
-    private ViewGroup frame;
+    private Container container;
+    @Nullable
+    private FrameLayout frame;
     private FragmentOwner owner;
     private Context context;
     private Bundle args;
@@ -67,26 +69,33 @@ public class Fragment implements FragmentOwner {
                 this.args = state.args;
             }
             viewModelId = state.viewModelId;
-            stateStore.restoreState(state.savedState);
         }
     }
 
-    void add(@NonNull FragmentOwner owner, @NonNull ViewGroup container) {
+    void add(@NonNull FragmentOwner owner, @NonNull Container container) {
         checkNotCreated();
         if (destroyed) {
             return;
         }
         this.owner = owner;
-        context = new FragmentContextWrapper(container.getContext(), this);
-        frame = new FrameLayout(context);
-        frame.setSaveFromParentEnabled(false);
-        container.addView(frame, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        context = new FragmentOwnerContextWrapper(owner.getContext(), this);
+        this.container = container;
 
+        if (state != null && state.savedState != null) {
+            stateStore.onRestoreState(state.savedState);
+        }
         onCreate();
+
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 
         owner.getLifecycle().addObserver(observer);
         state = null;
+    }
+
+    public interface Container {
+        void addView(View view);
+
+        void removeView(View view);
     }
 
     @NonNull
@@ -99,7 +108,8 @@ public class Fragment implements FragmentOwner {
                 state.viewState = new SparseArray();
                 frame.saveHierarchyState(state.viewState);
             }
-            state.savedState = stateStore.saveState();
+            state.savedState = new Bundle();
+            stateStore.onSaveState(state.savedState);
         }
         return state;
     }
@@ -111,7 +121,10 @@ public class Fragment implements FragmentOwner {
         removeViewModelStore(viewModelId);
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         owner.getLifecycle().removeObserver(observer);
-        ((ViewGroup) frame.getParent()).removeView(frame);
+
+        if (container != null && frame != null) {
+            container.removeView(frame);
+        }
     }
 
     private void checkDestroyed() {
@@ -145,22 +158,40 @@ public class Fragment implements FragmentOwner {
         this.args = args;
     }
 
-    @NonNull
-    public final ViewGroup getView() {
+    @CallSuper
+    public void setContentView(@NonNull View view) {
         checkCreated();
+        ViewGroup frame = createFrame();
+        frame.removeAllViews();
+        frame.addView(view);
+        restoreViewState(frame);
+    }
+
+    @CallSuper
+    public void setContentView(@LayoutRes int layoutId) {
+        checkCreated();
+        ViewGroup frame = createFrame();
+        frame.removeAllViews();
+        LayoutInflater.from(context).inflate(layoutId, frame, true);
+        restoreViewState(frame);
+    }
+
+    private ViewGroup createFrame() {
+        if (frame == null) {
+            frame = new FrameLayout(context);
+            frame.setSaveFromParentEnabled(false);
+            container.addView(frame);
+        }
         return frame;
     }
 
-    public void setContentView(@NonNull View view) {
-        ViewGroup frame = getView();
-        frame.removeAllViews();
-        frame.addView(view);
-        restoreViewState();
+    public ViewGroup getView() {
+        return frame;
     }
 
     @Nullable
     public <T extends View> T findViewById(@IdRes int id) {
-        return getView().findViewById(id);
+        return frame != null ? frame.<T>findViewById(id) : null;
     }
 
     @NonNull
@@ -172,22 +203,17 @@ public class Fragment implements FragmentOwner {
         return view;
     }
 
-    public void setContentView(@LayoutRes int layoutId) {
-        LayoutInflater.from(getContext()).inflate(layoutId, getView(), true);
-        restoreViewState();
-    }
-
-    private void restoreViewState() {
+    private void restoreViewState(View frame) {
         if (state != null && state.viewState != null) {
             frame.restoreHierarchyState(state.viewState);
         }
     }
 
-    @CallSuper
     public void onCreate() {
     }
 
     @NonNull
+    @Override
     public final Context getContext() {
         checkCreated();
         return context;

@@ -1,6 +1,7 @@
 package me.tatarka.betterfragment.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.CallSuper;
@@ -25,7 +26,10 @@ public class FragmentActivity extends Activity implements FragmentOwner {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            stateStore.restoreState(savedInstanceState.getBundle(STATE_FRAGMENT));
+            Bundle state = savedInstanceState.getBundle(STATE_FRAGMENT);
+            if (state != null) {
+                stateStore.onRestoreState(state);
+            }
         }
         viewModelStore = (ViewModelStore) getLastNonConfigurationInstance();
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
@@ -64,7 +68,9 @@ public class FragmentActivity extends Activity implements FragmentOwner {
     protected void onSaveInstanceState(Bundle outState) {
         lifecycleRegistry.markState(Lifecycle.State.CREATED);
         super.onSaveInstanceState(outState);
-        outState.putBundle(STATE_FRAGMENT, stateStore.saveState());
+        Bundle out = new Bundle();
+        stateStore.onSaveState(out);
+        outState.putBundle(STATE_FRAGMENT, out);
     }
 
     @Override
@@ -102,5 +108,10 @@ public class FragmentActivity extends Activity implements FragmentOwner {
     @Override
     public StateStore getStateStore() {
         return stateStore;
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 }

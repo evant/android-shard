@@ -1,4 +1,4 @@
-package me.tatarka.betterfragment.widget;
+package me.tatarka.betterfragment.wiget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -16,12 +16,12 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import me.tatarka.betterfragment.R;
 import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.app.FragmentManager;
 import me.tatarka.betterfragment.app.FragmentOwner;
 import me.tatarka.betterfragment.app.FragmentOwners;
 import me.tatarka.betterfragment.app.FragmentTransitionHelper;
-import me.tatarka.betterfragment.host.R;
 
 public class FragmentPageHost extends FrameLayout {
 

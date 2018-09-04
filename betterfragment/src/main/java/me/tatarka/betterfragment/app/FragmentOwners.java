@@ -41,7 +41,7 @@ public final class FragmentOwners {
         if (context instanceof ViewModelStoreOwner && context instanceof LifecycleOwner) {
             return WrappingFragmentOwner.of(context);
         }
-        return (FragmentOwner) context.getSystemService(FragmentContextWrapper.FRAGMENT_OWNER);
+        return (FragmentOwner) context.getSystemService(FragmentOwnerContextWrapper.FRAGMENT_OWNER);
     }
 
     static class FakeOwner implements FragmentOwner {
@@ -60,6 +60,11 @@ public final class FragmentOwners {
         @NonNull
         @Override
         public StateStore getStateStore() {
+            return null;
+        }
+
+        @Override
+        public Context getContext() {
             return null;
         }
     }
@@ -104,6 +109,11 @@ public final class FragmentOwners {
         public StateStore getStateStore() {
             return stateStore;
         }
+
+        @Override
+        public Context getContext() {
+            return context;
+        }
     }
 
     static class StateCallbacks implements Application.ActivityLifecycleCallbacks {
@@ -124,7 +134,10 @@ public final class FragmentOwners {
         public void onActivityCreated(Activity activity, @Nullable Bundle savedInstanceState) {
             WrappingFragmentOwner owner = WrappingFragmentOwner.of(activity);
             if (savedInstanceState != null) {
-                owner.stateStore.restoreState(savedInstanceState.getBundle(STATE_FRAGMENT));
+                Bundle state = savedInstanceState.getBundle(STATE_FRAGMENT);
+                if (state != null) {
+                    owner.stateStore.onRestoreState(state);
+                }
             }
         }
 
@@ -151,7 +164,9 @@ public final class FragmentOwners {
         @Override
         public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
             WrappingFragmentOwner owner = WrappingFragmentOwner.of(activity);
-            outState.putBundle(STATE_FRAGMENT, owner.stateStore.saveState());
+            Bundle out = new Bundle();
+            owner.stateStore.onSaveState(out);
+            outState.putBundle(STATE_FRAGMENT, out);
         }
 
         @Override

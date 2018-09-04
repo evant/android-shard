@@ -1,15 +1,12 @@
 package me.tatarka.betterfragment.state;
 
-import android.os.Parcelable;
+import android.os.Bundle;
 
-import androidx.annotation.MainThread;
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 
-public interface StateSaver<S extends Parcelable> {
-    @Nullable
-    @MainThread
-    S saveState();
+public interface StateSaver {
 
-    @MainThread
-    void restoreState(@Nullable S state);
+    void onSaveState(@NonNull Bundle outState);
+
+    void onRestoreState(@NonNull Bundle instanceState);
 }

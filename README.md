@@ -6,8 +6,7 @@
 Create a fragment
 ```kotlin
 class MyFragment: Fragment() {
-    override fun onCreate(savedState: Bundle?) {
-        super.onCreate(savedState)
+    override fun onCreate() {
         // set the layout
         setContentView(R.layout.my_fragment)
         // find a view
@@ -17,17 +16,12 @@ class MyFragment: Fragment() {
         // listen with LiveData
         vm.name.observe(this, Observer { value -> name.text = value })
     }
-    
-    override fun onSaveInstanceState(state: Bundle) {
-        super.onSaveInstanceState(state)
-        // save state
-    }
 }
 ```
 
 Add a static fragment to a layout
 ```xml
-<me.tatarka.betterfragment.widget.FragmentHost
+<me.tatarka.betterfragment.wiget.FragmentHost
     android:id="@+id/host"
     android:name="com.example.MyFragment"
     android:layout_width="match_parent"
@@ -36,7 +30,7 @@ Add a static fragment to a layout
 
 Dynamically set a fragment
 ```xml
-<me.tatarka.betterfragment.widget.FragmentHost
+<me.tatarka.betterfragment.wiget.FragmentHost
     android:id="@+id/host"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
@@ -48,7 +42,7 @@ requireViewById<FragmentHost>(R.id.host).fragment = MyFragment()
 
 BottomNav
 ```xml
-<me.tatarka.betterfragment.widget.FragmentPageHost
+<me.tatarka.betterfragment.wiget.FragmentPageHost
     android:id="@+id/host"
     app:startPage="@+id/page1" />
 
