@@ -225,6 +225,7 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
             return parentOwner.getStateStore();
         }
 
+        @NonNull
         @Override
         public Context getContext() {
             return context;

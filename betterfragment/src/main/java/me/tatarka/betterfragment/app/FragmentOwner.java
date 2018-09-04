@@ -2,9 +2,9 @@ package me.tatarka.betterfragment.app;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStoreOwner;
-import me.tatarka.betterfragment.app.FragmentActivity;
 import me.tatarka.betterfragment.state.StateStoreOwner;
 
 /**
@@ -12,5 +12,6 @@ import me.tatarka.betterfragment.state.StateStoreOwner;
  * and {@link ViewModelStoreOwner}. See {@link FragmentActivity} for a simple implementation.
  */
 public interface FragmentOwner extends LifecycleOwner, ViewModelStoreOwner, StateStoreOwner {
+    @NonNull
     Context getContext();
 }

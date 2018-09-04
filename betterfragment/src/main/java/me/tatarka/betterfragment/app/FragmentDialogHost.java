@@ -24,8 +24,16 @@ public class FragmentDialogHost {
     private final ArrayList<BaseDialogFragment> dialogFragments = new ArrayList<>();
     private final Fragment.Factory factory;
 
+    public FragmentDialogHost(Context context) {
+        this(context, Fragment.DefaultFactory.getInstance());
+    }
+
     public FragmentDialogHost(Context context, Fragment.Factory fragmentFactory) {
         this(FragmentOwners.get(context), fragmentFactory);
+    }
+
+    public FragmentDialogHost(FragmentOwner owner) {
+        this(owner, Fragment.DefaultFactory.getInstance());
     }
 
     public FragmentDialogHost(FragmentOwner owner, Fragment.Factory fragmentFactory) {

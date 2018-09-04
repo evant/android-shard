@@ -26,4 +26,5 @@ open class MyFragment @Inject constructor(
 
         stateStore.addStateSaver("KEY", stateLogger)
     }
+
 }

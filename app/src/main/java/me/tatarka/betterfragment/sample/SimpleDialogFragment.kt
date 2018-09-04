@@ -13,7 +13,6 @@ class SimpleDialogFragment @Inject constructor() : DialogFragment() {
     }
 
     override fun onCreate() {
-        super.onCreate()
         setContentView(R.layout.dialog)
         requireViewById<TextView>(R.id.number).text = args.getInt(KEY_NUMBER).toString()
     }

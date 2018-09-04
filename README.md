@@ -129,3 +129,67 @@ pager.adapter = object : FragmentPagerAdapter(this) {
 }
 ```
 The current page will be resumed, other pages will be started.
+
+Dialog
+```kotlin
+class MyDialogFragment: DialogFragment() {
+
+    override fun onCreateDialog(context: Context): Dialog {
+        return Dialog(context, R.style.MyDialogTheme)
+    }
+    
+    override fun onCreate() {
+        setContentView(R.layout.dialog_content)
+    }
+}
+```
+
+AlertDialog
+```kotlin
+class MyAlertDialogFragment: AlertDialogFragment() {
+    override fun onBuildAlertDialog(context: Context): AlertDialog.Builder {
+        return AlertDialog.Builder(context)
+            .setTitle(R.string.title)
+            .setMessage(R.string.message)
+            .setPositiveButton(R.string.ok, null)
+    }
+    
+    override fun onCreate() {
+        // Optional
+        setContentView(R.layout.custom_dialog_view)
+    }
+}
+```
+
+Show
+```kotlin
+// make sure to always init this to ensure dialog state is restored on config changes.
+val dialogHost = FragmentDialogHost(this)
+
+override fun onCreate() {
+    setContentView(R.layout.content)
+    val button: Button = requireViewById(R.id.button)
+    buttion.setOnClickListener {
+        dialogHost.show(MyDialogFragment())
+    }
+}
+```
+
+Saving/Restoring state
+```kotlin
+private const val STATE_KEY = "state"
+
+class MyFragment: Fragment(), StateSaver {
+    override fun onCreate() {
+        stateStore.addStateSaver(STATE_KEY, this) 
+    }
+    
+    override fun onSaveState(outState: Bundle) {
+        // save state
+    }
+
+    override fun onRestoreState(instanceState: Bundle) {
+        // restore state
+    }
+}
+```
