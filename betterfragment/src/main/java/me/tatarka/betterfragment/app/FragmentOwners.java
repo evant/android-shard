@@ -41,7 +41,11 @@ public final class FragmentOwners {
         if (context instanceof ViewModelStoreOwner && context instanceof LifecycleOwner) {
             return WrappingFragmentOwner.of(context);
         }
-        return (FragmentOwner) context.getSystemService(FragmentOwnerContextWrapper.FRAGMENT_OWNER);
+        FragmentOwner owner = (FragmentOwner) context.getSystemService(FragmentOwnerContextWrapper.FRAGMENT_OWNER);
+        if (owner != null) {
+            return owner;
+        }
+        throw new IllegalArgumentException("Cannot obtain FragmentOwner from context: " + context + ". Make sure your activity is an AppCompatActivity or implements FragmentOwner");
     }
 
     static class FakeOwner implements FragmentOwner {

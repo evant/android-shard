@@ -3,5 +3,6 @@
 
     <application>
         <activity android:name=".test.TestActivity" />
+        <activity android:name=".test.FragmentHostTest$FragmentHostActivity" />
     </application>
 </manifest>

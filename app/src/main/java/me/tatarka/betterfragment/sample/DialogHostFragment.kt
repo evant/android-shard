@@ -29,6 +29,5 @@ class DialogHostFragment @Inject constructor(private val fragmentFactory: Dagger
                     .withCustomView(2)
             )
         }
-        stateStore.addStateSaver()
     }
 }

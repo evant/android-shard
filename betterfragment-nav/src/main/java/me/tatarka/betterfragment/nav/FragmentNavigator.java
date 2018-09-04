@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -17,20 +16,18 @@ import androidx.navigation.Navigator;
 import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.app.FragmentManager;
 import me.tatarka.betterfragment.app.FragmentOwners;
-import me.tatarka.betterfragment.app.FragmentTransitionHelper;
+import me.tatarka.betterfragment.transition.FragmentTransition;
 
 @Navigator.Name("fragment")
 public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Destination, FragmentNavigator.Page, FragmentNavigator.PageState> {
 
     private final FragmentManager fm;
-    private final FragmentTransitionHelper th;
     private final FrameLayout container;
     private Fragment.Factory fragmentFactory = Fragment.DefaultFactory.getInstance();
 
     public FragmentNavigator(FrameLayout container) {
         this.container = container;
         fm = new FragmentManager(FragmentOwners.get(container));
-        th = new FragmentTransitionHelper(fm);
     }
 
     public void setFragmentFactory(@NonNull Fragment.Factory factory) {
@@ -62,7 +59,6 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
         Fragment newFragment = newPage.fragment;
         int enterAnim = -1;
         int exitAnim = -1;
-        int zOrder = FragmentTransitionHelper.NEW_FRAGMENT_ON_TOP;
         switch (backStackEffect) {
             case Navigator.BACK_STACK_DESTINATION_ADDED:
                 enterAnim = newPage.enterAnim;
@@ -72,11 +68,11 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
                 if (oldPage != null) {
                     enterAnim = oldPage.popEnterAnim;
                     exitAnim = oldPage.popExitAnim;
-                    zOrder = FragmentTransitionHelper.OLD_FRAGMENT_ON_TOP;
                 }
                 break;
         }
-        th.replace(oldFragment, newFragment, container, enterAnim, exitAnim, zOrder);
+        FragmentTransition transition = FragmentTransition.fromAnimRes(container.getContext(), enterAnim, exitAnim);
+        fm.replace(oldFragment, newFragment, container, transition);
     }
 
     @NonNull

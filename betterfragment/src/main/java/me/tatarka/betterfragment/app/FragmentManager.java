@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import me.tatarka.betterfragment.transition.FragmentTransition;
 
 public final class FragmentManager {
 
@@ -63,18 +64,41 @@ public final class FragmentManager {
         fragment.remove();
     }
 
+    public void replace(@Nullable Fragment oldFragment,
+                        @Nullable Fragment newFragment,
+                        @NonNull FrameLayout container) {
+        replace(oldFragment, newFragment, container, null);
+    }
+
     /**
      * Replaces the fragment.
      *
      * @param oldFragment The fragment to remove, if present.
      * @param newFragment The fragment to add, if present.
      */
-    public void replace(@Nullable Fragment oldFragment, @Nullable Fragment newFragment, @NonNull FrameLayout container) {
+    public void replace(@Nullable Fragment oldFragment,
+                        @Nullable Fragment newFragment,
+                        @NonNull FrameLayout container,
+                        @Nullable FragmentTransition transition) {
+        if (!container.isLaidOut()) {
+            transition = null;
+        }
         if (oldFragment != null) {
+            ViewGroup oldView = oldFragment.getView();
+            if (transition != null && oldView != null) {
+                transition.captureBefore(oldView);
+            }
             oldFragment.remove();
         }
         if (newFragment != null) {
             newFragment.add(owner, new ViewGroupContainer(container));
+            ViewGroup newView = newFragment.getView();
+            if (transition != null && newView != null) {
+                transition.captureAfter(newView);
+            }
+            if (transition != null) {
+                transition.start();
+            }
         }
     }
 

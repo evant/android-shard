@@ -5,11 +5,9 @@ import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.transition.Transition;
-import android.transition.TransitionInflater;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 import androidx.annotation.CallSuper;
@@ -21,13 +19,12 @@ import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.app.FragmentManager;
 import me.tatarka.betterfragment.app.FragmentOwner;
 import me.tatarka.betterfragment.app.FragmentOwners;
-import me.tatarka.betterfragment.app.FragmentTransitionHelper;
+import me.tatarka.betterfragment.transition.FragmentTransition;
 
 public class FragmentPageHost extends FrameLayout {
 
     private final FragmentOwner owner;
     private final FragmentManager fm;
-    private final FragmentTransitionHelper th;
     @Nullable
     private Adapter adapter;
     @Nullable
@@ -40,11 +37,7 @@ public class FragmentPageHost extends FrameLayout {
     private int currentPage;
     private SparseArray<Fragment.State> fragmentStates = new SparseArray<>();
     @Nullable
-    private Animation exitAnimation;
-    @Nullable
-    private Animation enterAnimation;
-    @Nullable
-    private Transition transition;
+    private FragmentTransition defaultTransition;
 
     public FragmentPageHost(@NonNull Context context) {
         this(context, null);
@@ -54,21 +47,18 @@ public class FragmentPageHost extends FrameLayout {
         super(context, attrs);
         owner = FragmentOwners.get(this);
         fm = new FragmentManager(owner);
-        th = new FragmentTransitionHelper(fm);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentPageHost);
             startPage = a.getResourceId(R.styleable.FragmentPageHost_startPage, startPage);
-            int enterAnimId = a.getResourceId(R.styleable.FragmentPageHost_enterAnim, 0);
-            if (enterAnimId != 0) {
-                enterAnimation = AnimationUtils.loadAnimation(context, enterAnimId);
-            }
-            int exitAnimId = a.getResourceId(R.styleable.FragmentPageHost_exitAnim, 0);
-            if (exitAnimId != 0) {
-                exitAnimation = AnimationUtils.loadAnimation(context, exitAnimId);
-            }
             int transitionId = a.getResourceId(R.styleable.FragmentPageHost_transition, 0);
             if (transitionId != 0) {
-                transition = TransitionInflater.from(context).inflateTransition(transitionId);
+                defaultTransition = FragmentTransition.fromTransitionRes(context, transitionId);
+            } else {
+                int enterAnimId = a.getResourceId(R.styleable.FragmentPageHost_enterAnim, 0);
+                int exitAnimId = a.getResourceId(R.styleable.FragmentPageHost_exitAnim, 0);
+                if (enterAnimId != 0 || exitAnimId != 0) {
+                    defaultTransition = FragmentTransition.fromAnimRes(context, enterAnimId, exitAnimId);
+                }
             }
             a.recycle();
         }
@@ -79,7 +69,7 @@ public class FragmentPageHost extends FrameLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (fragment == null && startPage != 0 && !owner.getStateStore().isStateRestored()) {
-            setCurrentPage(startPage, false);
+            setCurrentPage(startPage, null);
         }
     }
 
@@ -90,11 +80,20 @@ public class FragmentPageHost extends FrameLayout {
         this.adapter = adapter;
         fragmentStates.clear();
         if (adapter != null && currentPage != 0) {
-            setFragment(0, currentPage, adapter.newInstance(currentPage), false);
+            setFragment(0, currentPage, adapter.newInstance(currentPage), defaultTransition);
         }
     }
 
-    private void setFragment(@IdRes int oldId, @IdRes int newId, @Nullable Fragment fragment, boolean animate) {
+    public void setDefaultTransition(@Nullable FragmentTransition transition) {
+        defaultTransition = transition;
+    }
+
+    @Nullable
+    public FragmentTransition getDefaultTransition() {
+        return defaultTransition;
+    }
+
+    private void setFragment(@IdRes int oldId, @IdRes int newId, @Nullable Fragment fragment, @Nullable FragmentTransition transition) {
         Fragment oldFragment = this.fragment;
         this.fragment = fragment;
         if (oldFragment != null && oldId != 0) {
@@ -103,15 +102,7 @@ public class FragmentPageHost extends FrameLayout {
         if (fragment != null && newId != 0) {
             fm.restoreState(fragment, fragmentStates.get(newId));
         }
-        if (animate) {
-            if (transition != null) {
-                th.replace(oldFragment, fragment, this, transition);
-            } else {
-                th.replace(oldFragment, fragment, this, enterAnimation, exitAnimation, FragmentTransitionHelper.NEW_FRAGMENT_ON_TOP);
-            }
-        } else {
-            fm.replace(oldFragment, fragment, this);
-        }
+        fm.replace(oldFragment, fragment, this, transition);
         if (listener != null) {
             listener.onPageChanged(newId);
         }
@@ -122,17 +113,17 @@ public class FragmentPageHost extends FrameLayout {
     }
 
     public void setCurrentPage(@IdRes int id) {
-        setCurrentPage(id, isLaidOut());
+        setCurrentPage(id, null);
     }
 
-    private void setCurrentPage(@IdRes int id, boolean animate) {
+    public void setCurrentPage(@IdRes int id, @Nullable FragmentTransition transition) {
         if (currentPage == id) {
             return;
         }
         int oldId = currentPage;
         currentPage = id;
         if (adapter != null) {
-            setFragment(oldId, id, adapter.newInstance(id), animate);
+            setFragment(oldId, id, adapter.newInstance(id), transition != null ? transition : defaultTransition);
         }
     }
 
@@ -151,33 +142,6 @@ public class FragmentPageHost extends FrameLayout {
         if (listener != null && currentPage != 0) {
             listener.onPageChanged(currentPage);
         }
-    }
-
-    public void setExitAnimation(@Nullable Animation animation) {
-        exitAnimation = animation;
-    }
-
-    @Nullable
-    public Animation getEnterAnimation() {
-        return enterAnimation;
-    }
-
-    public void setEnterAnimation(@Nullable Animation animation) {
-        enterAnimation = animation;
-    }
-
-    @Nullable
-    public Animation getExitAnimation() {
-        return exitAnimation;
-    }
-
-    public void setTransition(@Nullable Transition transition) {
-        this.transition = transition;
-    }
-
-    @Nullable
-    public Transition getTransition() {
-        return transition;
     }
 
     public interface Adapter {
@@ -205,7 +169,7 @@ public class FragmentPageHost extends FrameLayout {
         fragmentStates = savedState.fragmentStates;
 
         if (adapter != null && currentPage != 0) {
-            setFragment(0, currentPage, adapter.newInstance(currentPage), false);
+            setFragment(0, currentPage, adapter.newInstance(currentPage), null);
         }
     }
 

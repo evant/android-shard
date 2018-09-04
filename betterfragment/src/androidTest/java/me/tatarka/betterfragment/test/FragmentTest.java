@@ -50,10 +50,12 @@ public class FragmentTest {
     @Test
     public void saveStateCallsOnSaveInstanceState() {
         TestFragment fragment = new TestFragment();
+        TestStateSaver stateSaver = new TestStateSaver();
+        fragment.getStateStore().addStateSaver("test", stateSaver);
         fm.add(fragment, container);
         fm.saveState(fragment);
 
-        assertTrue(fragment.saveInstanceStateCalled);
+        assertTrue(stateSaver.saveStateCalled);
     }
 
     @Test
@@ -102,15 +104,19 @@ public class FragmentTest {
     @Test
     public void fragmentSavesAndRestoresState() {
         TestFragment fragment = new TestFragment();
+        TestStateSaver stateSaver = new TestStateSaver(1);
+        fragment.getStateStore().addStateSaver("test", stateSaver);
         fm.add(fragment, container);
-        fragment.state = 1;
         Fragment.State state = fm.saveState(fragment);
         TestFragment newFragment = new TestFragment();
+        TestStateSaver newStateSaver = new TestStateSaver();
+        newFragment.getStateStore().addStateSaver("test", newStateSaver);
         fm.restoreState(newFragment, state);
         fm.add(newFragment, container);
 
-        assertTrue(fragment.saveInstanceStateCalled);
-        assertEquals(1, newFragment.state);
+        assertTrue(stateSaver.saveStateCalled);
+        assertTrue(newStateSaver.restoreStateCalled);
+        assertEquals(1, newStateSaver.state);
     }
 
 }

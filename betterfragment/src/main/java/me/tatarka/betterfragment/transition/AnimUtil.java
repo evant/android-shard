@@ -1,4 +1,4 @@
-package me.tatarka.betterfragment.app;
+package me.tatarka.betterfragment.transition;
 
 import android.animation.AnimatorInflater;
 import android.content.Context;
@@ -7,10 +7,15 @@ import android.view.animation.AnimationUtils;
 
 import androidx.annotation.AnimRes;
 import androidx.annotation.AnimatorRes;
+import androidx.annotation.Nullable;
 
 class AnimUtil {
 
+    @Nullable
     static Object loadAnim(Context context, @AnimatorRes @AnimRes int anim) {
+        if (anim == 0 || anim == -1) {
+            return null;
+        }
         String dir = context.getResources().getResourceTypeName(anim);
         boolean isAnim = "anim".equals(dir);
         if (isAnim) {

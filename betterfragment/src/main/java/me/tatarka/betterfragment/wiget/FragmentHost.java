@@ -5,11 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
 import android.util.AttributeSet;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 import androidx.annotation.CallSuper;
@@ -20,24 +16,19 @@ import me.tatarka.betterfragment.app.Fragment;
 import me.tatarka.betterfragment.app.FragmentManager;
 import me.tatarka.betterfragment.app.FragmentOwner;
 import me.tatarka.betterfragment.app.FragmentOwners;
-import me.tatarka.betterfragment.app.FragmentTransitionHelper;
+import me.tatarka.betterfragment.transition.FragmentTransition;
 
 public class FragmentHost extends FrameLayout {
 
     private final FragmentOwner owner;
     private final FragmentManager fm;
-    private final FragmentTransitionHelper th;
     private Fragment.Factory factory = Fragment.DefaultFactory.getInstance();
     @Nullable
     private Fragment fragment;
     @Nullable
     private Class<? extends Fragment> initialFragmentClass;
     @Nullable
-    private Animation exitAnimation;
-    @Nullable
-    private Animation enterAnimation;
-    @Nullable
-    private Transition transition;
+    private FragmentTransition defaultTransition;
 
     public FragmentHost(Context context) {
         this(context, null);
@@ -48,7 +39,6 @@ public class FragmentHost extends FrameLayout {
         super(context, attrs);
         owner = FragmentOwners.get(this);
         fm = new FragmentManager(owner);
-        th = new FragmentTransitionHelper(fm);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentHost);
             String fragmentName = a.getString(R.styleable.FragmentHost_android_name);
@@ -59,17 +49,15 @@ public class FragmentHost extends FrameLayout {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            int enterAnimId = a.getResourceId(R.styleable.FragmentHost_enterAnim, 0);
-            if (enterAnimId != 0) {
-                enterAnimation = AnimationUtils.loadAnimation(context, enterAnimId);
-            }
-            int exitAnimId = a.getResourceId(R.styleable.FragmentHost_exitAnim, 0);
-            if (exitAnimId != 0) {
-                exitAnimation = AnimationUtils.loadAnimation(context, exitAnimId);
-            }
             int transitionId = a.getResourceId(R.styleable.FragmentHost_transition, 0);
             if (transitionId != 0) {
-                transition = TransitionInflater.from(context).inflateTransition(transitionId);
+                defaultTransition = FragmentTransition.fromTransitionRes(context, transitionId);
+            } else {
+                int enterAnimId = a.getResourceId(R.styleable.FragmentHost_enterAnim, 0);
+                int exitAnimId = a.getResourceId(R.styleable.FragmentHost_exitAnim, 0);
+                if (enterAnimId != 0 || exitAnimId != 0) {
+                    defaultTransition = FragmentTransition.fromAnimRes(context, enterAnimId, exitAnimId);
+                }
             }
             a.recycle();
         }
@@ -89,21 +77,28 @@ public class FragmentHost extends FrameLayout {
      * A convenience method for {@code host.setFragment(host.getFragmentFactory().newInstance(fragmentClass))}
      */
     public void setFragmentClass(@Nullable Class<? extends Fragment> fragmentClass) {
+        setFragmentClass(fragmentClass, null);
+    }
+
+    /**
+     * A convenience method for {@code host.setFragment(host.getFragmentFactory().newInstance(fragmentClass))}
+     */
+    public void setFragmentClass(@Nullable Class<? extends Fragment> fragmentClass, @Nullable FragmentTransition transition) {
         if (fragmentClass == null) {
-            setFragment(null);
+            setFragment(null, transition);
         } else {
-            setFragment(factory.newInstance(fragmentClass));
+            setFragment(factory.newInstance(fragmentClass), transition);
         }
     }
 
     public void setFragment(@Nullable Fragment fragment) {
+        setFragment(fragment, null);
+    }
+
+    public void setFragment(@Nullable Fragment fragment, @Nullable FragmentTransition transition) {
         Fragment oldFragment = this.fragment;
         this.fragment = fragment;
-        if (transition != null) {
-            th.replace(oldFragment, fragment, this, transition);
-        } else {
-            th.replace(oldFragment, fragment, this, enterAnimation, exitAnimation, FragmentTransitionHelper.NEW_FRAGMENT_ON_TOP);
-        }
+        fm.replace(oldFragment, fragment, this, transition != null ? transition : defaultTransition);
     }
 
     @Nullable
@@ -120,31 +115,13 @@ public class FragmentHost extends FrameLayout {
         return factory;
     }
 
-    public void setExitAnimation(@Nullable Animation animation) {
-        exitAnimation = animation;
+    public void setDefaultTransition(@Nullable FragmentTransition transition) {
+        defaultTransition = transition;
     }
 
     @Nullable
-    public Animation getEnterAnimation() {
-        return enterAnimation;
-    }
-
-    public void setEnterAnimation(@Nullable Animation animation) {
-        enterAnimation = animation;
-    }
-
-    @Nullable
-    public Animation getExitAnimation() {
-        return exitAnimation;
-    }
-
-    public void setTransition(@Nullable Transition transition) {
-        this.transition = transition;
-    }
-
-    @Nullable
-    public Transition getTransition() {
-        return transition;
+    public FragmentTransition getDefaultTransition() {
+        return defaultTransition;
     }
 
     @Override
