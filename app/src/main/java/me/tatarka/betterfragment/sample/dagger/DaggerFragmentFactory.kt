@@ -1,17 +1,18 @@
 package me.tatarka.betterfragment.sample.dagger
 
+import android.os.Bundle
+import me.tatarka.betterfragment.app.Fragment
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
-import me.tatarka.betterfragment.app.Fragment
 
 @Singleton
 class DaggerFragmentFactory @Inject constructor(
-    private val fragmentMap: @JvmSuppressWildcards Map<Class<out Fragment>, Provider<Fragment>>
+    fragmentMap: @JvmSuppressWildcards Map<Class<out Fragment>, Provider<Fragment>>
 ) : Fragment.Factory {
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : Fragment> newInstance(fragmentClass: Class<T>): T {
-        return fragmentMap[fragmentClass]!!.get() as T
-    }
+    private val fragmentMap = fragmentMap.mapKeys { it.key.name }
+
+    override fun <T : Fragment> newInstance(name: String, args: Bundle): T =
+        fragmentMap.getValue(name).get() as T
 }

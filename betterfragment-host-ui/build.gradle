@@ -2,7 +2,7 @@ apply from: '../library.gradle'
 
 dependencies {
     api project(':betterfragment')
-    api 'com.google.android.material:material:1.0.0-rc01'
+    api 'com.google.android.material:material:1.0.0'
 
     testImplementation 'junit:junit:4.12'
 

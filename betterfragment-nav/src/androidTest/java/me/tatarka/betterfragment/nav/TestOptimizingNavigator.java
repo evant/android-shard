@@ -27,7 +27,7 @@ public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingN
 
     @NonNull
     @Override
-    protected TestPage createPage(TestDestination destination, @Nullable Bundle args, @Nullable NavOptions navOptions) {
+    protected TestPage createPage(TestDestination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Extras extras) {
         return new TestPage(destination.name);
     }
 

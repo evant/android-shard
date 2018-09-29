@@ -64,7 +64,7 @@ public class FragmentNavHost extends FrameLayout implements NavHost {
     @CallSuper
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (navController.getGraph() == null && graphId != 0 && !owner.getStateStore().isStateRestored()) {
+        if (navController.getGraph() == null && graphId != 0 && !owner.getInstanceStateStore().isStateRestored()) {
             navController.setGraph(graphId);
         }
     }

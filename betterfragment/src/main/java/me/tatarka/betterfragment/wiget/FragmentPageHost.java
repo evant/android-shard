@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.transition.Transition;
 import android.util.AttributeSet;
 import android.util.SparseArray;
-import android.view.animation.Animation;
 import android.widget.FrameLayout;
 
 import androidx.annotation.CallSuper;
@@ -68,7 +66,7 @@ public class FragmentPageHost extends FrameLayout {
     @CallSuper
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (fragment == null && startPage != 0 && !owner.getStateStore().isStateRestored()) {
+        if (fragment == null && startPage != 0 && !owner.getInstanceStateStore().isStateRestored()) {
             setCurrentPage(startPage, null);
         }
     }

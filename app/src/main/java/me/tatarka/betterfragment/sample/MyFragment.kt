@@ -10,7 +10,7 @@ private const val KEY_NUMBER = "number"
 
 open class MyFragment @Inject constructor(
     private val lifecycleLogger: LifecycleLogger,
-    private val stateLogger: StateLogger
+    private val stateLogger: InstanceStateLogger
 ) : Fragment() {
 
     fun withNumber(number: Int): Fragment = apply {
@@ -24,7 +24,7 @@ open class MyFragment @Inject constructor(
         setContentView(R.layout.fragment)
         requireViewById<TextView>(R.id.number).text = args.getInt(KEY_NUMBER).toString()
 
-        stateStore.addStateSaver("KEY", stateLogger)
+        instanceStateStore.add("KEY", stateLogger)
     }
 
 }

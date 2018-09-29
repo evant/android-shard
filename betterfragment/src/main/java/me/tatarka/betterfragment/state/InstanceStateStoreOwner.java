@@ -2,7 +2,7 @@ package me.tatarka.betterfragment.state;
 
 import androidx.annotation.NonNull;
 
-public interface StateStoreOwner {
+public interface InstanceStateStoreOwner {
     @NonNull
-    StateStore getStateStore();
+    InstanceStateStore getInstanceStateStore();
 }

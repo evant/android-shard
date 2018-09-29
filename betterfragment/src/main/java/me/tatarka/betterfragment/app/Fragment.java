@@ -23,7 +23,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
-import me.tatarka.betterfragment.state.StateStore;
+import me.tatarka.betterfragment.state.InstanceStateRegistry;
 
 /**
  * A simpler 'Fragment' that lies on the android architecture components for most of the heavy-lifting.
@@ -32,20 +32,8 @@ import me.tatarka.betterfragment.state.StateStore;
  */
 public class Fragment implements FragmentOwner {
 
-    /**
-     * Constructs a new fragment instance from the given class using reflection.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends Fragment> T newInstance(Class<T> fragmentClass) {
-        try {
-            return fragmentClass.getConstructor().newInstance();
-        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
-    private final StateStore stateStore = new StateStore();
+    private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
     private final Observer observer = new Observer();
     private int viewModelId = -1;
     private Container container;
@@ -60,9 +48,6 @@ public class Fragment implements FragmentOwner {
 
     void restoreState(@Nullable State state) {
         checkNotCreated();
-        if (state != null && !state.isFor(this)) {
-            throw new IllegalArgumentException("wrong state for fragment: " + toString());
-        }
         this.state = state;
         if (state != null) {
             if (state.args != null) {
@@ -82,7 +67,7 @@ public class Fragment implements FragmentOwner {
         this.container = container;
 
         if (state != null && state.savedState != null) {
-            stateStore.onRestoreState(state.savedState);
+            stateStore.onRestoreInstanceState(state.savedState);
         }
         onCreate();
 
@@ -99,17 +84,16 @@ public class Fragment implements FragmentOwner {
     }
 
     @NonNull
-    Fragment.State saveState() {
+    Fragment.State saveInstanceState() {
         checkDestroyed();
-        State state = new State(getClass(), viewModelId, args);
+        State state = new State(viewModelId, args);
         if (lifecycleRegistry.getCurrentState().isAtLeast(Lifecycle.State.CREATED)) {
             lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
             if (frame != null) {
                 state.viewState = new SparseArray();
                 frame.saveHierarchyState(state.viewState);
             }
-            state.savedState = new Bundle();
-            stateStore.onSaveState(state.savedState);
+            state.savedState = stateStore.onSaveInstanceState();
         }
         return state;
     }
@@ -209,6 +193,10 @@ public class Fragment implements FragmentOwner {
         }
     }
 
+    /**
+     * Called when the fragment is created, it's safe to call most method on the fragment after
+     * this.
+     */
     public void onCreate() {
     }
 
@@ -246,7 +234,7 @@ public class Fragment implements FragmentOwner {
 
     @NonNull
     @Override
-    public StateStore getStateStore() {
+    public InstanceStateRegistry getInstanceStateStore() {
         return stateStore;
     }
 
@@ -261,43 +249,35 @@ public class Fragment implements FragmentOwner {
     }
 
     public static class State implements Parcelable {
-        final Class<? extends Fragment> fragmentClass;
         final int viewModelId;
+        @Nullable
         final Bundle args;
         Bundle savedState;
         SparseArray viewState;
 
+        /**
+         * Returns the arguments for this fragment, you can only read these, you cannot modify them.
+         */
         @NonNull
-        public Class<? extends Fragment> getFragmentClass() {
-            return fragmentClass;
+        public Bundle getArgs() {
+            return args != null ? args : Bundle.EMPTY;
         }
 
-        public boolean isFor(@NonNull Fragment fragment) {
-            return fragmentClass.equals(fragment.getClass());
-        }
-
-        State(Class<? extends Fragment> fragmentClass, int viewModelId, Bundle args) {
-            this.fragmentClass = fragmentClass;
+        State(int viewModelId, @Nullable Bundle args) {
             this.viewModelId = viewModelId;
             this.args = args;
         }
 
         @SuppressWarnings("unchecked")
         State(Parcel in) {
-            try {
-                fragmentClass = (Class<? extends Fragment>) Class.forName(in.readString());
-                viewModelId = in.readInt();
-                args = in.readBundle(getClass().getClassLoader());
-                savedState = in.readBundle(getClass().getClassLoader());
-                viewState = in.readSparseArray(getClass().getClassLoader());
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            viewModelId = in.readInt();
+            args = in.readBundle(getClass().getClassLoader());
+            savedState = in.readBundle(getClass().getClassLoader());
+            viewState = in.readSparseArray(getClass().getClassLoader());
         }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(fragmentClass.getName());
             dest.writeInt(viewModelId);
             dest.writeBundle(args);
             dest.writeBundle(savedState);
@@ -322,11 +302,25 @@ public class Fragment implements FragmentOwner {
         };
     }
 
+    /**
+     * Factory to create a fragment from the given class name and args.
+     */
     public interface Factory {
+        /**
+         * Constructs a new instance of the fragment with the given arguments.
+         *
+         * @param name The fragment's class name.
+         * @param args The args for the fragment. You may pass {@link Bundle#EMPTY} if there are
+         *             none.
+         */
         @NonNull
-        <T extends Fragment> T newInstance(@NonNull Class<T> fragmentClass);
+        <T extends Fragment> T newInstance(@NonNull String name, @NonNull Bundle args);
     }
 
+    /**
+     * The default {@link Factory} which calls the zero-arg constructor of the fragment using
+     * reflection. This does <em>not</em> call {@link #setArgs(Bundle)}.
+     */
     public static class DefaultFactory implements Factory {
 
         private static final Factory INSTANCE = new DefaultFactory();
@@ -338,8 +332,21 @@ public class Fragment implements FragmentOwner {
 
         @NonNull
         @Override
-        public <T extends Fragment> T newInstance(@NonNull Class<T> fragmentClass) {
-            return Fragment.newInstance(fragmentClass);
+        @SuppressWarnings("unchecked")
+        public <T extends Fragment> T newInstance(@NonNull String name, @NonNull Bundle args) {
+            try {
+                return (T) Class.forName(name).getConstructor().newInstance();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

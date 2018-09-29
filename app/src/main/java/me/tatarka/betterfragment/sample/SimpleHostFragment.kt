@@ -2,11 +2,12 @@ package me.tatarka.betterfragment.sample
 
 import android.view.View
 import me.tatarka.betterfragment.app.Fragment
+import me.tatarka.betterfragment.sample.dagger.DaggerFragmentFactory
 import me.tatarka.betterfragment.wiget.FragmentHost
 import javax.inject.Inject
 
 class SimpleHostFragment @Inject constructor(
-    private val fragmentFactory: Fragment.Factory
+    private val fragmentFactory: DaggerFragmentFactory
 ) : Fragment() {
 
     override fun onCreate() {

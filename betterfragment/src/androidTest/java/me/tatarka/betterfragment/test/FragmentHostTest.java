@@ -52,7 +52,7 @@ public class FragmentHostTest {
             @Override
             public void run() {
                 FragmentHost host = fragmentHost();
-                host.getFragment().getStateStore().addStateSaver("test", new TestStateSaver(1));
+                host.getFragment().getInstanceStateStore().add("test", new TestInstanceStateSaver(1));
             }
         });
         await(new Runnable() {
@@ -65,8 +65,8 @@ public class FragmentHostTest {
             @Override
             public void run() {
                 FragmentHost host = fragmentHost();
-                TestStateSaver stateSaver = new TestStateSaver();
-                host.getFragment().getStateStore().addStateSaver("test", stateSaver);
+                TestInstanceStateSaver stateSaver = new TestInstanceStateSaver();
+                host.getFragment().getInstanceStateStore().add("test", stateSaver);
 
                 assertEquals(TestFragment.class, host.getFragment().getClass());
                 assertTrue(stateSaver.restoreStateCalled);
@@ -95,8 +95,8 @@ public class FragmentHostTest {
             public void run() {
                 FragmentHost host = fragmentHost();
                 OtherFragment fragment = new OtherFragment();
-                TestStateSaver stateSaver = new TestStateSaver(1);
-                fragment.getStateStore().addStateSaver("test", stateSaver);
+                TestInstanceStateSaver stateSaver = new TestInstanceStateSaver(1);
+                fragment.getInstanceStateStore().add("test", stateSaver);
                 host.setFragment(fragment);
             }
         });
@@ -111,8 +111,8 @@ public class FragmentHostTest {
             public void run() {
                 FragmentHost host = fragmentHost();
                 Fragment fragment = host.getFragment();
-                TestStateSaver stateSaver = new TestStateSaver();
-                fragment.getStateStore().addStateSaver("test", stateSaver);
+                TestInstanceStateSaver stateSaver = new TestInstanceStateSaver();
+                fragment.getInstanceStateStore().add("test", stateSaver);
 
                 assertEquals(OtherFragment.class, fragment.getClass());
                 assertTrue(stateSaver.restoreStateCalled);

@@ -47,10 +47,10 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
 
     @NonNull
     @Override
-    protected Page createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions) {
-        Fragment fragment = destination.newFragment();
+    protected Page createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Extras navExtras) {
+        Fragment fragment = destination.newFragment(args);
         fragment.setArgs(args);
-        return new Page(fragment, navOptions);
+        return new Page(fragmentFactory, fragment, navOptions);
     }
 
     @Override
@@ -106,9 +106,9 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
         }
 
         @SuppressWarnings("unchecked")
-        public <T extends Fragment> T newFragment() {
+        public <T extends Fragment> T newFragment(@Nullable Bundle args) {
             try {
-                return fragmentFactory.newInstance((Class<T>) Class.forName(name));
+                return fragmentFactory.newInstance(name, args);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -124,13 +124,15 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
     }
 
     static class Page {
+        final Fragment.Factory factory;
         final Fragment fragment;
         final int enterAnim;
         final int exitAnim;
         final int popEnterAnim;
         final int popExitAnim;
 
-        Page(Fragment fragment, @Nullable NavOptions navOptions) {
+        Page(Fragment.Factory factory, Fragment fragment, @Nullable NavOptions navOptions) {
+            this.factory = factory;
             this.fragment = fragment;
             enterAnim = navOptions != null ? navOptions.getEnterAnim() : 0;
             exitAnim = navOptions != null ? navOptions.getExitAnim() : 0;
@@ -138,7 +140,8 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
             popExitAnim = navOptions != null ? navOptions.getPopExitAnim() : 0;
         }
 
-        Page(Fragment fragment, PageState state) {
+        Page(Fragment.Factory factory, Fragment fragment, PageState state) {
+            this.factory = factory;
             this.fragment = fragment;
             enterAnim = 0;
             exitAnim = 0;
@@ -147,35 +150,39 @@ public class FragmentNavigator extends OptimizingNavigator<FragmentNavigator.Des
         }
 
         PageState saveState(FragmentManager fm) {
-            return new PageState(fm.saveState(fragment), popEnterAnim, popExitAnim);
+            return new PageState(fragment.getClass().getName(), fm.saveState(fragment), popEnterAnim, popExitAnim);
         }
     }
 
     static class PageState implements Parcelable {
+        final String name;
         final Fragment.State state;
         final int popEnterAnim;
         final int popExitAnim;
 
-        PageState(Fragment.State state, int popEnterAnim, int popExitAnim) {
+        PageState(String name, Fragment.State state, int popEnterAnim, int popExitAnim) {
+            this.name = name;
             this.state = state;
             this.popEnterAnim = popEnterAnim;
             this.popExitAnim = popExitAnim;
         }
 
         PageState(Parcel in) {
+            name = in.readString();
             state = in.readParcelable(Fragment.State.class.getClassLoader());
             popEnterAnim = in.readInt();
             popExitAnim = in.readInt();
         }
 
         Page restore(FragmentManager fm, Fragment.Factory factory) {
-            Fragment fragment = factory.newInstance(state.getFragmentClass());
+            Fragment fragment = factory.newInstance(name, state.getArgs());
             fm.restoreState(fragment, state);
-            return new Page(fragment, this);
+            return new Page(factory, fragment, this);
         }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(name);
             dest.writeParcelable(state, flags);
             dest.writeInt(popEnterAnim);
             dest.writeInt(popExitAnim);

@@ -23,7 +23,7 @@ import me.tatarka.betterfragment.app.FragmentManager;
 import me.tatarka.betterfragment.app.FragmentOwner;
 import me.tatarka.betterfragment.app.FragmentOwnerContextWrapper;
 import me.tatarka.betterfragment.app.FragmentOwners;
-import me.tatarka.betterfragment.state.StateStore;
+import me.tatarka.betterfragment.state.InstanceStateStore;
 
 /**
  * Implementation of {@link PagerAdapter} that represents each page as a {@link Fragment}.
@@ -221,8 +221,8 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
 
         @NonNull
         @Override
-        public StateStore getStateStore() {
-            return parentOwner.getStateStore();
+        public InstanceStateStore getInstanceStateStore() {
+            return parentOwner.getInstanceStateStore();
         }
 
         @NonNull

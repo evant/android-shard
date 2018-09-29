@@ -8,13 +8,13 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.test.InstrumentationRegistry;
 import me.tatarka.betterfragment.app.FragmentOwner;
-import me.tatarka.betterfragment.state.StateStore;
+import me.tatarka.betterfragment.state.InstanceStateRegistry;
 
 public class TestFragmentOwner implements FragmentOwner {
 
     final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     final ViewModelStore viewModelStore = new ViewModelStore();
-    final StateStore stateStore = new StateStore();
+    final InstanceStateRegistry stateStore = new InstanceStateRegistry();
 
     @NonNull
     @Override
@@ -35,7 +35,7 @@ public class TestFragmentOwner implements FragmentOwner {
 
     @NonNull
     @Override
-    public StateStore getStateStore() {
+    public InstanceStateRegistry getInstanceStateStore() {
         return stateStore;
     }
 }

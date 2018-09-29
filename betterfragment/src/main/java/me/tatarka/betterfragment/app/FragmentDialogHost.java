@@ -3,21 +3,22 @@ package me.tatarka.betterfragment.app;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.ArrayMap;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
-import me.tatarka.betterfragment.state.StateSaver;
+import me.tatarka.betterfragment.state.InstanceStateSaver;
 
 public class FragmentDialogHost {
 
     private static final String DIALOG_STATE = "me.tatarka.betterfragment.widget.FragmentDialogHost";
-    private static final String STATES = "states";
 
     private final FragmentOwner owner;
     private final FragmentManager fm;
@@ -41,19 +42,13 @@ public class FragmentDialogHost {
         this.factory = fragmentFactory;
         fm = new FragmentManager(owner);
         DialogHostCallbacks callbacks = new DialogHostCallbacks();
-        owner.getStateStore().addStateSaver(DIALOG_STATE, callbacks);
+        owner.getInstanceStateStore().add(DIALOG_STATE, callbacks);
         owner.getLifecycle().addObserver(callbacks);
     }
 
     @NonNull
     public Fragment.Factory getFragmentFactory() {
         return factory;
-    }
-
-    public void show(Class<? extends Fragment> fragmentClass) {
-        BaseDialogFragment fragment = (BaseDialogFragment) factory.newInstance(fragmentClass);
-        dialogFragments.add(fragment);
-        doShow(fragment);
     }
 
     public void show(BaseDialogFragment fragment) {
@@ -78,26 +73,34 @@ public class FragmentDialogHost {
         dialog.show();
     }
 
-    class DialogHostCallbacks implements StateSaver, LifecycleObserver {
+    class DialogHostCallbacks implements InstanceStateSaver<State>, LifecycleObserver {
+
+        @Nullable
+        @Override
+        public State onSaveInstanceState() {
+            int size = dialogFragments.size();
+            if (size == 0) {
+                return null;
+            }
+            ArrayMap<String, Fragment.State> states = new ArrayMap<>(size);
+            for (int i = 0; i < size; i++) {
+                Fragment fragment = dialogFragments.get(i);
+                states.put(fragment.getClass().getName(), fm.saveState(fragment));
+            }
+            return new State(states);
+        }
 
         @Override
-        public void onRestoreState(@NonNull Bundle instanceState) {
-            List<Fragment.State> states = instanceState.getParcelableArrayList(STATES);
-            for (Fragment.State fragmentState : states) {
-                BaseDialogFragment fragment = (BaseDialogFragment) factory.newInstance(fragmentState.getFragmentClass());
+        public void onRestoreInstanceState(@NonNull State instanceState) {
+            ArrayMap<String, Fragment.State> states = instanceState.fragmentStates;
+            for (int i = 0, size = states.size(); i < size; i++) {
+                String name = states.keyAt(i);
+                Fragment.State fragmentState = states.valueAt(i);
+                BaseDialogFragment fragment = factory.newInstance(name, fragmentState.getArgs());
                 fm.restoreState(fragment, fragmentState);
                 dialogFragments.add(fragment);
                 doShow(fragment);
             }
-        }
-
-        @Override
-        public void onSaveState(@NonNull Bundle outState) {
-            ArrayList<Fragment.State> states = new ArrayList<>();
-            for (BaseDialogFragment fragment : dialogFragments) {
-                states.add(fm.saveState(fragment));
-            }
-            outState.putParcelableArrayList(STATES, states);
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -106,5 +109,40 @@ public class FragmentDialogHost {
                 fragment.destroyDialog();
             }
         }
+    }
+
+    public static class State implements Parcelable {
+        final ArrayMap<String, Fragment.State> fragmentStates;
+
+        State(ArrayMap<String, Fragment.State> fragmentStates) {
+            this.fragmentStates = fragmentStates;
+        }
+
+        State(Parcel in) {
+            fragmentStates = new ArrayMap<>();
+            in.readMap(fragmentStates, getClass().getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeMap(fragmentStates);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<State> CREATOR = new Creator<State>() {
+            @Override
+            public State createFromParcel(Parcel in) {
+                return new State(in);
+            }
+
+            @Override
+            public State[] newArray(int size) {
+                return new State[size];
+            }
+        };
     }
 }

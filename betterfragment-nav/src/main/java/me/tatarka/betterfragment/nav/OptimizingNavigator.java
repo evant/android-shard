@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.transition.TransitionInflater;
-import android.transition.TransitionManager;
 import android.util.SparseArray;
 
 import java.lang.annotation.Retention;
@@ -38,7 +36,7 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
     private Page currentPage;
 
     @Override
-    public void navigate(@NonNull Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions) {
+    public void navigate(@NonNull Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Extras navigatorExtras) {
         boolean singleTop = navOptions != null && navOptions.shouldLaunchSingleTop();
 
         if (singleTop && currentId == destination.getId()) {
@@ -46,7 +44,7 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
             return;
         }
 
-        Page newPage = createPage(destination, args, navOptions);
+        Page newPage = createPage(destination, args, navOptions, navigatorExtras);
         push(newPage, destination.getId());
 
         dispatchOnNavigatorNavigated(destination.getId(), BACK_STACK_DESTINATION_ADDED);
@@ -73,7 +71,7 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
     }
 
     @NonNull
-    protected abstract Page createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions);
+    protected abstract Page createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Extras navExtras);
 
     protected abstract void replace(@Nullable Page oldPage, @NonNull Page newPage, @BackStackEffect int backStackEffect);
 

@@ -15,7 +15,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
-import me.tatarka.betterfragment.state.StateStore;
+import me.tatarka.betterfragment.state.InstanceStateRegistry;
 
 /**
  * Utilities to obtain a {@link FragmentOwner}.
@@ -63,7 +63,7 @@ public final class FragmentOwners {
 
         @NonNull
         @Override
-        public StateStore getStateStore() {
+        public InstanceStateRegistry getInstanceStateStore() {
             return null;
         }
 
@@ -90,7 +90,7 @@ public final class FragmentOwners {
         }
 
         private final Context context;
-        final StateStore stateStore = new StateStore();
+        final InstanceStateRegistry stateStore = new InstanceStateRegistry();
 
         private WrappingFragmentOwner(Context context) {
             this.context = context;
@@ -110,7 +110,7 @@ public final class FragmentOwners {
 
         @NonNull
         @Override
-        public StateStore getStateStore() {
+        public InstanceStateRegistry getInstanceStateStore() {
             return stateStore;
         }
 
@@ -140,7 +140,7 @@ public final class FragmentOwners {
             if (savedInstanceState != null) {
                 Bundle state = savedInstanceState.getBundle(STATE_FRAGMENT);
                 if (state != null) {
-                    owner.stateStore.onRestoreState(state);
+                    owner.stateStore.onRestoreInstanceState(state);
                 }
             }
         }
@@ -168,9 +168,10 @@ public final class FragmentOwners {
         @Override
         public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
             WrappingFragmentOwner owner = WrappingFragmentOwner.of(activity);
-            Bundle out = new Bundle();
-            owner.stateStore.onSaveState(out);
-            outState.putBundle(STATE_FRAGMENT, out);
+            Bundle state = owner.stateStore.onSaveInstanceState();
+            if (state != null) {
+                outState.putBundle(STATE_FRAGMENT, state);
+            }
         }
 
         @Override

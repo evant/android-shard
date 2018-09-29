@@ -3,6 +3,7 @@ package me.tatarka.betterfragment.wiget;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -26,7 +27,7 @@ public class FragmentHost extends FrameLayout {
     @Nullable
     private Fragment fragment;
     @Nullable
-    private Class<? extends Fragment> initialFragmentClass;
+    private String initialName;
     @Nullable
     private FragmentTransition defaultTransition;
 
@@ -41,14 +42,7 @@ public class FragmentHost extends FrameLayout {
         fm = new FragmentManager(owner);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FragmentHost);
-            String fragmentName = a.getString(R.styleable.FragmentHost_android_name);
-            try {
-                if (fragmentName != null) {
-                    initialFragmentClass = (Class<? extends Fragment>) Class.forName(fragmentName);
-                }
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            initialName = a.getString(R.styleable.FragmentHost_android_name);
             int transitionId = a.getResourceId(R.styleable.FragmentHost_transition, 0);
             if (transitionId != 0) {
                 defaultTransition = FragmentTransition.fromTransitionRes(context, transitionId);
@@ -67,27 +61,9 @@ public class FragmentHost extends FrameLayout {
     @CallSuper
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (fragment == null && initialFragmentClass != null && !owner.getStateStore().isStateRestored()) {
-            fragment = factory.newInstance(initialFragmentClass);
+        if (fragment == null && initialName != null && !owner.getInstanceStateStore().isStateRestored()) {
+            fragment = factory.newInstance(initialName, Bundle.EMPTY);
             fm.add(fragment, this);
-        }
-    }
-
-    /**
-     * A convenience method for {@code host.setFragment(host.getFragmentFactory().newInstance(fragmentClass))}
-     */
-    public void setFragmentClass(@Nullable Class<? extends Fragment> fragmentClass) {
-        setFragmentClass(fragmentClass, null);
-    }
-
-    /**
-     * A convenience method for {@code host.setFragment(host.getFragmentFactory().newInstance(fragmentClass))}
-     */
-    public void setFragmentClass(@Nullable Class<? extends Fragment> fragmentClass, @Nullable FragmentTransition transition) {
-        if (fragmentClass == null) {
-            setFragment(null, transition);
-        } else {
-            setFragment(factory.newInstance(fragmentClass), transition);
         }
     }
 
@@ -126,16 +102,19 @@ public class FragmentHost extends FrameLayout {
 
     @Override
     protected Parcelable onSaveInstanceState() {
-        return new SavedState(super.onSaveInstanceState(), fragment != null ? fm.saveState(fragment) : null);
+        return new SavedState(super.onSaveInstanceState(),
+                fragment != null ? fragment.getClass().getName() : null,
+                fragment != null ? fm.saveState(fragment) : null);
     }
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
         final SavedState savedState = (SavedState) state;
         super.onRestoreInstanceState(savedState.getSuperState());
-        final Fragment.State fragmentState = savedState.fragmentState;
-        if (fragmentState != null) {
-            fragment = factory.newInstance(fragmentState.getFragmentClass());
+        String name = savedState.name;
+        Fragment.State fragmentState = savedState.fragmentState;
+        if (name != null) {
+            fragment = factory.newInstance(name, fragmentState.getArgs());
             fm.restoreState(fragment, fragmentState);
             fm.add(fragment, this);
         }
@@ -143,21 +122,26 @@ public class FragmentHost extends FrameLayout {
 
     public static class SavedState extends BaseSavedState {
         @Nullable
+        final String name;
+        @Nullable
         final Fragment.State fragmentState;
 
-        SavedState(Parcelable superState, @Nullable Fragment.State fragmentState) {
+        SavedState(Parcelable superState, @Nullable String name, @Nullable Fragment.State fragmentState) {
             super(superState);
+            this.name = name;
             this.fragmentState = fragmentState;
         }
 
         SavedState(Parcel source) {
             super(source);
+            this.name = source.readString();
             this.fragmentState = source.readParcelable(getClass().getClassLoader());
         }
 
         @Override
         public void writeToParcel(Parcel out, int flags) {
             super.writeToParcel(out, flags);
+            out.writeString(name);
             out.writeParcelable(fragmentState, flags);
         }
 

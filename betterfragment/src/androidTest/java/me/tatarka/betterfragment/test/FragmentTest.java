@@ -50,8 +50,8 @@ public class FragmentTest {
     @Test
     public void saveStateCallsOnSaveInstanceState() {
         TestFragment fragment = new TestFragment();
-        TestStateSaver stateSaver = new TestStateSaver();
-        fragment.getStateStore().addStateSaver("test", stateSaver);
+        TestInstanceStateSaver stateSaver = new TestInstanceStateSaver();
+        fragment.getInstanceStateStore().add("test", stateSaver);
         fm.add(fragment, container);
         fm.saveState(fragment);
 
@@ -104,13 +104,13 @@ public class FragmentTest {
     @Test
     public void fragmentSavesAndRestoresState() {
         TestFragment fragment = new TestFragment();
-        TestStateSaver stateSaver = new TestStateSaver(1);
-        fragment.getStateStore().addStateSaver("test", stateSaver);
+        TestInstanceStateSaver stateSaver = new TestInstanceStateSaver(1);
+        fragment.getInstanceStateStore().add("test", stateSaver);
         fm.add(fragment, container);
         Fragment.State state = fm.saveState(fragment);
         TestFragment newFragment = new TestFragment();
-        TestStateSaver newStateSaver = new TestStateSaver();
-        newFragment.getStateStore().addStateSaver("test", newStateSaver);
+        TestInstanceStateSaver newStateSaver = new TestInstanceStateSaver();
+        newFragment.getInstanceStateStore().add("test", newStateSaver);
         fm.restoreState(newFragment, state);
         fm.add(newFragment, container);
 

@@ -3,10 +3,11 @@ package me.tatarka.betterfragment.sample
 import androidx.viewpager.widget.ViewPager
 import me.tatarka.betterfragment.app.Fragment
 import me.tatarka.betterfragment.pager.FragmentPagerAdapter
+import me.tatarka.betterfragment.sample.dagger.DaggerFragmentFactory
 import javax.inject.Inject
 
 class ViewPagerFragment @Inject constructor(
-    private val fragmentFactory: Fragment.Factory
+    private val fragmentFactory: DaggerFragmentFactory
 ) : Fragment() {
 
     override fun onCreate() {

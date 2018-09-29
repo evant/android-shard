@@ -1,12 +1,12 @@
 package me.tatarka.betterfragment.app;
 
-import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import me.tatarka.betterfragment.state.InstanceStateRegistry;
 import me.tatarka.betterfragment.transition.FragmentTransition;
 
 public final class FragmentManager {
@@ -18,7 +18,7 @@ public final class FragmentManager {
     }
 
     /**
-     * Adds the fragment, attaching is to the given container and calling {@link Fragment#onCreate(Bundle)}.
+     * Adds the fragment, attaching is to the given container and calling {@link Fragment#onCreate()}.
      * This method is a no-op if the fragment is already destroyed.
      *
      * @throws IllegalStateException If the fragment has already been created or has been created.
@@ -43,14 +43,14 @@ public final class FragmentManager {
 
     /**
      * Saves the fragment's state and returns it. This will move the fragment to the stopped state
-     * so that when {@link Fragment#onSaveInstanceState(Bundle)} is called is consistent. Therefore you
+     * so that when {@link InstanceStateRegistry#onSaveInstanceState()} is called is consistent. Therefore you
      * should only call this method when the fragment is being stopped or destroyed.
      *
      * @throws IllegalStateException If the fragment is destroyed.
      */
     @NonNull
     public Fragment.State saveState(Fragment fragment) {
-        return fragment.saveState();
+        return fragment.saveInstanceState();
     }
 
     /**

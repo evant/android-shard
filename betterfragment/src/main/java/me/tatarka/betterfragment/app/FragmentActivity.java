@@ -10,14 +10,14 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
-import me.tatarka.betterfragment.state.StateStore;
+import me.tatarka.betterfragment.state.InstanceStateRegistry;
 
 public class FragmentActivity extends Activity implements FragmentOwner {
 
     private static final String STATE_FRAGMENT = "me.tatarka.betterfragment.app.Fragment";
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
-    private final StateStore stateStore = new StateStore();
+    private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
     private ViewModelStore viewModelStore;
     private boolean isRetaining;
 
@@ -28,7 +28,7 @@ public class FragmentActivity extends Activity implements FragmentOwner {
         if (savedInstanceState != null) {
             Bundle state = savedInstanceState.getBundle(STATE_FRAGMENT);
             if (state != null) {
-                stateStore.onRestoreState(state);
+                stateStore.onRestoreInstanceState(state);
             }
         }
         viewModelStore = (ViewModelStore) getLastNonConfigurationInstance();
@@ -68,9 +68,7 @@ public class FragmentActivity extends Activity implements FragmentOwner {
     protected void onSaveInstanceState(Bundle outState) {
         lifecycleRegistry.markState(Lifecycle.State.CREATED);
         super.onSaveInstanceState(outState);
-        Bundle out = new Bundle();
-        stateStore.onSaveState(out);
-        outState.putBundle(STATE_FRAGMENT, out);
+        outState.putBundle(STATE_FRAGMENT, stateStore.onSaveInstanceState());
     }
 
     @Override
@@ -106,7 +104,7 @@ public class FragmentActivity extends Activity implements FragmentOwner {
 
     @NonNull
     @Override
-    public StateStore getStateStore() {
+    public InstanceStateRegistry getInstanceStateStore() {
         return stateStore;
     }
 
