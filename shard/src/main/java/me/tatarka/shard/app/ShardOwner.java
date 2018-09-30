@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStoreOwner;
+import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.state.InstanceStateStoreOwner;
 
 /**
@@ -21,4 +22,7 @@ public interface ShardOwner extends LifecycleOwner, ViewModelStoreOwner, Instanc
 
     @NonNull
     ActivityCallbacks getActivityCallbacks();
+
+    @NonNull
+    ComponentCallbacks getComponentCallbacks();
 }

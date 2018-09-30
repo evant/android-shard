@@ -49,6 +49,16 @@ final class NestedActivityCallbackDispatcher extends BaseActivityCallbackDispatc
         return parentCallbacks.shouldShowRequestPermissionRationale(permission);
     }
 
+    @Override
+    public boolean isInMultiWindowMode() {
+        return parentCallbacks.isInMultiWindowMode();
+    }
+
+    @Override
+    public boolean isInPictureInPictureMode() {
+        return parentCallbacks.isInPictureInPictureMode();
+    }
+
     @Nullable
     @Override
     public State onSaveInstanceState() {
@@ -81,6 +91,16 @@ final class NestedActivityCallbackDispatcher extends BaseActivityCallbackDispatc
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
+        dispatchOnMultiWindowModeChanged(isInMultiWindowMode);
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        dispatchOnMultiWindowModeChanged(isInPictureInPictureMode);
     }
 
     public void destroy() {

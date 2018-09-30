@@ -31,7 +31,8 @@ public final class ActivityCallbackDispatcher extends BaseActivityCallbackDispat
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             activity.requestPermissions(permissions, requestCode);
         } else {
-            //TODO
+            // assume granted
+            dispatchOnRequestPermissionsResult(requestCode, permissions, new int[permissions.length]);
         }
     }
 
@@ -39,5 +40,15 @@ public final class ActivityCallbackDispatcher extends BaseActivityCallbackDispat
     public boolean shouldShowRequestPermissionRationale(@NonNull String permission) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && activity.shouldShowRequestPermissionRationale(permission);
+    }
+
+    @Override
+    public boolean isInMultiWindowMode() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activity.isInMultiWindowMode();
+    }
+
+    @Override
+    public boolean isInPictureInPictureMode() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activity.isInPictureInPictureMode();
     }
 }

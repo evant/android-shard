@@ -23,6 +23,8 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
+import me.tatarka.shard.content.ComponentCallbacks;
+import me.tatarka.shard.content.ComponentCallbacksDispatcher;
 import me.tatarka.shard.state.InstanceStateRegistry;
 import me.tatarka.shard.state.InstanceStateStore;
 
@@ -36,6 +38,7 @@ public class Shard implements ShardOwner {
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
     private NestedActivityCallbackDispatcher activityCallbackDispatcher;
+    private final ComponentCallbacksDispatcher componentCallbacksDispatcher = new ComponentCallbacksDispatcher();
     private final Observer observer = new Observer();
     private int viewModelId = -1;
     private Container container;
@@ -66,6 +69,7 @@ public class Shard implements ShardOwner {
         }
         this.owner = owner;
         activityCallbackDispatcher = new NestedActivityCallbackDispatcher((BaseActivityCallbackDispatcher) owner.getActivityCallbacks(), stateStore);
+        ((ComponentCallbacksDispatcher) owner.getComponentCallbacks()).add(componentCallbacksDispatcher);
         context = new ShardOwnerContextWrapper(owner.getContext(), this);
         this.container = container;
 
@@ -109,6 +113,7 @@ public class Shard implements ShardOwner {
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         owner.getLifecycle().removeObserver(observer);
         activityCallbackDispatcher.destroy();
+        ((ComponentCallbacksDispatcher) owner.getComponentCallbacks()).remove(componentCallbacksDispatcher);
 
         if (container != null && frame != null) {
             container.removeView(frame);
@@ -223,6 +228,13 @@ public class Shard implements ShardOwner {
     public ActivityCallbacks getActivityCallbacks() {
         checkCreated();
         return activityCallbackDispatcher;
+    }
+
+    @NonNull
+    @Override
+    public ComponentCallbacks getComponentCallbacks() {
+        checkCreated();
+        return componentCallbacksDispatcher;
     }
 
     private ViewModelStore getOrCreateViewModelStore() {

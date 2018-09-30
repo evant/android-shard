@@ -10,7 +10,8 @@ private const val KEY_NUMBER = "number"
 
 open class MyShard @Inject constructor(
     private val lifecycleLogger: LifecycleLogger,
-    private val stateLogger: InstanceStateLogger
+    private val stateLogger: InstanceStateLogger,
+    private val callbacksLogger: CallbacksLogger
 ) : Shard() {
 
     fun withNumber(number: Int): Shard = apply {
@@ -19,6 +20,10 @@ open class MyShard @Inject constructor(
 
     override fun onCreate() {
         super.onCreate()
+        activityCallbacks.addOnMultiWindowModeChangedListener(callbacksLogger)
+        activityCallbacks.addOnPictureInPictureModeChangedListener(callbacksLogger)
+        componentCallbacks.addOnConfigurationChangedListener(callbacksLogger)
+        componentCallbacks.addOnTrimMemoryListener(callbacksLogger)
         lifecycle.addObserver(lifecycleLogger)
         ViewModelProviders.of(this).get<MyViewModel>()
         setContentView(R.layout.shard)

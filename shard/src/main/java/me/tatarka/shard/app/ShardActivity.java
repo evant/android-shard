@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
+import me.tatarka.shard.content.ComponentCallbacks;
+import me.tatarka.shard.content.ComponentCallbacksDispatcher;
 import me.tatarka.shard.state.InstanceStateRegistry;
 import me.tatarka.shard.state.InstanceStateStore;
 
@@ -21,6 +23,7 @@ public class ShardActivity extends Activity implements ShardOwner {
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
     private final ActivityCallbackDispatcher activityCallbackDispatcher = new ActivityCallbackDispatcher(this);
+    private final ComponentCallbacksDispatcher componentCallbacksDispatcher = new ComponentCallbacksDispatcher();
     private ViewModelStore viewModelStore;
     private boolean isRetaining;
     private Shard.Factory factory = Shard.DefaultFactory.getInstance();
@@ -35,6 +38,7 @@ public class ShardActivity extends Activity implements ShardOwner {
                 stateStore.onRestoreInstanceState(state);
             }
         }
+        registerComponentCallbacks(componentCallbacksDispatcher);
         viewModelStore = (ViewModelStore) getLastNonConfigurationInstance();
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
     }
@@ -89,6 +93,7 @@ public class ShardActivity extends Activity implements ShardOwner {
             viewModelStore.clear();
         }
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
+        unregisterComponentCallbacks(componentCallbacksDispatcher);
     }
 
     @NonNull
@@ -130,6 +135,12 @@ public class ShardActivity extends Activity implements ShardOwner {
         return activityCallbackDispatcher;
     }
 
+    @NonNull
+    @Override
+    public ComponentCallbacks getComponentCallbacks() {
+        return componentCallbacksDispatcher;
+    }
+
     @Override
     @CallSuper
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -140,5 +151,17 @@ public class ShardActivity extends Activity implements ShardOwner {
     @CallSuper
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         activityCallbackDispatcher.dispatchOnRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    @CallSuper
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
+        activityCallbackDispatcher.dispatchOnMultiWindowModeChanged(isInMultiWindowMode);
+    }
+
+    @Override
+    @CallSuper
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        activityCallbackDispatcher.dispatchOnMultiWindowModeChanged(isInPictureInPictureMode);
     }
 }

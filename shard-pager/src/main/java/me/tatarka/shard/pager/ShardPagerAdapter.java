@@ -24,6 +24,7 @@ import me.tatarka.shard.app.ShardManager;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwnerContextWrapper;
 import me.tatarka.shard.app.ShardOwners;
+import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.state.InstanceStateStore;
 
 /**
@@ -242,6 +243,12 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
         @Override
         public ActivityCallbacks getActivityCallbacks() {
             return parentOwner.getActivityCallbacks();
+        }
+
+        @NonNull
+        @Override
+        public ComponentCallbacks getComponentCallbacks() {
+            return parentOwner.getComponentCallbacks();
         }
     }
 }

@@ -54,6 +54,32 @@ public interface ActivityCallbacks {
      */
     void startActivityForResult(@NonNull Intent intent, int requestCode, @Nullable Bundle options);
 
+    interface OnActivityResultListener {
+        /**
+         * Called when an activity you launched exits, giving you the requestCode
+         * you started it with, the resultCode it returned, and any additional
+         * data from it.  The <var>resultCode</var> will be
+         * {@link android.app.Activity#RESULT_CANCELED} if the activity explicitly returned that,
+         * didn't return any result, or crashed during its operation.
+         *
+         * <p>You will receive this call immediately before onResume() when your
+         * activity is re-starting.
+         *
+         * <p>This method is never invoked if your activity sets
+         * {@link android.R.styleable#AndroidManifestActivity_noHistory noHistory} to
+         * <code>true</code>.
+         *
+         * @param resultCode The integer result code returned by the child activity
+         *                   through its setResult().
+         * @param data       An Intent, which can return result data to the caller
+         *                   (various data can be attached to Intent "extras").
+         * @see android.app.Activity#startActivityForResult
+         * @see android.app.Activity#createPendingResult
+         * @see android.app.Activity#setResult(int)
+         */
+        void onActivityResult(int resultCode, @Nullable Intent data);
+    }
+
     void addOnActivityResultListener(int requestCode, @NonNull OnActivityResultListener listener);
 
     void removeActivityResultListener(int requestCode);
@@ -144,36 +170,6 @@ public interface ActivityCallbacks {
      */
     boolean shouldShowRequestPermissionRationale(@NonNull String permission);
 
-    void addOnRequestPermissionResultListener(int requestCode, @NonNull OnRequestPermissionResultListener listener);
-
-    void removeOnRequestPermissionResultListener(int requestCode);
-
-    interface OnActivityResultListener {
-        /**
-         * Called when an activity you launched exits, giving you the requestCode
-         * you started it with, the resultCode it returned, and any additional
-         * data from it.  The <var>resultCode</var> will be
-         * {@link android.app.Activity#RESULT_CANCELED} if the activity explicitly returned that,
-         * didn't return any result, or crashed during its operation.
-         *
-         * <p>You will receive this call immediately before onResume() when your
-         * activity is re-starting.
-         *
-         * <p>This method is never invoked if your activity sets
-         * {@link android.R.styleable#AndroidManifestActivity_noHistory noHistory} to
-         * <code>true</code>.
-         *
-         * @param resultCode  The integer result code returned by the child activity
-         *                    through its setResult().
-         * @param data        An Intent, which can return result data to the caller
-         *                    (various data can be attached to Intent "extras").
-         * @see android.app.Activity#startActivityForResult
-         * @see android.app.Activity#createPendingResult
-         * @see android.app.Activity#setResult(int)
-         */
-        void onActivityResult(int resultCode, @Nullable Intent data);
-    }
-
     interface OnRequestPermissionResultListener {
 
         /**
@@ -193,4 +189,41 @@ public interface ActivityCallbacks {
          */
         void onRequestPermissionResult(@NonNull String[] permissions, @NonNull int[] grantResults);
     }
+
+    void addOnRequestPermissionResultListener(int requestCode, @NonNull OnRequestPermissionResultListener listener);
+
+    void removeOnRequestPermissionResultListener(int requestCode);
+
+    boolean isInMultiWindowMode();
+
+    interface OnMultiWindowModeChangedListener {
+        /**
+         * Called when the Fragment's activity changes from fullscreen mode to multi-window mode and
+         * visa-versa. This is generally tied to {@link android.app.Activity#onMultiWindowModeChanged} of the
+         * containing Activity.
+         *
+         * @param isInMultiWindowMode True if the activity is in multi-window mode.
+         */
+        void onMultiWindowModeChanged(boolean isInMultiWindowMode);
+    }
+
+    void addOnMultiWindowModeChangedListener(@NonNull OnMultiWindowModeChangedListener listener);
+
+    void removeOnMultiWindowModeChangedListener(@NonNull OnMultiWindowModeChangedListener listener);
+
+    boolean isInPictureInPictureMode();
+
+    interface OnPictureInPictureModeChangedListener {
+        /**
+         * Called by the system when the activity changes to and from picture-in-picture mode. This is
+         * generally tied to {@link android.app.Activity#onPictureInPictureModeChanged} of the containing Activity.
+         *
+         * @param isInPictureInPictureMode True if the activity is in picture-in-picture mode.
+         */
+        void onPictureInPictureModeChanged(boolean isInPictureInPictureMode);
+    }
+
+    void addOnPictureInPictureModeChangedListener(@NonNull OnPictureInPictureModeChangedListener listener);
+
+    void removeOnPictureInPictureModeChangedListener(@NonNull OnPictureInPictureModeChangedListener listener);
 }

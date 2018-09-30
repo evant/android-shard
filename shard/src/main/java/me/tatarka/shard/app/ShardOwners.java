@@ -14,6 +14,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
+import me.tatarka.shard.content.ComponentCallbacks;
+import me.tatarka.shard.content.ComponentCallbacksDispatcher;
 import me.tatarka.shard.state.InstanceStateRegistry;
 import me.tatarka.shard.state.InstanceStateStore;
 
@@ -56,8 +58,15 @@ public final class ShardOwners {
             }
         }
 
+        @Nullable
+        static WrappingShardOwner find(Activity activity) {
+            StateCallbacks stateCallbacks = StateCallbacks.getInstance(activity);
+            return stateCallbacks.map.get(activity);
+        }
+
         private final Context context;
         final InstanceStateRegistry stateStore = new InstanceStateRegistry();
+        final ComponentCallbacksDispatcher callbacks = new ComponentCallbacksDispatcher();
         private final Shard.Factory factory = Shard.DefaultFactory.getInstance();
 
         private WrappingShardOwner(Context context) {
@@ -99,6 +108,12 @@ public final class ShardOwners {
         public ActivityCallbacks getActivityCallbacks() {
             throw new UnsupportedOperationException();
         }
+
+        @NonNull
+        @Override
+        public ComponentCallbacks getComponentCallbacks() {
+            return callbacks;
+        }
     }
 
     static class StateCallbacks implements Application.ActivityLifecycleCallbacks {
@@ -118,6 +133,7 @@ public final class ShardOwners {
         @Override
         public void onActivityCreated(Activity activity, @Nullable Bundle savedInstanceState) {
             WrappingShardOwner owner = WrappingShardOwner.of(activity);
+            activity.registerComponentCallbacks(owner.callbacks);
             if (savedInstanceState != null) {
                 Bundle state = savedInstanceState.getBundle(STATE_SHARD);
                 if (state != null) {
@@ -150,14 +166,15 @@ public final class ShardOwners {
         public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
             WrappingShardOwner owner = WrappingShardOwner.of(activity);
             Bundle state = owner.stateStore.onSaveInstanceState();
-            if (state != null) {
-                outState.putBundle(STATE_SHARD, state);
-            }
+            outState.putBundle(STATE_SHARD, state);
         }
 
         @Override
         public void onActivityDestroyed(Activity activity) {
-
+            WrappingShardOwner owner = WrappingShardOwner.find(activity);
+            if (owner != null) {
+                activity.unregisterComponentCallbacks(owner.callbacks);
+            }
         }
     }
 }
