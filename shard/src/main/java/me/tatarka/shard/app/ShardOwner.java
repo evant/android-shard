@@ -18,4 +18,7 @@ public interface ShardOwner extends LifecycleOwner, ViewModelStoreOwner, Instanc
 
     @NonNull
     Shard.Factory getShardFactory();
+
+    @NonNull
+    ActivityCallbacks getActivityCallbacks();
 }

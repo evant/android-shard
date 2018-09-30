@@ -22,4 +22,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Alert Dialog with Custom View" />
+
+    <Button
+        android:id="@+id/start_activity_for_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Activity For Result" />
+
+    <Button
+        android:id="@+id/request_permission"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Request Permission" />
 </LinearLayout>

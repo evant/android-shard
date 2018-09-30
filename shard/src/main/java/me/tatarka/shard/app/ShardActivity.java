@@ -2,6 +2,7 @@ package me.tatarka.shard.app;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.CallSuper;
@@ -19,6 +20,7 @@ public class ShardActivity extends Activity implements ShardOwner {
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
+    private final ActivityCallbackDispatcher activityCallbackDispatcher = new ActivityCallbackDispatcher(this);
     private ViewModelStore viewModelStore;
     private boolean isRetaining;
     private Shard.Factory factory = Shard.DefaultFactory.getInstance();
@@ -120,5 +122,23 @@ public class ShardActivity extends Activity implements ShardOwner {
     @Override
     public Shard.Factory getShardFactory() {
         return factory;
+    }
+
+    @NonNull
+    @Override
+    public ActivityCallbacks getActivityCallbacks() {
+        return activityCallbackDispatcher;
+    }
+
+    @Override
+    @CallSuper
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        activityCallbackDispatcher.dispatchOnActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    @CallSuper
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        activityCallbackDispatcher.dispatchOnRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

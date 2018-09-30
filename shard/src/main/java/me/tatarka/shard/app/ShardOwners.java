@@ -93,6 +93,12 @@ public final class ShardOwners {
         public Shard.Factory getShardFactory() {
             return factory;
         }
+
+        @NonNull
+        @Override
+        public ActivityCallbacks getActivityCallbacks() {
+            throw new UnsupportedOperationException();
+        }
     }
 
     static class StateCallbacks implements Application.ActivityLifecycleCallbacks {

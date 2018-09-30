@@ -2,7 +2,7 @@ apply from: '../library.gradle'
 
 dependencies {
     api project(':shard')
-    api 'androidx.appcompat:appcompat:1.0.0-rc02'
+    api 'androidx.appcompat:appcompat:1.0.0'
 
     testImplementation 'junit:junit:4.12'
 

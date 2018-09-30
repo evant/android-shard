@@ -18,6 +18,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import me.tatarka.shard.app.ActivityCallbacks;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardManager;
 import me.tatarka.shard.app.ShardOwner;
@@ -235,6 +236,12 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
         @Override
         public Shard.Factory getShardFactory() {
             return parentOwner.getShardFactory();
+        }
+
+        @NonNull
+        @Override
+        public ActivityCallbacks getActivityCallbacks() {
+            return parentOwner.getActivityCallbacks();
         }
     }
 }

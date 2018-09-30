@@ -58,7 +58,7 @@ public final class InstanceStateRegistry implements InstanceStateStore, Instance
         pendingState = instanceState;
         for (int i = 0; i < stateSavers.size(); i++) {
             String key = stateSavers.keyAt(i);
-            Parcelable childState = instanceState.getBundle(key);
+            Parcelable childState = instanceState.getParcelable(key);
             if (childState != null) {
                 InstanceStateSaver instanceStateSaver = stateSavers.valueAt(i);
                 instanceStateSaver.onRestoreInstanceState(childState);
