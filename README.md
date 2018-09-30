@@ -179,16 +179,16 @@ Saving/Restoring state
 ```kotlin
 private const val STATE_KEY = "state"
 
-class MyShard: Shard(), StateSaver {
+class MyShard: Shard(), InstanceStateSaver<Bundle> {
     override fun onCreate() {
         stateStore.addStateSaver(STATE_KEY, this) 
     }
     
-    override fun onSaveState(outState: Bundle) {
+    override fun onSaveInstanceState() : Bundle? {
         // save state
     }
 
-    override fun onRestoreState(instanceState: Bundle) {
+    override fun onRestoreInstanceState(instanceState: Bundle) {
         // restore state
     }
 }
