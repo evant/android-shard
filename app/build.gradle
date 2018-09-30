@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "me.tatarka.betterfragment.sample"
+        applicationId "me.tatarka.shard.sample"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
@@ -27,10 +27,10 @@ configurations {
 }
 
 dependencies {
-    implementation project(':betterfragment-appcompat')
-    implementation project(':betterfragment-pager')
-    implementation project(':betterfragment-nav')
-    implementation project(':betterfragment-host-ui')
+    implementation project(':shard-appcompat')
+    implementation project(':shard-pager')
+    implementation project(':shard-nav')
+    implementation project(':shard-host-ui')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 

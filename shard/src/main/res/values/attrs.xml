@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="shardFactory" format="string" />
+    <attr name="enterAnim" format="reference" />
+    <attr name="exitAnim" format="reference" />
+    <attr name="transition" format="reference" />
+    <declare-styleable name="ShardHost">
+        <attr name="android:name" />
+        <attr name="enterAnim" />
+        <attr name="exitAnim" />
+        <attr name="transition" />
+    </declare-styleable>
+    <declare-styleable name="ShardPageHost">
+        <attr name="startPage" format="reference" />
+        <attr name="enterAnim" />
+        <attr name="exitAnim" />
+        <attr name="transition" />
+    </declare-styleable>
+</resources>

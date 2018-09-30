@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <me.tatarka.betterfragment.wiget.FragmentPageHost
+    <me.tatarka.shard.wiget.ShardPageHost
         android:id="@+id/page_host"
         android:layout_width="match_parent"
         android:layout_height="0dp"

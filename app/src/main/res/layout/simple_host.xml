@@ -24,9 +24,9 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <me.tatarka.betterfragment.sample.dagger.DaggerFragmentHost
+        <me.tatarka.shard.sample.dagger.DaggerShardHost
             android:id="@+id/host"
-            android:name="me.tatarka.betterfragment.sample.MyFragment"
+            android:name="me.tatarka.shard.sample.MyShard"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:enterAnim="@anim/nav_default_enter_anim"

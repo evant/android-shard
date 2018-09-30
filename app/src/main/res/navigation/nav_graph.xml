@@ -2,73 +2,73 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/my_fragment1">
+    app:startDestination="@id/my_shard1">
 
-    <fragment
-        android:id="@+id/my_fragment1"
-        android:name="me.tatarka.betterfragment.sample.MyFragment"
+    <shard
+        android:id="@+id/my_shard1"
+        android:name="me.tatarka.shard.sample.MyShard"
         android:label="Navigation Root"
-        tools:layout="@layout/fragment">
+        tools:layout="@layout/shard">
 
         <argument
             android:name="number"
             android:defaultValue="0"
             app:argType="int" />
 
-    </fragment>
+    </shard>
 
-    <fragment
-        android:id="@+id/my_fragment2"
-        android:name="me.tatarka.betterfragment.sample.MyFragment"
+    <shard
+        android:id="@+id/my_shard2"
+        android:name="me.tatarka.shard.sample.MyShard"
         android:label="Navigation Dest1"
-        tools:layout="@layout/fragment">
+        tools:layout="@layout/shard">
 
         <argument
             android:name="number"
             android:defaultValue="1"
             app:argType="int" />
-    </fragment>
+    </shard>
 
-    <fragment
-        android:id="@+id/my_fragment3"
-        android:name="me.tatarka.betterfragment.sample.MyFragment"
+    <shard
+        android:id="@+id/my_shard3"
+        android:name="me.tatarka.shard.sample.MyShard"
         android:label="Navigation Dest2"
-        tools:layout="@layout/fragment">
+        tools:layout="@layout/shard">
 
         <argument
             android:name="number"
             android:defaultValue="2"
             app:argType="int" />
-    </fragment>
+    </shard>
 
     <action
         android:id="@+id/root"
-        app:destination="@id/my_fragment1"
+        app:destination="@id/my_shard1"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:launchSingleTop="true"
         app:popEnterAnim="@anim/nav_default_enter_anim"
         app:popExitAnim="@anim/nav_default_exit_anim"
-        app:popUpTo="@id/my_fragment1"
+        app:popUpTo="@id/my_shard1"
         app:popUpToInclusive="false" />
 
     <action
         android:id="@+id/dest1"
-        app:destination="@id/my_fragment2"
+        app:destination="@id/my_shard2"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_enter_anim"
         app:popExitAnim="@anim/nav_default_exit_anim"
-        app:popUpTo="@id/my_fragment1"
+        app:popUpTo="@id/my_shard1"
         app:popUpToInclusive="false" />
 
     <action
         android:id="@+id/dest2"
-        app:destination="@id/my_fragment3"
+        app:destination="@id/my_shard3"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_enter_anim"
         app:popExitAnim="@anim/nav_default_exit_anim"
-        app:popUpTo="@id/my_fragment1"
+        app:popUpTo="@id/my_shard1"
         app:popUpToInclusive="false" />
 </navigation>

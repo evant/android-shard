@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.tatarka.shard">
+
+    <application>
+        <activity android:name=".test.TestActivity" />
+        <activity android:name=".test.ShardHostTest$ShardHostActivity" />
+    </application>
+</manifest>

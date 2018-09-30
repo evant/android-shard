@@ -1,14 +1,14 @@
-# better-fragment
+# Shard
 [WIP] 'Fragments' with a simpler api built on top of the android architecture components
 
 ## Usage
 
-Create a fragment
+Create a shard
 ```kotlin
-class MyFragment: Fragment() {
+class MyShard: Shard() {
     override fun onCreate() {
         // set the layout
-        setContentView(R.layout.my_fragment)
+        setContentView(R.layout.my_shard)
         // find a view
         val name: TextView = requireViewById(R.id.name)
         // get a ViewModel
@@ -19,30 +19,30 @@ class MyFragment: Fragment() {
 }
 ```
 
-Add a static fragment to a layout
+Add a static shard to a layout
 ```xml
-<me.tatarka.betterfragment.wiget.FragmentHost
+<me.tatarka.shard.wiget.ShardHost
     android:id="@+id/host"
-    android:name="com.example.MyFragment"
+    android:name="com.example.MyShard"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 ```
 
-Dynamically set a fragment
+Dynamically set a shard
 ```xml
-<me.tatarka.betterfragment.wiget.FragmentHost
+<me.tatarka.shard.wiget.ShardHost
     android:id="@+id/host"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 ``` 
 
 ```kotlin
-requireViewById<FragmentHost>(R.id.host).fragment = MyFragment()
+requireViewById<ShardHost>(R.id.host).shard = MyShard()
 ```
 
 BottomNav
 ```xml
-<me.tatarka.betterfragment.wiget.FragmentPageHost
+<me.tatarka.shard.wiget.ShardPageHost
     android:id="@+id/host"
     app:startPage="@+id/page1" />
 
@@ -52,22 +52,22 @@ BottomNav
 ```
 
 ```kotlin
-val host: FragmentPageHost = requireViewById(R.id.host)
+val host: ShardPageHost = requireViewById(R.id.host)
 val bottomNav: BottomNavigationView = requiteViewById(R.id.bottom_nav)
-host.adapter = FragmentPageHost.Adapter { id ->
+host.adapter = ShardPageHost.Adapter { id ->
     when (id) {
-        R.id.page1 -> MyFragment1()
-        R.id.page2 -> MyFragment2()
-        R.id.page3 -> MyFragment3()
+        R.id.page1 -> MyShard1()
+        R.id.page2 -> MyShard2()
+        R.id.page3 -> MyShard3()
         else -> null
     }
 }
-FragmentPageHostUI.setupWithPageHost(bottomNav, host)
+ShardPageHostUI.setupWithPageHost(bottomNav, host)
 ```
 
 Navigation
 ```xml
-<me.tatarka.betterfragment.widget.FragmentNavHost
+<me.tatarka.shard.widget.ShardNavHost
    android:id="@+id/nav"
    android:layout_width="match_parent"
    android:layout_height="match_parent"
@@ -78,19 +78,19 @@ Navigation
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/fragment1">
+    app:startDestination="@id/shard1">
 
-    <fragment
-        android:id="@+id/fragment1"
-        android:name="com.example.Fragment1"
-        android:label="Fragment1"
-        tools:layout="@layout/fragment1" />
+    <shard
+        android:id="@+id/shard1"
+        android:name="com.example.Shard1"
+        android:label="Shard1"
+        tools:layout="@layout/shard1" />
 
-    <fragment
-        android:id="@+id/fragment2"
-        android:name="com.example.Fragment2"
-        android:label="Fragment2"
-        tools:layout="@layout/fragment2" />
+    <shard
+        android:id="@+id/shard2"
+        android:name="com.example.Shard2"
+        android:label="Shard2"
+        tools:layout="@layout/shard2" />
 </navigation>
 ```
 
@@ -115,12 +115,12 @@ class MainActivity: AppCompatActivity() {
 ViewPager
 ```kotlin
 val pager: ViewPager = requireViewById(R.id.pager)
-pager.adapter = object : FragmentPagerAdapter(this) {
-    override fun getItem(position: Int): Fragment {
+pager.adapter = object : ShardPagerAdapter(this) {
+    override fun getItem(position: Int): Shard {
         return when (position) {
-            case 0 -> MyFragment1()
-            case 1 -> MyFragment2()
-            case 2 -> MyFragment3()
+            case 0 -> MyShard1()
+            case 1 -> MyShard2()
+            case 2 -> MyShard3()
             else -> throw AssertionError()
         }
     }
@@ -132,7 +132,7 @@ The current page will be resumed, other pages will be started.
 
 Dialog
 ```kotlin
-class MyDialogFragment: DialogFragment() {
+class MyDialogShard: DialogShard() {
 
     override fun onCreateDialog(context: Context): Dialog {
         return Dialog(context, R.style.MyDialogTheme)
@@ -146,7 +146,7 @@ class MyDialogFragment: DialogFragment() {
 
 AlertDialog
 ```kotlin
-class MyAlertDialogFragment: AlertDialogFragment() {
+class MyAlertDialogShard: AlertDialogShard() {
     override fun onBuildAlertDialog(context: Context): AlertDialog.Builder {
         return AlertDialog.Builder(context)
             .setTitle(R.string.title)
@@ -164,13 +164,13 @@ class MyAlertDialogFragment: AlertDialogFragment() {
 Show
 ```kotlin
 // make sure to always init this to ensure dialog state is restored on config changes.
-val dialogHost = FragmentDialogHost(this)
+val dialogHost = ShardDialogHost(this)
 
 override fun onCreate() {
     setContentView(R.layout.content)
     val button: Button = requireViewById(R.id.button)
     buttion.setOnClickListener {
-        dialogHost.show(MyDialogFragment())
+        dialogHost.show(MyDialogShard())
     }
 }
 ```
@@ -179,7 +179,7 @@ Saving/Restoring state
 ```kotlin
 private const val STATE_KEY = "state"
 
-class MyFragment: Fragment(), StateSaver {
+class MyShard: Shard(), StateSaver {
     override fun onCreate() {
         stateStore.addStateSaver(STATE_KEY, this) 
     }
