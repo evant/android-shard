@@ -1,0 +1,68 @@
+apply plugin: 'signing'
+apply plugin: 'digital.wup.android-maven-publish'
+
+group = 'me.tatarka.shard'
+version = '1.0.0-alpha01'
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from(android.sourceSets.main.java.srcDirs)
+}
+
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    failOnError = false
+}
+
+task javadocsJar(type: Jar) {
+    classifier = 'javadoc'
+    from(androidJavadocs)
+}
+
+publishing {
+    publications {
+        lib(MavenPublication) {
+            from components.android
+            artifact sourcesJar
+            artifact javadocsJar
+
+            pom {
+                name = 'Shard'
+                description = '\'Fragments\' with a simpler api built on top of the android architecture components'
+                url = 'https://github.com/evant/android-shard'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'evant'
+                        name = 'Evan Tatarka'
+                    }
+                }
+                scm {
+                    connection = 'https://github.com/evant/android-shard.git'
+                    developerConnection = 'https://github.com/evant/android-shard.git'
+                    url = 'https://github.com/evant/android-shard'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+            def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username project.findProperty('sonatype.username')
+                password project.findProperty('sonatype.password')
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.lib
+}

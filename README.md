@@ -1,5 +1,23 @@
 # Shard
+
 [WIP] 'Fragments' with a simpler api built on top of the android architecture components
+
+## Download
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/me.tatarka.shard/shard/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/me.tatarka.shard/shard)
+
+```groovy
+def shard_version = '1.0.0-alpha01'
+// The core lib
+implementation "me.tatarka.shard:shard:$shard_version"
+// For use with appcompat
+implementation "me.tatarka.shard:shard-appcompat:$shard_version"
+// For use with the material design lib 
+implementation "me.tatarka.shard:shard-host-ui:$shard_version"
+// For use with the android architecture navigation component
+implementation "me.tatarka.shard:shard-nav:$shard_version"
+// For use in a ViewPager
+implementation "me.tatarka.shard:shard-pager:$shard_version"
+```
 
 ## Usage
 
