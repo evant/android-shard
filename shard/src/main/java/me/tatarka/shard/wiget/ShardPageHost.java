@@ -68,8 +68,10 @@ public class ShardPageHost extends FrameLayout {
     @CallSuper
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (shard == null && startPage != 0 && !owner.getInstanceStateStore().isStateRestored()) {
-            setCurrentPage(startPage, null);
+        if (!isInEditMode()) {
+            if (shard == null && startPage != 0 && !owner.getInstanceStateStore().isStateRestored()) {
+                setCurrentPage(startPage, null);
+            }
         }
     }
 

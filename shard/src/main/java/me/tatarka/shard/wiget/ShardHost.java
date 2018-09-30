@@ -62,9 +62,11 @@ public class ShardHost extends FrameLayout {
     @CallSuper
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (shard == null && initialName != null && !owner.getInstanceStateStore().isStateRestored()) {
-            shard = getShardFactory().newInstance(initialName, Bundle.EMPTY);
-            fm.add(shard, this);
+        if (!isInEditMode()) {
+            if (shard == null && initialName != null && !owner.getInstanceStateStore().isStateRestored()) {
+                shard = getShardFactory().newInstance(initialName, Bundle.EMPTY);
+                fm.add(shard, this);
+            }
         }
     }
 
