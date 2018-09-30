@@ -7,6 +7,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.test.InstrumentationRegistry;
+import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.state.InstanceStateRegistry;
 import me.tatarka.shard.state.InstanceStateStore;
@@ -33,6 +34,12 @@ public class TestShardOwner implements ShardOwner {
     @Override
     public Context getContext() {
         return InstrumentationRegistry.getTargetContext();
+    }
+
+    @NonNull
+    @Override
+    public Shard.Factory getShardFactory() {
+        return Shard.DefaultFactory.getInstance();
     }
 
     @NonNull

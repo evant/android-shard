@@ -15,4 +15,7 @@ import me.tatarka.shard.state.InstanceStateStoreOwner;
 public interface ShardOwner extends LifecycleOwner, ViewModelStoreOwner, InstanceStateStoreOwner {
     @NonNull
     Context getContext();
+
+    @NonNull
+    Shard.Factory getShardFactory();
 }

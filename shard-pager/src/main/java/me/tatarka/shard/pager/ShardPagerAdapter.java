@@ -230,5 +230,11 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
         public Context getContext() {
             return context;
         }
+
+        @NonNull
+        @Override
+        public Shard.Factory getShardFactory() {
+            return parentOwner.getShardFactory();
+        }
     }
 }

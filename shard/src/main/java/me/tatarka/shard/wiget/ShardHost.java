@@ -23,7 +23,6 @@ public class ShardHost extends FrameLayout {
 
     private ShardOwner owner;
     private ShardManager fm;
-    private Shard.Factory factory = Shard.DefaultFactory.getInstance();
     @Nullable
     private Shard shard;
     @Nullable
@@ -64,7 +63,7 @@ public class ShardHost extends FrameLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (shard == null && initialName != null && !owner.getInstanceStateStore().isStateRestored()) {
-            shard = factory.newInstance(initialName, Bundle.EMPTY);
+            shard = getShardFactory().newInstance(initialName, Bundle.EMPTY);
             fm.add(shard, this);
         }
     }
@@ -84,15 +83,6 @@ public class ShardHost extends FrameLayout {
         return shard;
     }
 
-    public void setShardFactory(@NonNull Shard.Factory factory) {
-        this.factory = factory;
-    }
-
-    @NonNull
-    public Shard.Factory getShardFactory() {
-        return factory;
-    }
-
     public void setDefaultTransition(@Nullable ShardTransition transition) {
         defaultTransition = transition;
     }
@@ -100,6 +90,11 @@ public class ShardHost extends FrameLayout {
     @Nullable
     public ShardTransition getDefaultTransition() {
         return defaultTransition;
+    }
+
+    @NonNull
+    public Shard.Factory getShardFactory() {
+        return owner.getShardFactory();
     }
 
     @Override
@@ -116,7 +111,7 @@ public class ShardHost extends FrameLayout {
         String name = savedState.name;
         Shard.State shardState = savedState.shardState;
         if (name != null && shardState != null) {
-            shard = factory.newInstance(name, shardState.getArgs());
+            shard = getShardFactory().newInstance(name, shardState.getArgs());
             fm.restoreState(shard, shardState);
             fm.add(shard, this);
         }

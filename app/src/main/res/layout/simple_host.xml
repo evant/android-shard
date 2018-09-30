@@ -24,7 +24,7 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <me.tatarka.shard.sample.dagger.DaggerShardHost
+        <me.tatarka.shard.wiget.ShardHost
             android:id="@+id/host"
             android:name="me.tatarka.shard.sample.MyShard"
             android:layout_width="0dp"

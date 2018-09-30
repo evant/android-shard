@@ -2,13 +2,10 @@ package me.tatarka.shard.sample
 
 import android.view.View
 import me.tatarka.shard.app.Shard
-import me.tatarka.shard.sample.dagger.DaggerShardFactory
 import me.tatarka.shard.wiget.ShardHost
 import javax.inject.Inject
 
-class SimpleHostShard @Inject constructor(
-    private val shardFactory: DaggerShardFactory
-) : Shard() {
+class SimpleHostShard @Inject constructor() : Shard() {
 
     override fun onCreate() {
         super.onCreate()

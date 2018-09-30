@@ -3,12 +3,9 @@ package me.tatarka.shard.sample
 import androidx.viewpager.widget.ViewPager
 import me.tatarka.shard.app.Shard
 import me.tatarka.shard.pager.ShardPagerAdapter
-import me.tatarka.shard.sample.dagger.DaggerShardFactory
 import javax.inject.Inject
 
-class ViewPagerShard @Inject constructor(
-    private val shardFactory: DaggerShardFactory
-) : Shard() {
+class ViewPagerShard @Inject constructor() : Shard() {
 
     override fun onCreate() {
         super.onCreate()

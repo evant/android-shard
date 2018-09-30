@@ -24,7 +24,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <me.tatarka.shard.sample.dagger.DaggerShardNavHost
+        <me.tatarka.shard.nav.ShardNavHost
             android:id="@+id/nav"
             android:layout_width="0dp"
             android:layout_height="0dp"

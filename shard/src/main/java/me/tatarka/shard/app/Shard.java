@@ -208,6 +208,13 @@ public class Shard implements ShardOwner {
         return context;
     }
 
+    @NonNull
+    @Override
+    public Factory getShardFactory() {
+        checkCreated();
+        return owner.getShardFactory();
+    }
+
     private ViewModelStore getOrCreateViewModelStore() {
         ShardManagerViewModel viewModel = ShardManagerViewModel.get(owner.getViewModelStore());
         if (viewModelId == -1) {

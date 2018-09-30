@@ -21,6 +21,7 @@ public class ShardActivity extends Activity implements ShardOwner {
     private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
     private ViewModelStore viewModelStore;
     private boolean isRetaining;
+    private Shard.Factory factory = Shard.DefaultFactory.getInstance();
 
     @Override
     @CallSuper
@@ -113,5 +114,11 @@ public class ShardActivity extends Activity implements ShardOwner {
     @Override
     public Context getContext() {
         return this;
+    }
+
+    @NonNull
+    @Override
+    public Shard.Factory getShardFactory() {
+        return factory;
     }
 }

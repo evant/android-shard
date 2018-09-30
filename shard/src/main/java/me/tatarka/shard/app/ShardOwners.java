@@ -58,6 +58,7 @@ public final class ShardOwners {
 
         private final Context context;
         final InstanceStateRegistry stateStore = new InstanceStateRegistry();
+        private final Shard.Factory factory = Shard.DefaultFactory.getInstance();
 
         private WrappingShardOwner(Context context) {
             this.context = context;
@@ -85,6 +86,12 @@ public final class ShardOwners {
         @Override
         public Context getContext() {
             return context;
+        }
+
+        @NonNull
+        @Override
+        public Shard.Factory getShardFactory() {
+            return factory;
         }
     }
 

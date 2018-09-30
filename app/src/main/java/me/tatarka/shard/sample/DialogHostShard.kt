@@ -3,14 +3,12 @@ package me.tatarka.shard.sample
 import android.view.View
 import me.tatarka.shard.app.Shard
 import me.tatarka.shard.app.ShardDialogHost
-import me.tatarka.shard.sample.dagger.DaggerShardFactory
 import javax.inject.Inject
 
-class DialogHostShard @Inject constructor(private val shardFactory: DaggerShardFactory) :
+class DialogHostShard @Inject constructor() :
     Shard() {
 
-    private val dialogHost: ShardDialogHost =
-        ShardDialogHost(this, shardFactory)
+    private val dialogHost: ShardDialogHost = ShardDialogHost(this)
 
     override fun onCreate() {
         super.onCreate()

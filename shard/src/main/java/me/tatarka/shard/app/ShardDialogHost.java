@@ -23,23 +23,13 @@ public class ShardDialogHost {
     private final ShardOwner owner;
     private final ShardManager fm;
     private final ArrayList<BaseDialogShard> dialogShards = new ArrayList<>();
-    private final Shard.Factory factory;
 
     public ShardDialogHost(Context context) {
-        this(context, Shard.DefaultFactory.getInstance());
-    }
-
-    public ShardDialogHost(Context context, Shard.Factory factory) {
-        this(ShardOwners.get(context), factory);
+        this(ShardOwners.get(context));
     }
 
     public ShardDialogHost(ShardOwner owner) {
-        this(owner, Shard.DefaultFactory.getInstance());
-    }
-
-    public ShardDialogHost(ShardOwner owner, Shard.Factory factory) {
         this.owner = owner;
-        this.factory = factory;
         fm = new ShardManager(owner);
         DialogHostCallbacks callbacks = new DialogHostCallbacks();
         owner.getInstanceStateStore().add(DIALOG_STATE, callbacks);
@@ -48,7 +38,7 @@ public class ShardDialogHost {
 
     @NonNull
     public Shard.Factory getShardFactory() {
-        return factory;
+        return owner.getShardFactory();
     }
 
     public void show(BaseDialogShard shard) {
@@ -96,7 +86,7 @@ public class ShardDialogHost {
             for (int i = 0, size = states.size(); i < size; i++) {
                 String name = states.keyAt(i);
                 Shard.State shardState = states.valueAt(i);
-                BaseDialogShard shard = factory.newInstance(name, shardState.getArgs());
+                BaseDialogShard shard = getShardFactory().newInstance(name, shardState.getArgs());
                 fm.restoreState(shard, shardState);
                 dialogShards.add(shard);
                 doShow(shard);
@@ -105,7 +95,7 @@ public class ShardDialogHost {
 
         @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         void onDestroy() {
-            for (BaseDialogShard shard: dialogShards) {
+            for (BaseDialogShard shard : dialogShards) {
                 shard.destroyDialog();
             }
         }

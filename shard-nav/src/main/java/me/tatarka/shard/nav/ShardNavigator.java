@@ -15,6 +15,7 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardManager;
+import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwners;
 import me.tatarka.shard.transition.ShardTransition;
 
@@ -23,26 +24,28 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
 
     private final ShardManager fm;
     private final FrameLayout container;
-    private Shard.Factory shardFactory = Shard.DefaultFactory.getInstance();
+    private Shard.Factory factory;
 
     public ShardNavigator(FrameLayout container) {
         this.container = container;
-        fm = new ShardManager(ShardOwners.get(container.getContext()));
+        ShardOwner owner = ShardOwners.get(container.getContext());
+        fm = new ShardManager(owner);
+        factory = owner.getShardFactory();
     }
 
     public void setShardFactory(@NonNull Shard.Factory factory) {
-        shardFactory = factory;
+        this.factory = factory;
     }
 
     @NonNull
     public Shard.Factory getShardFactory() {
-        return shardFactory;
+        return factory;
     }
 
     @NonNull
     @Override
     public Destination createDestination() {
-        return new Destination(this, shardFactory);
+        return new Destination(this, factory);
     }
 
     @NonNull
@@ -50,7 +53,7 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
     protected Page createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Extras navExtras) {
         Shard shard = destination.shardFactory.newInstance(destination.getName(), args != null ? args : Bundle.EMPTY);
         shard.setArgs(args);
-        return new Page(shardFactory, shard, navOptions);
+        return new Page(factory, shard, navOptions);
     }
 
     @Override
@@ -84,7 +87,7 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
     @NonNull
     @Override
     protected Page restorePageState(PageState state) {
-        return state.restore(fm, shardFactory);
+        return state.restore(fm, factory);
     }
 
     public static class Destination extends NavDestination {
