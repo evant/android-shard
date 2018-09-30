@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStoreOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
+import me.tatarka.shard.content.ComponentCallbacksOwner;
 import me.tatarka.shard.state.InstanceStateStoreOwner;
 
 /**
@@ -13,16 +14,13 @@ import me.tatarka.shard.state.InstanceStateStoreOwner;
  * a {@link ViewModelStoreOwner}, and a {@link InstanceStateStoreOwner}.See {@link ShardActivity}
  * for a simple implementation.
  */
-public interface ShardOwner extends LifecycleOwner, ViewModelStoreOwner, InstanceStateStoreOwner {
+public interface ShardOwner extends LifecycleOwner,
+        ViewModelStoreOwner,
+        InstanceStateStoreOwner,
+        ActivityCallbacksOwner,
+        ComponentCallbacksOwner,
+        ShardFactoryProvider {
     @NonNull
     Context getContext();
 
-    @NonNull
-    Shard.Factory getShardFactory();
-
-    @NonNull
-    ActivityCallbacks getActivityCallbacks();
-
-    @NonNull
-    ComponentCallbacks getComponentCallbacks();
 }

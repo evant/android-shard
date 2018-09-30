@@ -67,7 +67,6 @@ public final class ShardOwners {
         private final Context context;
         final InstanceStateRegistry stateStore = new InstanceStateRegistry();
         final ComponentCallbacksDispatcher callbacks = new ComponentCallbacksDispatcher();
-        private final Shard.Factory factory = Shard.DefaultFactory.getInstance();
 
         private WrappingShardOwner(Context context) {
             this.context = context;
@@ -100,13 +99,19 @@ public final class ShardOwners {
         @NonNull
         @Override
         public Shard.Factory getShardFactory() {
-            return factory;
+            return (context instanceof ShardFactoryProvider)
+                    ? ((ShardFactoryProvider) context).getShardFactory()
+                    : Shard.DefaultFactory.getInstance();
         }
 
         @NonNull
         @Override
         public ActivityCallbacks getActivityCallbacks() {
-            throw new UnsupportedOperationException();
+            if (context instanceof ActivityCallbacksOwner) {
+                return ((ActivityCallbacksOwner) context).getActivityCallbacks();
+            } else {
+                throw new UnsupportedOperationException();
+            }
         }
 
         @NonNull
