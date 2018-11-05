@@ -37,8 +37,8 @@ public class Shard implements ShardOwner {
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
-    private NestedActivityCallbackDispatcher activityCallbackDispatcher;
-    private final ComponentCallbacksDispatcher componentCallbacksDispatcher = new ComponentCallbacksDispatcher();
+    private NestedActivityCallbacksDispatcher activityCallbackDispatcher;
+    private ComponentCallbacksDispatcher componentCallbacksDispatcher;
     private final Observer observer = new Observer();
     private int viewModelId = -1;
     private Container container;
@@ -68,9 +68,9 @@ public class Shard implements ShardOwner {
             return;
         }
         this.owner = owner;
-        activityCallbackDispatcher = new NestedActivityCallbackDispatcher((BaseActivityCallbackDispatcher) owner.getActivityCallbacks(), stateStore);
-        ((ComponentCallbacksDispatcher) owner.getComponentCallbacks()).add(componentCallbacksDispatcher);
         context = new ShardOwnerContextWrapper(owner.getContext(), this);
+        activityCallbackDispatcher = new NestedActivityCallbacksDispatcher((BaseActivityCallbacksDispatcher) owner.getActivityCallbacks(), this);
+        componentCallbacksDispatcher = new ComponentCallbacksDispatcher(this);
         this.container = container;
 
         if (state != null && state.savedState != null) {
@@ -112,8 +112,6 @@ public class Shard implements ShardOwner {
         removeViewModelStore(viewModelId);
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         owner.getLifecycle().removeObserver(observer);
-        activityCallbackDispatcher.destroy();
-        ((ComponentCallbacksDispatcher) owner.getComponentCallbacks()).remove(componentCallbacksDispatcher);
 
         if (container != null && frame != null) {
             container.removeView(frame);

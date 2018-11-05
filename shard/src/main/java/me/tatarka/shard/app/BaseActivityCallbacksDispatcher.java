@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-abstract class BaseActivityCallbackDispatcher implements ActivityCallbacks {
+abstract class BaseActivityCallbacksDispatcher implements ActivityCallbacks {
 
     private final ArrayList<NestedCallbackListener> nestedCallbackListeners = new ArrayList<>();
     private final SparseArray<OnActivityResultListener> activityResultListeners = new SparseArray<>();

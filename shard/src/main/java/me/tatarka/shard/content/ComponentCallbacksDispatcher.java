@@ -1,22 +1,29 @@
 package me.tatarka.shard.content;
 
 import android.content.ComponentCallbacks2;
+import android.content.Context;
 import android.content.res.Configuration;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import me.tatarka.shard.app.ShardOwner;
 
-public class ComponentCallbacksDispatcher implements ComponentCallbacks, ComponentCallbacks2 {
+public class ComponentCallbacksDispatcher implements ComponentCallbacks {
 
     private final ArrayList<android.content.ComponentCallbacks2> componentCallbacks = new ArrayList<>();
+    final Context context;
+    final Lifecycle lifecycle;
 
-    public void add(@NonNull ComponentCallbacks2 callbacks) {
-        componentCallbacks.add(callbacks);
-    }
-
-    public void remove(@NonNull ComponentCallbacks2 callbacks) {
-        componentCallbacks.remove(callbacks);
+    public ComponentCallbacksDispatcher(ShardOwner owner) {
+        this.context = owner.getContext();
+        lifecycle = owner.getLifecycle();
+        Callbacks callbacks = new Callbacks();
+        context.registerComponentCallbacks(callbacks);
+        owner.getLifecycle().addObserver(callbacks);
     }
 
     @Override
@@ -51,24 +58,34 @@ public class ComponentCallbacksDispatcher implements ComponentCallbacks, Compone
         }
     }
 
-    @Override
-    public void onTrimMemory(int level) {
-        for (int i = 0, size = componentCallbacks.size(); i < size; i++) {
-            android.content.ComponentCallbacks2 listener = componentCallbacks.get(i);
-            listener.onTrimMemory(level);
-        }
-    }
+    class Callbacks implements ComponentCallbacks2, LifecycleObserver {
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        for (int i = 0, size = componentCallbacks.size(); i < size; i++) {
-            ComponentCallbacks2 listener = componentCallbacks.get(i);
-            listener.onConfigurationChanged(newConfig);
+        @Override
+        public void onTrimMemory(int level) {
+            for (int i = 0, size = componentCallbacks.size(); i < size; i++) {
+                android.content.ComponentCallbacks2 listener = componentCallbacks.get(i);
+                listener.onTrimMemory(level);
+            }
         }
-    }
 
-    @Override
-    public void onLowMemory() {
+        @Override
+        public void onConfigurationChanged(Configuration newConfig) {
+            for (int i = 0, size = componentCallbacks.size(); i < size; i++) {
+                ComponentCallbacks2 listener = componentCallbacks.get(i);
+                listener.onConfigurationChanged(newConfig);
+            }
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        void onDestroy() {
+            lifecycle.removeObserver(this);
+            context.unregisterComponentCallbacks(this);
+        }
+
+        @Override
+        public void onLowMemory() {
+
+        }
     }
 
     static class ConfigurationChangedComponentCallbacksAdapter implements android.content.ComponentCallbacks2 {

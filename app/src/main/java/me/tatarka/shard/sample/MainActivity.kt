@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var pageHost: ShardPageHost
 
-    override fun getShardFactory(): Shard.Factory = injector.shardFactory
+    override fun getShardFactory(): Shard.Factory = LeakLifecycleWatcher.wrap(injector.shardFactory)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -58,18 +58,13 @@ public final class ShardOwners {
             }
         }
 
-        @Nullable
-        static WrappingShardOwner find(Activity activity) {
-            StateCallbacks stateCallbacks = StateCallbacks.getInstance(activity);
-            return stateCallbacks.map.get(activity);
-        }
-
         private final Context context;
         final InstanceStateRegistry stateStore = new InstanceStateRegistry();
-        final ComponentCallbacksDispatcher callbacks = new ComponentCallbacksDispatcher();
+        final ComponentCallbacksDispatcher callbacks;
 
         private WrappingShardOwner(Context context) {
             this.context = context;
+            callbacks = new ComponentCallbacksDispatcher(this);
         }
 
         @NonNull
@@ -138,7 +133,6 @@ public final class ShardOwners {
         @Override
         public void onActivityCreated(Activity activity, @Nullable Bundle savedInstanceState) {
             WrappingShardOwner owner = WrappingShardOwner.of(activity);
-            activity.registerComponentCallbacks(owner.callbacks);
             if (savedInstanceState != null) {
                 Bundle state = savedInstanceState.getBundle(STATE_SHARD);
                 if (state != null) {
@@ -176,10 +170,6 @@ public final class ShardOwners {
 
         @Override
         public void onActivityDestroyed(Activity activity) {
-            WrappingShardOwner owner = WrappingShardOwner.find(activity);
-            if (owner != null) {
-                activity.unregisterComponentCallbacks(owner.callbacks);
-            }
         }
     }
 }

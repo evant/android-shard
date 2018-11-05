@@ -7,23 +7,29 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 import me.tatarka.shard.state.InstanceStateSaver;
-import me.tatarka.shard.state.InstanceStateStore;
 
-final class NestedActivityCallbackDispatcher extends BaseActivityCallbackDispatcher implements InstanceStateSaver<NestedActivityCallbackDispatcher.State>, BaseActivityCallbackDispatcher.NestedCallbackListener {
+final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher implements
+        InstanceStateSaver<NestedActivityCallbacksDispatcher.State>,
+        LifecycleObserver,
+        BaseActivityCallbacksDispatcher.NestedCallbackListener {
 
-    private static final String STATE_ACTIVITY_CALLBACK_DISPATCHER = "me.tatarka.shard.ActivityCallbackDispatcher";
+    private static final String STATE_ACTIVITY_CALLBACK_DISPATCHER = "me.tatarka.shard.ActivityCallbacksDispatcher";
 
-    private final BaseActivityCallbackDispatcher parentCallbacks;
-    private final InstanceStateStore stateStore;
+    private final BaseActivityCallbacksDispatcher parentCallbacks;
+    private final ShardOwner owner;
     private boolean pendingActivityResult;
     private boolean pendingRequestPermission;
 
-    NestedActivityCallbackDispatcher(BaseActivityCallbackDispatcher parentCallbacks, InstanceStateStore stateStore) {
+    NestedActivityCallbacksDispatcher(BaseActivityCallbacksDispatcher parentCallbacks, ShardOwner owner) {
         this.parentCallbacks = parentCallbacks;
-        this.stateStore = stateStore;
         parentCallbacks.addNestedCallbackListener(this);
-        stateStore.add(STATE_ACTIVITY_CALLBACK_DISPATCHER, this);
+        this.owner = owner;
+        owner.getInstanceStateStore().add(STATE_ACTIVITY_CALLBACK_DISPATCHER, this);
+        owner.getLifecycle().addObserver(this);
     }
 
     @Override
@@ -103,9 +109,10 @@ final class NestedActivityCallbackDispatcher extends BaseActivityCallbackDispatc
         dispatchOnMultiWindowModeChanged(isInPictureInPictureMode);
     }
 
-    public void destroy() {
-        stateStore.remove(STATE_ACTIVITY_CALLBACK_DISPATCHER);
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    void onDestroy() {
         parentCallbacks.removeNestedCallbackListener(this);
+        owner.getLifecycle().removeObserver(this);
     }
 
     public static class State implements Parcelable {

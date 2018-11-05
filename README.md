@@ -1,8 +1,8 @@
 # Shard
 
-'Fragments' with a simpler api built on top of the android architecture components
+Shards are 'Fragments' with a simpler api built on top of the android architecture components. 
 
-**Stablity**: All important features are implemented but there may be some api changes before `1.0.0`.
+**Stability**: All important features are implemented but there may be some api changes before `1.0.0`.
 
 ## Download
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/me.tatarka.shard/shard/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/me.tatarka.shard/shard)

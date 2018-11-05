@@ -8,11 +8,11 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public final class ActivityCallbackDispatcher extends BaseActivityCallbackDispatcher {
+public final class ActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher {
 
     private final Activity activity;
 
-    public ActivityCallbackDispatcher(Activity activity) {
+    public ActivityCallbacksDispatcher(Activity activity) {
         this.activity = activity;
     }
 

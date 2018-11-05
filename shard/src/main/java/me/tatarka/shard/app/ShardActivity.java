@@ -22,8 +22,8 @@ public class ShardActivity extends Activity implements ShardOwner {
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
-    private final ActivityCallbackDispatcher activityCallbackDispatcher = new ActivityCallbackDispatcher(this);
-    private final ComponentCallbacksDispatcher componentCallbacksDispatcher = new ComponentCallbacksDispatcher();
+    private ActivityCallbacksDispatcher activityCallbackDispatcher;
+    private ComponentCallbacksDispatcher componentCallbacksDispatcher;
     private ViewModelStore viewModelStore;
     private boolean isRetaining;
     private Shard.Factory factory = Shard.DefaultFactory.getInstance();
@@ -38,8 +38,9 @@ public class ShardActivity extends Activity implements ShardOwner {
                 stateStore.onRestoreInstanceState(state);
             }
         }
-        registerComponentCallbacks(componentCallbacksDispatcher);
         viewModelStore = (ViewModelStore) getLastNonConfigurationInstance();
+        activityCallbackDispatcher = new ActivityCallbacksDispatcher(this);
+        componentCallbacksDispatcher = new ComponentCallbacksDispatcher(this);
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
     }
 
@@ -93,7 +94,6 @@ public class ShardActivity extends Activity implements ShardOwner {
             viewModelStore.clear();
         }
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
-        unregisterComponentCallbacks(componentCallbacksDispatcher);
     }
 
     @NonNull
