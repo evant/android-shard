@@ -35,14 +35,14 @@ final class IntArrayStack implements Parcelable {
     }
 
     private int[] toArray() {
-        if (elements == ZERO_ARRAY) {
+        if (elements.length == 0) {
             return ZERO_ARRAY;
         }
         return Arrays.copyOfRange(elements, 0, size);
     }
 
     public void push(int value) {
-        if (elements == ZERO_ARRAY) {
+        if (elements.length == 0) {
             elements = new int[8];
         }
         elements[size++] = value;

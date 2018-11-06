@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.NavigationRes;
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
@@ -44,6 +43,9 @@ public class ShardNavHost extends FrameLayout implements NavHost {
             ShardNavigator shardNavigator = new ShardNavigator(this);
             navController.getNavigatorProvider().addNavigator(shardNavigator);
         }
+        if (graphId != 0 && !owner.getInstanceStateStore().isStateRestored()) {
+            navController.setGraph(graphId);
+        }
     }
 
     public void setGraph(NavGraph graph) {
@@ -63,15 +65,6 @@ public class ShardNavHost extends FrameLayout implements NavHost {
     }
 
     @Override
-    @CallSuper
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (graphId != 0 && !owner.getInstanceStateStore().isStateRestored()) {
-            navController.setGraph(graphId);
-        }
-    }
-
-    @Override
     protected Parcelable onSaveInstanceState() {
         return new SavedState(super.onSaveInstanceState(), navController.saveState());
     }
@@ -81,6 +74,9 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         SavedState savedState = (SavedState) state;
         super.onRestoreInstanceState(savedState.getSuperState());
         navController.restoreState(savedState.navState);
+        if (graphId != 0) {
+            navController.setGraph(graphId);
+        }
     }
 
     @NonNull

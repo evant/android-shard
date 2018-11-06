@@ -62,14 +62,8 @@ public class ShardPageHost extends FrameLayout {
             }
             a.recycle();
         }
-    }
-
-    @Override
-    @CallSuper
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
         if (!isInEditMode()) {
-            if (shard == null && startPage != 0 && !owner.getInstanceStateStore().isStateRestored()) {
+            if (startPage != 0 && !owner.getInstanceStateStore().isStateRestored()) {
                 setCurrentPage(startPage, null);
             }
         }
@@ -118,7 +112,7 @@ public class ShardPageHost extends FrameLayout {
         setCurrentPage(id, null);
     }
 
-    public void setCurrentPage(@IdRes int id, @Nullable ShardTransition transition) {
+    public final void setCurrentPage(@IdRes int id, @Nullable ShardTransition transition) {
         if (currentPage == id) {
             return;
         }

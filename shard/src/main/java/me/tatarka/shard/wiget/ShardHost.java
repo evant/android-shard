@@ -9,7 +9,6 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.tatarka.shard.R;
@@ -56,14 +55,8 @@ public class ShardHost extends FrameLayout {
             }
             a.recycle();
         }
-    }
-
-    @Override
-    @CallSuper
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
         if (!isInEditMode()) {
-            if (shard == null && initialName != null && !owner.getInstanceStateStore().isStateRestored()) {
+            if (initialName != null && !owner.getInstanceStateStore().isStateRestored()) {
                 shard = getShardFactory().newInstance(initialName, Bundle.EMPTY);
                 fm.add(shard, this);
             }
