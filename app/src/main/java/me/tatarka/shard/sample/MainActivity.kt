@@ -34,20 +34,4 @@ class MainActivity : AppCompatActivity() {
         }
         bottomNav.setupWithPageHost(pageHost)
     }
-
-    override fun onBackPressed() {
-        val shard = pageHost.shard
-        if (!(shard is NavInterface && shard.onBackPressed())) {
-            super.onBackPressed()
-        }
-    }
-
-    override fun onNavigateUp(): Boolean {
-        val shard = pageHost.shard
-        return if (shard is NavInterface && shard.onNavigateUp()) {
-            true
-        } else {
-            super.onNavigateUp()
-        }
-    }
 }

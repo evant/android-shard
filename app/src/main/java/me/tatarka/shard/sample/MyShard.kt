@@ -20,8 +20,8 @@ open class MyShard @Inject constructor(
 
     override fun onCreate() {
         super.onCreate()
-        activityCallbacks.addOnMultiWindowModeChangedListener(callbacksLogger)
-        activityCallbacks.addOnPictureInPictureModeChangedListener(callbacksLogger)
+        activityCallbacks.addOnMultiWindowModeChangedCallback(callbacksLogger)
+        activityCallbacks.addOnPictureInPictureModeChangedCallback(callbacksLogger)
         componentCallbacks.addOnConfigurationChangedListener(callbacksLogger)
         componentCallbacks.addOnTrimMemoryListener(callbacksLogger)
         lifecycle.addObserver(lifecycleLogger)

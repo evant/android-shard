@@ -21,11 +21,11 @@ class DialogHostShard @Inject constructor() :
     override fun onCreate() {
         super.onCreate()
         setContentView(R.layout.dialogs)
-        activityCallbacks.addOnActivityResultListener(REQUEST_CODE_ACTIVITY) { resultCode, _ ->
+        activityCallbacks.addOnActivityResultCallback(REQUEST_CODE_ACTIVITY) { resultCode, _ ->
             requireViewById<Button>(R.id.start_activity_for_result).text =
                     "Result: ${if (resultCode == Activity.RESULT_OK) "Ok" else "Cancel"}"
         }
-        activityCallbacks.addOnRequestPermissionResultListener(REQUEST_CODE_PERMISSION) { _, grantResults ->
+        activityCallbacks.addOnRequestPermissionResultCallback(REQUEST_CODE_PERMISSION) { _, grantResults ->
             requireViewById<Button>(R.id.request_permission).text =
                     "Result: ${if (grantResults[0] == PackageManager.PERMISSION_GRANTED) "Granted" else "Denied"}"
         }

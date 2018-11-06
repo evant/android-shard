@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
+import me.tatarka.shard.activity.OnNavigateUpCallback;
 import me.tatarka.shard.state.InstanceStateSaver;
 
 final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher implements
@@ -20,14 +23,13 @@ final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispa
     private static final String STATE_ACTIVITY_CALLBACK_DISPATCHER = "me.tatarka.shard.ActivityCallbacksDispatcher";
 
     private final BaseActivityCallbacksDispatcher parentCallbacks;
-    private final ShardOwner owner;
     private boolean pendingActivityResult;
     private boolean pendingRequestPermission;
 
     NestedActivityCallbacksDispatcher(BaseActivityCallbacksDispatcher parentCallbacks, ShardOwner owner) {
+        super(owner);
         this.parentCallbacks = parentCallbacks;
         parentCallbacks.addNestedCallbackListener(this);
-        this.owner = owner;
         owner.getInstanceStateStore().add(STATE_ACTIVITY_CALLBACK_DISPATCHER, this);
         owner.getLifecycle().addObserver(this);
     }
@@ -63,6 +65,26 @@ final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispa
     @Override
     public boolean isInPictureInPictureMode() {
         return parentCallbacks.isInPictureInPictureMode();
+    }
+
+    @Override
+    public void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback callback) {
+        parentCallbacks.addOnBackPressedCallback(owner, callback);
+    }
+
+    @Override
+    public void removeOnBackPressedCallback(OnBackPressedCallback callback) {
+        parentCallbacks.removeOnBackPressedCallback(callback);
+    }
+
+    @Override
+    public void addOnNavigateUpCallback(LifecycleOwner owner, OnNavigateUpCallback onNavigateUpCallback) {
+        parentCallbacks.addOnNavigateUpCallback(owner, onNavigateUpCallback);
+    }
+
+    @Override
+    public void removeOnNavigateUpCallback(OnNavigateUpCallback onNavigateUpCallback) {
+        parentCallbacks.removeOnNavigateUpCallback(onNavigateUpCallback);
     }
 
     @Nullable
@@ -112,7 +134,7 @@ final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispa
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     void onDestroy() {
         parentCallbacks.removeNestedCallbackListener(this);
-        owner.getLifecycle().removeObserver(this);
+        lifecycleOwner.getLifecycle().removeObserver(this);
     }
 
     public static class State implements Parcelable {

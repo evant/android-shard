@@ -8,7 +8,7 @@ import androidx.navigation.ui.setupWithNavController
 import me.tatarka.shard.app.Shard
 import javax.inject.Inject
 
-class NavigationShard @Inject constructor() : Shard(), NavInterface {
+class NavigationShard @Inject constructor() : Shard() {
 
     lateinit var controller: NavController
 
@@ -20,9 +20,8 @@ class NavigationShard @Inject constructor() : Shard(), NavInterface {
         requireViewById<View>(R.id.root).setOnClickListener { controller.navigate(R.id.root) }
         requireViewById<View>(R.id.dest1).setOnClickListener { controller.navigate(R.id.dest1) }
         requireViewById<View>(R.id.dest2).setOnClickListener { controller.navigate(R.id.dest2) }
+
+        activityCallbacks.addOnNavigateUpCallback { controller.navigateUp() }
+        activityCallbacks.addOnBackPressedCallback { controller.popBackStack() }
     }
-
-    override fun onBackPressed(): Boolean = controller.popBackStack()
-
-    override fun onNavigateUp(): Boolean = controller.navigateUp()
 }

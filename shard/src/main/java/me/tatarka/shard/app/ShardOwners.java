@@ -14,6 +14,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
+import me.tatarka.shard.activity.ActivityCallbacks;
+import me.tatarka.shard.activity.ActivityCallbacksOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.content.ComponentCallbacksDispatcher;
 import me.tatarka.shard.state.InstanceStateRegistry;

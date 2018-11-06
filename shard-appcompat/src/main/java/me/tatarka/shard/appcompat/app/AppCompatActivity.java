@@ -511,7 +511,7 @@ public class AppCompatActivity extends ShardActivity implements AppCompatCallbac
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         getDelegate().onSaveInstanceState(outState);
     }

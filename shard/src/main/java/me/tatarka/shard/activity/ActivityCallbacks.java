@@ -1,10 +1,15 @@
-package me.tatarka.shard.app;
+package me.tatarka.shard.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.ComponentActivity;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 public interface ActivityCallbacks {
 
@@ -54,7 +59,7 @@ public interface ActivityCallbacks {
      */
     void startActivityForResult(@NonNull Intent intent, int requestCode, @Nullable Bundle options);
 
-    interface OnActivityResultListener {
+    interface OnActivityResultCallback {
         /**
          * Called when an activity you launched exits, giving you the requestCode
          * you started it with, the resultCode it returned, and any additional
@@ -80,9 +85,9 @@ public interface ActivityCallbacks {
         void onActivityResult(int resultCode, @Nullable Intent data);
     }
 
-    void addOnActivityResultListener(int requestCode, @NonNull OnActivityResultListener listener);
+    void addOnActivityResultCallback(int requestCode, @NonNull OnActivityResultCallback onActivityResultCallback);
 
-    void removeActivityResultListener(int requestCode);
+    void removeActivityResultCallback(int requestCode);
 
     /**
      * Requests permissions to be granted to this application. These permissions
@@ -166,11 +171,11 @@ public interface ActivityCallbacks {
      * @return Whether you can show permission rationale UI.
      * @see android.content.Context#checkSelfPermission(String)
      * @see #requestPermissions(String[], int)
-     * @see OnRequestPermissionResultListener#onRequestPermissionResult(int, String[], int[])
+     * @see OnRequestPermissionResultCallback#onRequestPermissionResult(String[], int[])
      */
     boolean shouldShowRequestPermissionRationale(@NonNull String permission);
 
-    interface OnRequestPermissionResultListener {
+    interface OnRequestPermissionResultCallback {
 
         /**
          * Callback for the result from requesting permissions. This method
@@ -190,13 +195,13 @@ public interface ActivityCallbacks {
         void onRequestPermissionResult(@NonNull String[] permissions, @NonNull int[] grantResults);
     }
 
-    void addOnRequestPermissionResultListener(int requestCode, @NonNull OnRequestPermissionResultListener listener);
+    void addOnRequestPermissionResultCallback(int requestCode, @NonNull OnRequestPermissionResultCallback onRequestPermissionResultCallback);
 
-    void removeOnRequestPermissionResultListener(int requestCode);
+    void removeOnRequestPermissionResultCallback(int requestCode);
 
     boolean isInMultiWindowMode();
 
-    interface OnMultiWindowModeChangedListener {
+    interface OnMultiWindowModeChangedCallback {
         /**
          * Called when the Fragment's activity changes from fullscreen mode to multi-window mode and
          * visa-versa. This is generally tied to {@link android.app.Activity#onMultiWindowModeChanged} of the
@@ -207,13 +212,13 @@ public interface ActivityCallbacks {
         void onMultiWindowModeChanged(boolean isInMultiWindowMode);
     }
 
-    void addOnMultiWindowModeChangedListener(@NonNull OnMultiWindowModeChangedListener listener);
+    void addOnMultiWindowModeChangedCallback(@NonNull OnMultiWindowModeChangedCallback onMultiWindowModeChangedCallback);
 
-    void removeOnMultiWindowModeChangedListener(@NonNull OnMultiWindowModeChangedListener listener);
+    void removeOnMultiWindowModeChangedCallback(@NonNull OnMultiWindowModeChangedCallback onMultiWindowModeChangedCallback);
 
     boolean isInPictureInPictureMode();
 
-    interface OnPictureInPictureModeChangedListener {
+    interface OnPictureInPictureModeChangedCallback {
         /**
          * Called by the system when the activity changes to and from picture-in-picture mode. This is
          * generally tied to {@link android.app.Activity#onPictureInPictureModeChanged} of the containing Activity.
@@ -223,7 +228,61 @@ public interface ActivityCallbacks {
         void onPictureInPictureModeChanged(boolean isInPictureInPictureMode);
     }
 
-    void addOnPictureInPictureModeChangedListener(@NonNull OnPictureInPictureModeChangedListener listener);
+    void addOnPictureInPictureModeChangedCallback(@NonNull OnPictureInPictureModeChangedCallback onPictureInPictureModeChangedCallback);
 
-    void removeOnPictureInPictureModeChangedListener(@NonNull OnPictureInPictureModeChangedListener listener);
+    void removeOnPictureInPictureModeChangedCallback(@NonNull OnPictureInPictureModeChangedCallback onPictureInPictureModeChangedCallback);
+
+    /**
+     * Add a new {@link OnBackPressedCallback}. Callbacks are invoked in order of recency, so
+     * this newly added {@link OnBackPressedCallback} will be the first callback to receive a
+     * callback if {@link Activity#onBackPressed()} is called. Only if this callback returns
+     * <code>false</code> from its {@link OnBackPressedCallback#handleOnBackPressed()} will any
+     * previously added callback be called.
+     *
+     * @param onBackPressedCallback The callback to add
+     * @see Activity#onBackPressed()
+     * @see #removeOnBackPressedCallback(OnBackPressedCallback)
+     */
+    void addOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback);
+
+    /**
+     * Remove a previously
+     * {@link #addOnNavigateUpCallback(OnNavigateUpCallback)} added}
+     * {@link OnBackPressedCallback} instance. The callback won't be called for any future
+     * {@link Activity#onBackPressed()} calls, but may still receive a callback if this method is called
+     * during the dispatch of an ongoing {@link Activity#onBackPressed()} call.
+     * <p>
+     * This call is usually not necessary as callbacks will be automatically removed when their
+     * associated {@link LifecycleOwner} is {@link Lifecycle.State#DESTROYED destroyed}.
+     *
+     * @param onBackPressedCallback The callback to remove
+     */
+    void removeOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback);
+
+    /**
+     * Add a new {@link OnNavigateUpCallback}. Callbacks are invoked in order of recency, so
+     * this newly added {@link OnNavigateUpCallback} will be the first callback to receive a
+     * callback if {@link Activity#onNavigateUp()} ()} is called. Only if this callback returns
+     * <code>false</code> from its {@link OnNavigateUpCallback#handleOnNavigateUp()} will any
+     * previously added callback be called.
+     *
+     * @param onNavigateUpCallback The callback to add
+     * @see Activity#onNavigateUp()
+     * @see #removeOnNavigateUpCallback(OnNavigateUpCallback)
+     */
+    void addOnNavigateUpCallback(OnNavigateUpCallback onNavigateUpCallback);
+
+    /**
+     * Remove a previously
+     * {@link #addOnNavigateUpCallback(OnNavigateUpCallback)} added}
+     * {@link OnNavigateUpCallback} instance. The callback won't be called for any future
+     * {@link Activity#onNavigateUp()} calls, but may still receive a callback if this method is called
+     * during the dispatch of an ongoing {@link Activity#onNavigateUp()} call.
+     * <p>
+     * This call is usually not necessary as callbacks will be automatically removed when their
+     * associated {@link LifecycleOwner} is {@link Lifecycle.State#DESTROYED destroyed}.
+     *
+     * @param onNavigateUpCallback The callback to remove
+     */
+    void removeOnNavigateUpCallback(OnNavigateUpCallback onNavigateUpCallback);
 }

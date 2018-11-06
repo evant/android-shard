@@ -5,62 +5,85 @@ import android.util.SparseArray;
 
 import java.util.ArrayList;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
+import me.tatarka.shard.activity.ActivityCallbacks;
+import me.tatarka.shard.activity.OnNavigateUpCallback;
 
 abstract class BaseActivityCallbacksDispatcher implements ActivityCallbacks {
 
+    protected final LifecycleOwner lifecycleOwner;
     private final ArrayList<NestedCallbackListener> nestedCallbackListeners = new ArrayList<>();
-    private final SparseArray<OnActivityResultListener> activityResultListeners = new SparseArray<>();
-    private final SparseArray<OnRequestPermissionResultListener> requestPermissionResultListeners = new SparseArray<>();
-    private final ArrayList<OnMultiWindowModeChangedListener> multiWindowModeChangedListeners = new ArrayList<>();
-    private final ArrayList<OnPictureInPictureModeChangedListener> pictureInPictureModeChangedListeners = new ArrayList<>();
+    private final SparseArray<OnActivityResultCallback> activityResultListeners = new SparseArray<>();
+    private final SparseArray<OnRequestPermissionResultCallback> requestPermissionResultListeners = new SparseArray<>();
+    private final ArrayList<OnMultiWindowModeChangedCallback> multiWindowModeChangedListeners = new ArrayList<>();
+    private final ArrayList<OnPictureInPictureModeChangedCallback> pictureInPictureModeChangedListeners = new ArrayList<>();
+
+    protected BaseActivityCallbacksDispatcher(LifecycleOwner lifecycleOwner) {
+        this.lifecycleOwner = lifecycleOwner;
+    }
 
     @Override
-    public void addOnActivityResultListener(int requestCode, @NonNull OnActivityResultListener listener) {
+    public void addOnActivityResultCallback(int requestCode, @NonNull OnActivityResultCallback listener) {
         activityResultListeners.put(requestCode, listener);
     }
 
     @Override
-    public void removeActivityResultListener(int requestCode) {
+    public void removeActivityResultCallback(int requestCode) {
         activityResultListeners.remove(requestCode);
     }
 
     @Override
-    public void addOnRequestPermissionResultListener(int requestCode, @NonNull OnRequestPermissionResultListener listener) {
+    public void addOnRequestPermissionResultCallback(int requestCode, @NonNull OnRequestPermissionResultCallback listener) {
         requestPermissionResultListeners.put(requestCode, listener);
     }
 
     @Override
-    public void removeOnRequestPermissionResultListener(int requestCode) {
+    public void removeOnRequestPermissionResultCallback(int requestCode) {
         requestPermissionResultListeners.remove(requestCode);
     }
 
-    public void addNestedCallbackListener(@NonNull NestedCallbackListener listener) {
+    protected void addNestedCallbackListener(@NonNull NestedCallbackListener listener) {
         nestedCallbackListeners.add(listener);
     }
 
-    public void removeNestedCallbackListener(@NonNull NestedCallbackListener listener) {
+    protected void removeNestedCallbackListener(@NonNull NestedCallbackListener listener) {
         nestedCallbackListeners.remove(listener);
     }
 
     @Override
-    public void addOnMultiWindowModeChangedListener(@NonNull OnMultiWindowModeChangedListener listener) {
+    public final void addOnBackPressedCallback(OnBackPressedCallback callback) {
+        addOnBackPressedCallback(lifecycleOwner, callback);
+    }
+
+    protected abstract void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback callback);
+
+    @Override
+    public final void addOnNavigateUpCallback(OnNavigateUpCallback onNavigateUpCallback) {
+        addOnNavigateUpCallback(lifecycleOwner, onNavigateUpCallback);
+    }
+
+    protected abstract void addOnNavigateUpCallback(LifecycleOwner owner, OnNavigateUpCallback onNavigateUpCallback);
+
+    @Override
+    public void addOnMultiWindowModeChangedCallback(@NonNull OnMultiWindowModeChangedCallback listener) {
         multiWindowModeChangedListeners.add(listener);
     }
 
     @Override
-    public void removeOnMultiWindowModeChangedListener(@NonNull OnMultiWindowModeChangedListener listener) {
+    public void removeOnMultiWindowModeChangedCallback(@NonNull OnMultiWindowModeChangedCallback listener) {
         multiWindowModeChangedListeners.remove(listener);
     }
 
     @Override
-    public void addOnPictureInPictureModeChangedListener(@NonNull OnPictureInPictureModeChangedListener listener) {
+    public void addOnPictureInPictureModeChangedCallback(@NonNull OnPictureInPictureModeChangedCallback listener) {
         pictureInPictureModeChangedListeners.add(listener);
     }
 
     @Override
-    public void removeOnPictureInPictureModeChangedListener(@NonNull OnPictureInPictureModeChangedListener listener) {
+    public void removeOnPictureInPictureModeChangedCallback(@NonNull OnPictureInPictureModeChangedCallback listener) {
         pictureInPictureModeChangedListeners.remove(listener);
     }
 
@@ -72,7 +95,7 @@ abstract class BaseActivityCallbacksDispatcher implements ActivityCallbacks {
             }
         }
 
-        OnActivityResultListener listener = activityResultListeners.get(requestCode);
+        OnActivityResultCallback listener = activityResultListeners.get(requestCode);
         if (listener != null) {
             listener.onActivityResult(resultCode, data);
         }
@@ -86,7 +109,7 @@ abstract class BaseActivityCallbacksDispatcher implements ActivityCallbacks {
             }
         }
 
-        OnRequestPermissionResultListener listener = requestPermissionResultListeners.get(requestCode);
+        OnRequestPermissionResultCallback listener = requestPermissionResultListeners.get(requestCode);
         if (listener != null) {
             listener.onRequestPermissionResult(permissions, grantResults);
         }
@@ -98,7 +121,7 @@ abstract class BaseActivityCallbacksDispatcher implements ActivityCallbacks {
             listener.onMultiWindowModeChanged(isInMultiWindowMode);
         }
         for (int i = 0, size = multiWindowModeChangedListeners.size(); i < size; i++) {
-            OnMultiWindowModeChangedListener listener = multiWindowModeChangedListeners.get(i);
+            OnMultiWindowModeChangedCallback listener = multiWindowModeChangedListeners.get(i);
             listener.onMultiWindowModeChanged(isInMultiWindowMode);
         }
     }
@@ -109,7 +132,7 @@ abstract class BaseActivityCallbacksDispatcher implements ActivityCallbacks {
             listener.onPictureInPictureModeChanged(isInPictureInPictureMode);
         }
         for (int i = 0, size = pictureInPictureModeChangedListeners.size(); i < size; i++) {
-            OnPictureInPictureModeChangedListener listener = pictureInPictureModeChangedListeners.get(i);
+            OnPictureInPictureModeChangedCallback listener = pictureInPictureModeChangedListeners.get(i);
             listener.onPictureInPictureModeChanged(isInPictureInPictureMode);
         }
     }

@@ -1,14 +1,14 @@
 package me.tatarka.shard.test;
 
-import android.app.Activity;
 import android.content.Context;
 
+import androidx.activity.ComponentActivity;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.test.InstrumentationRegistry;
-import me.tatarka.shard.app.ActivityCallbacks;
+import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.app.ActivityCallbacksDispatcher;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
@@ -25,7 +25,7 @@ public class TestShardOwner implements ShardOwner {
     final ActivityCallbacks activityCallbacks;
     final ComponentCallbacks componentCallbacks = new ComponentCallbacksDispatcher(this);
 
-    public TestShardOwner(Activity activity) {
+    public TestShardOwner(ComponentActivity activity) {
         activityCallbacks = new ActivityCallbacksDispatcher(activity);
     }
 

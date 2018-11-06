@@ -18,7 +18,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import me.tatarka.shard.app.ActivityCallbacks;
+import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardManager;
 import me.tatarka.shard.app.ShardOwner;
