@@ -1,7 +1,7 @@
 apply from: '../library.gradle'
 
 dependencies {
-    def nav_version = '1.0.0-alpha06'
+    def nav_version = '1.0.0-alpha07'
 
     api project(':shard')
     api "android.arch.navigation:navigation-runtime:$nav_version"
@@ -9,7 +9,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     androidTestImplementation "android.arch.navigation:navigation-testing:$nav_version"
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test:rules:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 }

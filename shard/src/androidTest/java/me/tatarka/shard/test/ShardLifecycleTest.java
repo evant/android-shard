@@ -26,7 +26,7 @@ public class ShardLifecycleTest {
 
     @Before
     public void setup() {
-        TestShardOwner owner = new TestShardOwner();
+        TestShardOwner owner = new TestShardOwner(null);
         registry = owner.lifecycleRegistry;
         fm = new ShardManager(owner);
         container = new FrameLayout(InstrumentationRegistry.getTargetContext());

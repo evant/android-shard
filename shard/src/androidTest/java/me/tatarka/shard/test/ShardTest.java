@@ -27,7 +27,7 @@ public class ShardTest {
 
     @Before
     public void setup() {
-        fm = new ShardManager(new TestShardOwner());
+        fm = new ShardManager(new TestShardOwner(null));
         container = new FrameLayout(InstrumentationRegistry.getTargetContext());
     }
 
