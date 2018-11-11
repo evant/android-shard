@@ -14,6 +14,7 @@ import androidx.annotation.AnimatorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.TransitionRes;
+import androidx.collection.ArrayMap;
 
 import static me.tatarka.shard.transition.AnimUtil.loadAnim;
 

@@ -2,6 +2,7 @@ package me.tatarka.shard.sample
 
 import android.view.View
 import me.tatarka.shard.app.Shard
+import me.tatarka.shard.transition.ShardTransitionCompat
 import me.tatarka.shard.wiget.ShardHost
 import javax.inject.Inject
 
@@ -11,13 +12,14 @@ class SimpleHostShard @Inject constructor() : Shard() {
         super.onCreate()
         setContentView(R.layout.simple_host)
         val host: ShardHost = requireViewById(R.id.host)
+        host.defaultTransition =
+                ShardTransitionCompat.fromTransitionRes(context, R.transition.square_transition)
+
         requireViewById<View>(R.id.one).setOnClickListener {
-            host.shard =
-                    shardFactory.newInstance<MyShard>().withNumber(1)
+            host.shard = shardFactory.newInstance<ShardSquareLeft>()
         }
         requireViewById<View>(R.id.two).setOnClickListener {
-            host.shard =
-                    shardFactory.newInstance<MyShard>().withNumber(2)
+            host.shard = shardFactory.newInstance<ShardSquareRight>()
         }
     }
 }

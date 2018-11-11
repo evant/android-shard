@@ -19,6 +19,21 @@ abstract class ShardModule {
 
     @Binds
     @IntoMap
+    @ShardKey(ShardSquareLeft::class)
+    internal abstract fun shardSquareLeft(shard: ShardSquareLeft): Shard
+
+    @Binds
+    @IntoMap
+    @ShardKey(ShardSquareMiddle::class)
+    internal abstract fun shardSquareMiddle(shard: ShardSquareMiddle): Shard
+
+    @Binds
+    @IntoMap
+    @ShardKey(ShardSquareRight::class)
+    internal abstract fun shardSquareRight(shard: ShardSquareRight): Shard
+
+    @Binds
+    @IntoMap
     @ShardKey(SimpleHostShard::class)
     internal abstract fun simpleHostShard(shard: SimpleHostShard): Shard
 

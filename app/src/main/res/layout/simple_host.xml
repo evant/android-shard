@@ -29,8 +29,6 @@
             android:name="me.tatarka.shard.sample.MyShard"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
             app:layout_constraintBottom_toTopOf="@+id/one"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

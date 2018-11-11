@@ -3,4 +3,5 @@ include ':app',
         ':shard-appcompat',
         ':shard-host-ui',
         ':shard-nav',
-        ':shard-pager'
+        ':shard-pager',
+        ':shard-transition'
