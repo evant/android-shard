@@ -113,6 +113,10 @@ public abstract class ShardTransition {
         public void captureBefore(ViewGroup view) {
             if (exitAnimation != null) {
                 container = (ViewGroup) view.getParent();
+                if (oldView != null) {
+                    // Ensure previous transition was ended so we don't leak.
+                    container.endViewTransition(oldView);
+                }
                 oldView = view;
                 container.startViewTransition(view);
                 exitAnimation.setAnimationListener(this);
@@ -146,6 +150,9 @@ public abstract class ShardTransition {
         @Override
         public void onAnimationEnd(Animation animation) {
             container.endViewTransition(oldView);
+            container = null;
+            oldView = null;
+            newView = null;
         }
 
         @Override
@@ -172,6 +179,10 @@ public abstract class ShardTransition {
             if (exitAnimator != null) {
                 exitAnimator.setTarget(view);
                 container = (ViewGroup) view.getParent();
+                if (oldView != null) {
+                    // Ensure previous transition was ended so we don't leak.
+                    container.endViewTransition(oldView);
+                }
                 oldView = view;
                 container.startViewTransition(view);
                 exitAnimator.addListener(this);
@@ -203,6 +214,8 @@ public abstract class ShardTransition {
         @Override
         public void onAnimationEnd(Animator animation) {
             container.endViewTransition(oldView);
+            container = null;
+            oldView = null;
         }
 
         @Override

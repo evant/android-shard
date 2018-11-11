@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.view.LayoutInflater;
 
+import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStoreOwner;
 
-public class ShardOwnerContextWrapper extends ContextWrapper {
+public class ShardOwnerContextWrapper extends ContextWrapper implements LifecycleObserver {
     static final String SHARD_OWNER = "me.tatarka.shard.app.ShardOwner";
     private final Object owner;
     private LayoutInflater inflater;

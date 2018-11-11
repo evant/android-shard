@@ -15,7 +15,6 @@ import androidx.lifecycle.GenericLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import me.tatarka.shard.activity.OnNavigateUpCallback;
-import me.tatarka.shard.app.BaseActivityCallbacksDispatcher;
 
 public final class ActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher {
 

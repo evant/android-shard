@@ -37,6 +37,17 @@ import me.tatarka.shard.state.InstanceStateStore;
 public class Shard implements ShardOwner {
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+    {
+        lifecycleRegistry.addObserver(new LifecycleObserver() {
+            @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+            void onLifecyleEvent() {
+                if (frame != null) {
+                    frame.cancelPendingInputEvents();
+                }
+            }
+        });
+    }
+
     private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
     private NestedActivityCallbacksDispatcher activityCallbackDispatcher;
     private ComponentCallbacksDispatcher componentCallbacksDispatcher;
@@ -78,7 +89,6 @@ public class Shard implements ShardOwner {
             stateStore.onRestoreInstanceState(state.savedState);
         }
         onCreate();
-
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 
         owner.getLifecycle().addObserver(observer);

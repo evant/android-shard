@@ -12,7 +12,14 @@ class LeakLifecycleWatcher(private val shard: Shard) : LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
         shard.lifecycle.removeObserver(this)
-        LeakCanary.installedRefWatcher().watch(shard, "Shard")
+        // An animation might be running, wait a bit for it to finish.
+        if (shard.view != null) {
+            shard.view.postDelayed({
+                LeakCanary.installedRefWatcher().watch(shard, "Shard")
+            }, 500)
+        } else {
+            LeakCanary.installedRefWatcher().watch(shard, "Shard")
+        }
     }
 
     companion object {

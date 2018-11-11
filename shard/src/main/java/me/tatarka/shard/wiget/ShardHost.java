@@ -88,7 +88,7 @@ public class ShardHost extends FrameLayout {
     }
 
     @NonNull
-    public Shard.Factory getShardFactory() {
+    public final Shard.Factory getShardFactory() {
         return owner.getShardFactory();
     }
 
