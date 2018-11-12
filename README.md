@@ -63,4 +63,5 @@ class MyShard: Shard() {
 - [Getting Started](/docs/getting-started.md)
 - [Implementing Shards](/docs/implementing-shards.md)
 - [Hosting Shards](/docs/hosting-shards.md)
+- [Transition Animations](/docs/transition-animations.md)
 - [Migrating from Fragments](/docs/migrating-from-fragments.md)

@@ -26,9 +26,7 @@ or set it dynamically in code.
 ```
 
 ```kotlin
-if (savedInstanceState == null) {
-    requireViewById<ShardHost>(R.id.host).shard = MyShard()
-}
+requireViewById<ShardHost>(R.id.host).shard = MyShard()
 ```
 Note that what shard is set and it's state is automatically saved. Setting a new shard will destroy
 the old one and it's state will be lost.
