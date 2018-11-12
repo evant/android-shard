@@ -25,5 +25,5 @@ this is probably the easiest way to go. Just make sure you keep it up to date wi
 You can copy the implementation from
 [ShardActivity](/shard/src/main/java/me/tatarka/shard/app/ShardActivity.java).
 
-After setup check out how to [implement shards](/docs/implementing-shards.md) or how to
-[host them](/docs/hosting-shards.md).
+After setup check out how to [implement shards](docs/implementing-shards.md) or how to
+[host them](docs/hosting-shards.md).
