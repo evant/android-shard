@@ -60,7 +60,7 @@ class MyShard: Shard() {
 
 ## Full Documentation
 
-- [Getting Started](/android-shard/docs/getting-started.md)
-- [Implementing Shards](/android-shard/docs/implementing-shards.md)
-- [Hosting Shards](/android-shard/docs/hosting-shards.md)
-- [Migrating from Fragments](/android-shard/migrating-from-fragments.md)
+- [Getting Started](/docs/getting-started.md)
+- [Implementing Shards](/docs/implementing-shards.md)
+- [Hosting Shards](/docs/hosting-shards.md)
+- [Migrating from Fragments](/docs/migrating-from-fragments.md)
