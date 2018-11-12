@@ -19,7 +19,6 @@ class DialogHostShard @Inject constructor() :
     private val dialogHost: ShardDialogHost = ShardDialogHost(this)
 
     override fun onCreate() {
-        super.onCreate()
         setContentView(R.layout.dialogs)
         activityCallbacks.addOnActivityResultCallback(REQUEST_CODE_ACTIVITY) { resultCode, _ ->
             requireViewById<Button>(R.id.start_activity_for_result).text =

@@ -103,6 +103,15 @@ public class ShardDialogHost {
                 BaseDialogShard shard = getShardFactory().newInstance(name, shardState.getArgs());
                 fm.restoreState(shard, shardState);
                 dialogShards.add(shard);
+                if (owner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.CREATED)) {
+                    doShow(shard);
+                }
+            }
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        void onCreate() {
+            for (BaseDialogShard shard : dialogShards) {
                 doShow(shard);
             }
         }
