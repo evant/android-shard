@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.ComponentActivity;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -247,7 +246,7 @@ public interface ActivityCallbacks {
 
     /**
      * Remove a previously
-     * {@link #addOnNavigateUpCallback(OnNavigateUpCallback)} added}
+     * {@link #addOnBackPressedCallback(OnBackPressedCallback)} added}
      * {@link OnBackPressedCallback} instance. The callback won't be called for any future
      * {@link Activity#onBackPressed()} calls, but may still receive a callback if this method is called
      * during the dispatch of an ongoing {@link Activity#onBackPressed()} call.
@@ -258,31 +257,4 @@ public interface ActivityCallbacks {
      * @param onBackPressedCallback The callback to remove
      */
     void removeOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback);
-
-    /**
-     * Add a new {@link OnNavigateUpCallback}. Callbacks are invoked in order of recency, so
-     * this newly added {@link OnNavigateUpCallback} will be the first callback to receive a
-     * callback if {@link Activity#onNavigateUp()} ()} is called. Only if this callback returns
-     * <code>false</code> from its {@link OnNavigateUpCallback#handleOnNavigateUp()} will any
-     * previously added callback be called.
-     *
-     * @param onNavigateUpCallback The callback to add
-     * @see Activity#onNavigateUp()
-     * @see #removeOnNavigateUpCallback(OnNavigateUpCallback)
-     */
-    void addOnNavigateUpCallback(OnNavigateUpCallback onNavigateUpCallback);
-
-    /**
-     * Remove a previously
-     * {@link #addOnNavigateUpCallback(OnNavigateUpCallback)} added}
-     * {@link OnNavigateUpCallback} instance. The callback won't be called for any future
-     * {@link Activity#onNavigateUp()} calls, but may still receive a callback if this method is called
-     * during the dispatch of an ongoing {@link Activity#onNavigateUp()} call.
-     * <p>
-     * This call is usually not necessary as callbacks will be automatically removed when their
-     * associated {@link LifecycleOwner} is {@link Lifecycle.State#DESTROYED destroyed}.
-     *
-     * @param onNavigateUpCallback The callback to remove
-     */
-    void removeOnNavigateUpCallback(OnNavigateUpCallback onNavigateUpCallback);
 }

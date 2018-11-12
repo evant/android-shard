@@ -12,7 +12,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
-import me.tatarka.shard.activity.OnNavigateUpCallback;
 import me.tatarka.shard.state.InstanceStateSaver;
 
 final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher implements
@@ -75,16 +74,6 @@ final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispa
     @Override
     public void removeOnBackPressedCallback(OnBackPressedCallback callback) {
         parentCallbacks.removeOnBackPressedCallback(callback);
-    }
-
-    @Override
-    public void addOnNavigateUpCallback(LifecycleOwner owner, OnNavigateUpCallback onNavigateUpCallback) {
-        parentCallbacks.addOnNavigateUpCallback(owner, onNavigateUpCallback);
-    }
-
-    @Override
-    public void removeOnNavigateUpCallback(OnNavigateUpCallback onNavigateUpCallback) {
-        parentCallbacks.removeOnNavigateUpCallback(onNavigateUpCallback);
     }
 
     @Nullable

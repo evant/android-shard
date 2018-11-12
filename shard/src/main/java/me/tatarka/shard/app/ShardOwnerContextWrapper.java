@@ -8,6 +8,11 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStoreOwner;
 
+/**
+ * Allows obtaining a {@link Shard} from {@link #getSystemService(String)}.
+ *
+ * @see ShardOwners
+ */
 public class ShardOwnerContextWrapper extends ContextWrapper implements LifecycleObserver {
     static final String SHARD_OWNER = "me.tatarka.shard.app.ShardOwner";
     private final Object owner;

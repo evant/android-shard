@@ -14,6 +14,10 @@ import me.tatarka.shard.content.ComponentCallbacksDispatcher;
 import me.tatarka.shard.state.InstanceStateRegistry;
 import me.tatarka.shard.state.InstanceStateStore;
 
+/**
+ * A base class for hosting {@link Shard}s. You can either subclass this or duplicate it's
+ * implementation into your own base activity.
+ */
 public class ShardActivity extends ComponentActivity implements ShardOwner {
 
     private static final String STATE_SHARD = "me.tatarka.shard.app.Shard";
@@ -71,11 +75,6 @@ public class ShardActivity extends ComponentActivity implements ShardOwner {
     @Override
     public ComponentCallbacks getComponentCallbacks() {
         return componentCallbacksDispatcher;
-    }
-
-    @Override
-    public boolean onNavigateUp() {
-        return activityCallbackDispatcher.dispatchOnNavigateUp() || super.onNavigateUp();
     }
 
     @Override

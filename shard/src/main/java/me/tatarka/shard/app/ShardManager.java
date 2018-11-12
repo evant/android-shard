@@ -64,6 +64,13 @@ public final class ShardManager {
         shard.remove();
     }
 
+    /**
+     * Replaces the shard.
+     *
+     * @param oldShard  The shard to remove, if present.
+     * @param newShard  The shard to add, if present.
+     * @param container The container hosting the shards.
+     */
     public void replace(@Nullable Shard oldShard,
                         @Nullable Shard newShard,
                         @NonNull FrameLayout container) {
@@ -73,8 +80,10 @@ public final class ShardManager {
     /**
      * Replaces the shard.
      *
-     * @param oldShard The shard to remove, if present.
-     * @param newShard The shard to add, if present.
+     * @param oldShard   The shard to remove, if present.
+     * @param newShard   The shard to add, if present.
+     * @param container  The container hosting the shards.
+     * @param transition An optional transition to animate between shards.
      */
     public void replace(@Nullable Shard oldShard,
                         @Nullable Shard newShard,

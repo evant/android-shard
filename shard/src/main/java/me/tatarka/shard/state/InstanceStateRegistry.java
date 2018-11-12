@@ -5,7 +5,14 @@ import android.os.Parcelable;
 import android.util.ArrayMap;
 
 import androidx.annotation.NonNull;
+import me.tatarka.shard.app.ShardActivity;
 
+/**
+ * Helps with implementing {@link InstanceStateStore}. Will save and restore state for any added
+ * {@link InstanceStateSaver}s.
+ *
+ * @see ShardActivity for an example of how to use.
+ */
 public final class InstanceStateRegistry implements InstanceStateStore, InstanceStateSaver<Bundle> {
 
     private final ArrayMap<String, InstanceStateSaver> stateSavers = new ArrayMap<>();

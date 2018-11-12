@@ -16,6 +16,10 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import me.tatarka.shard.state.InstanceStateSaver;
 
+/**
+ * Responsible for showing {@link DialogShard}s and {@link AlertDialogShard}s, and restoring them
+ * across configuration changes.
+ */
 public class ShardDialogHost {
 
     private static final String DIALOG_STATE = "me.tatarka.shard.widget.ShardDialogHost";
@@ -24,10 +28,17 @@ public class ShardDialogHost {
     private final ShardManager fm;
     private final ArrayList<BaseDialogShard> dialogShards = new ArrayList<>();
 
+    /**
+     * Constructs a new instance from the given {@link Context}. A {@link ShardOwner} must be able
+     * to be obtained from the context.
+     */
     public ShardDialogHost(Context context) {
         this(ShardOwners.get(context));
     }
 
+    /**
+     * Constructs a new instance from the given {@link ShardOwner}.
+     */
     public ShardDialogHost(ShardOwner owner) {
         this.owner = owner;
         fm = new ShardManager(owner);
@@ -41,6 +52,9 @@ public class ShardDialogHost {
         return owner.getShardFactory();
     }
 
+    /**
+     * Shows the given {@link DialogShard} or {@link AlertDialogShard}.
+     */
     public void show(BaseDialogShard shard) {
         dialogShards.add(shard);
         doShow(shard);

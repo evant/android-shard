@@ -7,6 +7,12 @@ import android.content.DialogInterface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+/**
+ * The base class for shards that can be shown in dialogs.
+ *
+ * @see DialogShard
+ * @see AlertDialogShard
+ */
 public abstract class BaseDialogShard extends Shard implements DialogInterface.OnDismissListener, DialogInterface.OnCancelListener {
 
     @Nullable

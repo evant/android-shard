@@ -17,7 +17,6 @@ import androidx.navigation.NavGraph;
 import androidx.navigation.NavHost;
 import androidx.navigation.Navigation;
 import me.tatarka.shard.activity.ActivityCallbacks;
-import me.tatarka.shard.activity.OnNavigateUpCallback;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwners;
@@ -124,7 +123,7 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         };
     }
 
-    static class NavCallbacks implements OnAttachStateChangeListener, OnBackPressedCallback, OnNavigateUpCallback {
+    static class NavCallbacks implements OnAttachStateChangeListener, OnBackPressedCallback {
         final ActivityCallbacks callbacks;
         final NavController navController;
 
@@ -139,20 +138,13 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         }
 
         @Override
-        public boolean handleOnNavigateUp() {
-            return navController.navigateUp();
-        }
-
-        @Override
         public void onViewAttachedToWindow(View v) {
             callbacks.addOnBackPressedCallback(this);
-            callbacks.addOnNavigateUpCallback(this);
         }
 
         @Override
         public void onViewDetachedFromWindow(View v) {
             callbacks.removeOnBackPressedCallback(this);
-            callbacks.removeOnNavigateUpCallback(this);
         }
     }
 }

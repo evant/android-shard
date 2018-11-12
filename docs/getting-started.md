@@ -3,8 +3,10 @@
 In order to use shards, you may need to set up your hosting activity. You have a few options here:
 
 1. Do nothing. If you are using a recent version of appcompat, you'll be mostly good-to-go. This is
-the easiest option to get started. However,
-[ActivityCallbacks](/docs/implementing-shards.md#ActivityCallbacks) will not be available.
+the easiest option to get started. However, all of
+[ActivityCallbacks](/docs/implementing-shards.md#ActivityCallbacks) will not be available except for
+`isInMultiWindowMode()`, `isInPictureInPictureMode()`, `addOnBackPrssedCallback()` and
+`removeOnBackPressedCallback()`.
 
 2. Subclass `ShardActivity` in the core package or `AppCompatActivity` in `shard-appcompat`. This is
 your best option if you don't need to deal with fragments in the same activity. You can even 

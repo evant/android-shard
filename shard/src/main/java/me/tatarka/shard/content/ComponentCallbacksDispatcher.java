@@ -10,8 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
+import me.tatarka.shard.app.ShardActivity;
 import me.tatarka.shard.app.ShardOwner;
 
+/**
+ * Helps with implementing {@link ComponentCallbacks}. Will dispatch component callbacks to any
+ * registered listeners.
+ *
+ * @see ShardActivity for an example of how to use.
+ */
 public class ComponentCallbacksDispatcher implements ComponentCallbacks {
 
     private final ArrayList<android.content.ComponentCallbacks2> componentCallbacks = new ArrayList<>();

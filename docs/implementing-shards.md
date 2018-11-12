@@ -50,11 +50,10 @@ a composable way. You can access these with `getActivityCallbacks()`. Note: This
 available depending on how you set up your base activity, see
 [Getting Started](/docs/getting-started.md).
 
-You can handle back/up navigation
+You can handle back presses
 
 ```kotlin
 activityCallbacks.addOnBackPrssedCallback { false }
-activityCallbacks.addOnNavgiateUpCallback { false }
 ```
 
 , start activities for result

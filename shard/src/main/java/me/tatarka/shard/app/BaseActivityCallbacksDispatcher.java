@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import me.tatarka.shard.activity.ActivityCallbacks;
-import me.tatarka.shard.activity.OnNavigateUpCallback;
 
 abstract class BaseActivityCallbacksDispatcher implements ActivityCallbacks {
 
@@ -59,13 +58,6 @@ abstract class BaseActivityCallbacksDispatcher implements ActivityCallbacks {
     }
 
     protected abstract void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback callback);
-
-    @Override
-    public final void addOnNavigateUpCallback(OnNavigateUpCallback onNavigateUpCallback) {
-        addOnNavigateUpCallback(lifecycleOwner, onNavigateUpCallback);
-    }
-
-    protected abstract void addOnNavigateUpCallback(LifecycleOwner owner, OnNavigateUpCallback onNavigateUpCallback);
 
     @Override
     public void addOnMultiWindowModeChangedCallback(@NonNull OnMultiWindowModeChangedCallback listener) {

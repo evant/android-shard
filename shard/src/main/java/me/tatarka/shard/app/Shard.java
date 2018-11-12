@@ -37,6 +37,7 @@ import me.tatarka.shard.state.InstanceStateStore;
 public class Shard implements ShardOwner {
 
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+
     {
         lifecycleRegistry.addObserver(new LifecycleObserver() {
             @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -95,9 +96,21 @@ public class Shard implements ShardOwner {
         state = null;
     }
 
+    /**
+     * A {@code Container} hosts the view for a {@code Shard}. You normally don't need to deal with
+     * this directly as there is already an implementation for {@link ViewGroup} and {@link android.app.Dialog}.
+     *
+     * @see ShardManager#add(Shard, Container).
+     */
     public interface Container {
+        /**
+         * Adds the view to the container.
+         */
         void addView(View view);
 
+        /**
+         * Removes the view from the container.
+         */
         void removeView(View view);
     }
 
@@ -147,6 +160,12 @@ public class Shard implements ShardOwner {
         }
     }
 
+    /**
+     * Returns a {@link Bundle} that can be read and written to provide arguments for the
+     * {@code Shard}. These will be automatically persisted in the instance state.
+     *
+     * @see #setArgs(Bundle)
+     */
     @NonNull
     public Bundle getArgs() {
         if (args == null) {
@@ -155,11 +174,23 @@ public class Shard implements ShardOwner {
         return args;
     }
 
+    /**
+     * Sets the args for this {@code Shard} to the given {@link Bundle}. This will replace any
+     * existing args. These will be automatically persisted in the instance state.
+     *
+     * @see #getArgs()
+     */
     @CallSuper
     public void setArgs(@Nullable Bundle args) {
         this.args = args;
     }
 
+    /**
+     * Sets the {@code Shard}'s content view to the given view. This will immediately restore any
+     * view state. After calling this, {@link #getView()} will not return null.
+     *
+     * @see #setContentView(int)
+     */
     @CallSuper
     public void setContentView(@NonNull View view) {
         checkCreated();
@@ -169,6 +200,11 @@ public class Shard implements ShardOwner {
         restoreViewState(frame);
     }
 
+    /**
+     * Inflates the given layout and sets the {@code Shard}'s content view to it. This will
+     * immediately restore any view state. After calling this, {@link #getView()} will not return
+     * null.
+     */
     @CallSuper
     public void setContentView(@LayoutRes int layoutId) {
         checkCreated();
@@ -187,15 +223,47 @@ public class Shard implements ShardOwner {
         return frame;
     }
 
+    /**
+     * Returns the root view for the {@code Shard}. This will be null until {@link #setContentView(int)}
+     * or {@link #setContentView(View)} is called.
+     */
     public ViewGroup getView() {
         return frame;
     }
 
+    /**
+     * Finds the first descendant view with the given ID, the view itself if
+     * the ID matches {@link View#getId()}, or {@code null} if the ID is invalid
+     * (< 0) or there is no matching view in the hierarchy.
+     * <p>
+     * <strong>Note:</strong> In most cases -- depending on compiler support --
+     * the resulting view is automatically cast to the target class type. If
+     * the target class type is unconstrained, an explicit cast may be
+     * necessary.
+     *
+     * @param id the ID to search for
+     * @return a view with given ID if found, or {@code null} otherwise
+     * @see View#findViewById(int)
+     */
     @Nullable
     public <T extends View> T findViewById(@IdRes int id) {
         return frame != null ? frame.<T>findViewById(id) : null;
     }
 
+    /**
+     * Finds the first descendant view with the given ID, the view itself if the ID matches
+     * {@link View#getId()}, or throws an IllegalArgumentException if the ID is invalid or there is no
+     * matching view in the hierarchy.
+     * <p>
+     * <strong>Note:</strong> In most cases -- depending on compiler support --
+     * the resulting view is automatically cast to the target class type. If
+     * the target class type is unconstrained, an explicit cast may be
+     * necessary.
+     *
+     * @param id the ID to search for
+     * @return a view with given ID
+     * @see View#requireViewById(int)
+     */
     @NonNull
     public final <T extends View> T requireViewById(@IdRes int id) {
         T view = findViewById(id);
@@ -218,6 +286,9 @@ public class Shard implements ShardOwner {
     public void onCreate() {
     }
 
+    /**
+     * Returns a context. This must not be called before {@link #onCreate()}.
+     */
     @NonNull
     @Override
     public final Context getContext() {
@@ -225,6 +296,10 @@ public class Shard implements ShardOwner {
         return context;
     }
 
+    /**
+     * Returns the factory used to construct {@code Shard}'s. This must not be called before
+     * {@link #onCreate()}.
+     */
     @NonNull
     @Override
     public Factory getShardFactory() {
@@ -232,6 +307,10 @@ public class Shard implements ShardOwner {
         return owner.getShardFactory();
     }
 
+    /**
+     * Returns {@link ActivityCallbacks} for interacting with activity-level api's. This must not be
+     * called before {@link #onCreate()}.
+     */
     @NonNull
     @Override
     public ActivityCallbacks getActivityCallbacks() {
@@ -239,6 +318,10 @@ public class Shard implements ShardOwner {
         return activityCallbackDispatcher;
     }
 
+    /**
+     * Returns {@link ComponentCallbacks} for interacting with component-level api's. This must not
+     * be called before {@link #onCreate()}.
+     */
     @NonNull
     @Override
     public ComponentCallbacks getComponentCallbacks() {
@@ -258,6 +341,10 @@ public class Shard implements ShardOwner {
         ShardManagerViewModel.get(owner.getViewModelStore()).remove(id);
     }
 
+    /**
+     * Returns a {@link ViewModelStore} for holding onto {@link androidx.lifecycle.ViewModel}'s.
+     * This must not be called before {@link #onCreate()}.
+     */
     @NonNull
     @Override
     public ViewModelStore getViewModelStore() {
@@ -265,12 +352,18 @@ public class Shard implements ShardOwner {
         return getOrCreateViewModelStore();
     }
 
+    /**
+     * Returns a {@link Lifecycle} for this {@code Shard}.
+     */
     @NonNull
     @Override
     public Lifecycle getLifecycle() {
         return lifecycleRegistry;
     }
 
+    /**
+     * Returns a {@link InstanceStateStore} for saving additional instance state.
+     */
     @NonNull
     @Override
     public InstanceStateStore getInstanceStateStore() {
@@ -287,6 +380,9 @@ public class Shard implements ShardOwner {
         }
     }
 
+    /**
+     * The {@code Shard}'s state which can be persisted.
+     */
     public static class State implements Parcelable {
         final int viewModelId;
         @Nullable
