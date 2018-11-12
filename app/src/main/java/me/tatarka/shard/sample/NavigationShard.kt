@@ -33,8 +33,5 @@ class NavigationShard @Inject constructor() : Shard() {
                     .build()
             )
         }
-
-        activityCallbacks.addOnNavigateUpCallback { controller.navigateUp() }
-        activityCallbacks.addOnBackPressedCallback { controller.popBackStack() }
     }
 }

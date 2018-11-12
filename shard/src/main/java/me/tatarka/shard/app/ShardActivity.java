@@ -21,7 +21,6 @@ public class ShardActivity extends ComponentActivity implements ShardOwner {
     private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
     private ActivityCallbacksDispatcher activityCallbackDispatcher;
     private ComponentCallbacksDispatcher componentCallbacksDispatcher;
-    private Shard.Factory factory = Shard.DefaultFactory.getInstance();
 
     @Override
     @CallSuper
@@ -59,7 +58,7 @@ public class ShardActivity extends ComponentActivity implements ShardOwner {
     @NonNull
     @Override
     public Shard.Factory getShardFactory() {
-        return factory;
+        return Shard.DefaultFactory.getInstance();
     }
 
     @NonNull

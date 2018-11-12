@@ -45,10 +45,16 @@ class DialogHostShard @Inject constructor() :
             )
         }
         requireViewById<View>(R.id.start_activity_for_result).setOnClickListener {
-            activityCallbacks.startActivityForResult(Intent(context, ResultActivity::class.java), REQUEST_CODE_ACTIVITY)
+            activityCallbacks.startActivityForResult(
+                Intent(context, ResultActivity::class.java),
+                REQUEST_CODE_ACTIVITY
+            )
         }
         requireViewById<View>(R.id.request_permission).setOnClickListener {
-            activityCallbacks.requestPermissions(arrayOf(Manifest.permission.SEND_SMS), REQUEST_CODE_PERMISSION)
+            activityCallbacks.requestPermissions(
+                arrayOf(Manifest.permission.SEND_SMS),
+                REQUEST_CODE_PERMISSION
+            )
         }
     }
 }

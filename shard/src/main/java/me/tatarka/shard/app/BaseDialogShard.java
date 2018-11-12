@@ -11,8 +11,10 @@ public abstract class BaseDialogShard extends Shard implements DialogInterface.O
 
     @Nullable
     private Dialog dialog;
+    private boolean isInDialog;
 
     Dialog createDialog(ShardManager fm, Context context) {
+        isInDialog = true;
         dialog = onCreateDialog(fm, context);
         return dialog;
     }
@@ -27,21 +29,48 @@ public abstract class BaseDialogShard extends Shard implements DialogInterface.O
 
     protected abstract Dialog onCreateDialog(ShardManager fm, Context context);
 
-    public void dismiss() {
+    /**
+     * Dismiss the dialog if it is showing.
+     *
+     * @see Dialog#dismiss()
+     */
+    public final void dismiss() {
         if (dialog != null) {
             dialog.dismiss();
         }
     }
 
-    public boolean isShowing() {
+    /**
+     * Returns true if the shard is or will be shown in a {@link Dialog}.
+     */
+    public final boolean isInDialog() {
+        return isInDialog;
+    }
+
+    /**
+     * Returns true if the {@link Dialog} is showing.
+     *
+     * @see Dialog#isShowing()
+     */
+    public final boolean isShowing() {
         return dialog != null && dialog.isShowing();
     }
 
+    /**
+     * Called when the {@link Dialog} is canceled.
+     *
+     * @see android.content.DialogInterface.OnCancelListener#onCancel(DialogInterface)
+     */
     @Override
     public void onCancel(@NonNull DialogInterface dialog) {
 
     }
 
+    /**
+     * Called when the {@link Dialog} is dismissed.
+     *
+     * @see DialogInterface.OnDismissListener#onDismiss(DialogInterface)
+     */
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
 

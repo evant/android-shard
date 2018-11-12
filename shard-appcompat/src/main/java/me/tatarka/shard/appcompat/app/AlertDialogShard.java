@@ -2,15 +2,30 @@ package me.tatarka.shard.appcompat.app;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import me.tatarka.shard.app.BaseDialogShard;
+import me.tatarka.shard.app.ShardDialogHost;
 import me.tatarka.shard.app.ShardManager;
 
+/**
+ * A {@code Shard} that can be shown in an {@link AlertDialog}. The dialog will automatically be
+ * retained across configuration changes until it's dismissed.
+ */
 public class AlertDialogShard extends BaseDialogShard {
 
+    /**
+     * Creates a new {@link AlertDialog} to be shown. The default implementation simply calls
+     * {@code new AlertDialog.Builder(context)}. Do not add cancel/dismiss listeners here as they
+     * will be overwritten by the {@link ShardDialogHost} implementation. Override
+     * {@link #onCancel(DialogInterface)} and {@link #onDismiss(DialogInterface)} instead. You
+     * should prefer calling {@link #setContentView(View)} in {@link #onCreate()} instead of setting
+     * the content view here as it makes easier to reuse the same view when the shard is showing in
+     * a dialog or not.
+     */
     @NonNull
     public AlertDialog.Builder onBuildAlertDialog(@NonNull Context context) {
         return new AlertDialog.Builder(context);

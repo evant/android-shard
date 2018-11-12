@@ -9,12 +9,15 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NavigationRes;
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavHost;
 import androidx.navigation.Navigation;
+import me.tatarka.shard.activity.ActivityCallbacks;
+import me.tatarka.shard.activity.OnNavigateUpCallback;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwners;
@@ -45,6 +48,10 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         }
         if (graphId != 0 && !owner.getInstanceStateStore().isStateRestored()) {
             navController.setGraph(graphId);
+        }
+        if (!isInEditMode()) {
+            NavCallbacks navCallbacks = new NavCallbacks(owner, navController);
+            addOnAttachStateChangeListener(navCallbacks);
         }
     }
 
@@ -115,5 +122,37 @@ public class ShardNavHost extends FrameLayout implements NavHost {
                 return new SavedState[size];
             }
         };
+    }
+
+    static class NavCallbacks implements OnAttachStateChangeListener, OnBackPressedCallback, OnNavigateUpCallback {
+        final ActivityCallbacks callbacks;
+        final NavController navController;
+
+        NavCallbacks(ShardOwner owner, NavController navController) {
+            this.callbacks = owner.getActivityCallbacks();
+            this.navController = navController;
+        }
+
+        @Override
+        public boolean handleOnBackPressed() {
+            return navController.popBackStack();
+        }
+
+        @Override
+        public boolean handleOnNavigateUp() {
+            return navController.navigateUp();
+        }
+
+        @Override
+        public void onViewAttachedToWindow(View v) {
+            callbacks.addOnBackPressedCallback(this);
+            callbacks.addOnNavigateUpCallback(this);
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(View v) {
+            callbacks.removeOnBackPressedCallback(this);
+            callbacks.removeOnNavigateUpCallback(this);
+        }
     }
 }
