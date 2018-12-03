@@ -63,6 +63,8 @@ public class Shard implements ShardOwner {
     private boolean destroyed;
     @Nullable
     private State state;
+    @Nullable
+    private Shard.Factory shardFactory;
 
     void restoreState(@Nullable State state) {
         checkNotCreated();
@@ -304,7 +306,14 @@ public class Shard implements ShardOwner {
     @Override
     public Factory getShardFactory() {
         checkCreated();
-        return owner.getShardFactory();
+        return shardFactory != null ? shardFactory : owner.getShardFactory();
+    }
+
+    /**
+     * Sets the factory used to construct {@code Shard}'s
+     */
+    public void setShardFactory(@NonNull Factory factory) {
+        shardFactory = factory;
     }
 
     /**

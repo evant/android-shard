@@ -10,9 +10,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
-import androidx.test.InstrumentationRegistry;
 import androidx.test.annotation.UiThreadTest;
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -29,7 +29,7 @@ public class OptimizingNavigatorTest {
     @UiThreadTest
     public void setup() {
         instrumentation = InstrumentationRegistry.getInstrumentation();
-        controller = new NavController(InstrumentationRegistry.getTargetContext());
+        controller = new NavController(InstrumentationRegistry.getInstrumentation().getTargetContext());
         navigator = new TestOptimizingNavigator();
         controller.getNavigatorProvider().addNavigator(navigator);
         navGraph = new NavGraph(controller.getNavigatorProvider());

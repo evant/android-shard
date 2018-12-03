@@ -62,14 +62,6 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         navController.setGraph(graphId);
     }
 
-    public void setShardFactory(Shard.Factory factory) {
-        navController.getNavigatorProvider().getNavigator(ShardNavigator.class).setShardFactory(factory);
-    }
-
-    public Shard.Factory getShardFactory() {
-        return navController.getNavigatorProvider().getNavigator(ShardNavigator.class).getShardFactory();
-    }
-
     @Override
     protected Parcelable onSaveInstanceState() {
         return new SavedState(super.onSaveInstanceState(), navController.saveState());

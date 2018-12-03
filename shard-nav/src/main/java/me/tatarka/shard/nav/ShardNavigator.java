@@ -35,15 +35,6 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
         factory = owner.getShardFactory();
     }
 
-    public void setShardFactory(@NonNull Shard.Factory factory) {
-        this.factory = factory;
-    }
-
-    @NonNull
-    public Shard.Factory getShardFactory() {
-        return factory;
-    }
-
     @NonNull
     @Override
     public Destination createDestination() {
