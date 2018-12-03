@@ -245,3 +245,17 @@ other shards who's views are present will be in the started state. When a page i
 shard will be as well, however the state will be saved and restored. By default the list of shards 
 is not expected to change. You can, however override `getItemPosition()` to support changing the 
 pages.
+
+## Custom Host
+
+All hosts above are built on the lower-level `ShardManager` api. You can use this directly to build
+custom hosts for your own use-cases. The lifecycle is as follows:
+
+![ShardManager Lifecycle](/docs/shardmanager-lifecycle.svg)
+
+You add a shard to a ViewGroup with `add()`, and remove it with `remove()`. To properly handle
+instance state, you call `saveState()` which will return you some parcelable state to save. You then 
+call `restoreState()` before you add the shard again with `add()` to have it restore that state. You 
+then call `remove()` to remove the shard. The shard's viewmodels will stay around until you call
+`remove()`. You can also use `replace()` to remove one shard from a container and add another one,
+optionally providing a transition animation to run.
