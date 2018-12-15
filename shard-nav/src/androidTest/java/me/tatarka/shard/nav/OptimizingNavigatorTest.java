@@ -8,12 +8,15 @@ import org.junit.runner.RunWith;
 
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
+import androidx.navigation.NavGraphNavigator;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
 import androidx.test.annotation.UiThreadTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import static me.tatarka.shard.nav.OptimizingNavigator.DIRECTION_POP;
+import static me.tatarka.shard.nav.OptimizingNavigator.DIRECTION_PUSH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -32,7 +35,8 @@ public class OptimizingNavigatorTest {
         controller = new NavController(InstrumentationRegistry.getInstrumentation().getTargetContext());
         navigator = new TestOptimizingNavigator();
         controller.getNavigatorProvider().addNavigator(navigator);
-        navGraph = new NavGraph(controller.getNavigatorProvider());
+        controller.addOnDestinationChangedListener(navigator);
+        navGraph = new NavGraph(controller.getNavigatorProvider().getNavigator(NavGraphNavigator.class));
     }
 
     @Test
@@ -53,7 +57,7 @@ public class OptimizingNavigatorTest {
                 TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(0);
                 assertEquals("start", transaction.newPage.name);
                 assertNull(transaction.oldPage);
-                assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                assertEquals(DIRECTION_PUSH, transaction.direction);
 
                 assertEquals(0, navigator.savedPages.size());
 
@@ -85,7 +89,7 @@ public class OptimizingNavigatorTest {
                 TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(0);
                 assertEquals("one", transaction.newPage.name);
                 assertNull(transaction.oldPage);
-                assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                assertEquals(DIRECTION_PUSH, transaction.direction);
 
                 assertEquals(1, navigator.savedPages.size());
                 assertEquals("start", navigator.savedPages.get(0).name);
@@ -126,13 +130,13 @@ public class OptimizingNavigatorTest {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(0);
                     assertEquals("one", transaction.newPage.name);
                     assertNull(transaction.oldPage);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
                 {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(1);
                     assertEquals("start", transaction.newPage.name);
                     assertEquals("one", transaction.oldPage.name);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_POPPED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_POP, transaction.direction);
                 }
 
                 assertEquals(1, navigator.savedPages.size());
@@ -177,13 +181,13 @@ public class OptimizingNavigatorTest {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(0);
                     assertEquals("start", transaction.newPage.name);
                     assertNull(transaction.oldPage);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
                 {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(1);
                     assertEquals("two", transaction.newPage.name);
                     assertEquals("start", transaction.oldPage.name);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
 
                 assertEquals(2, navigator.savedPages.size());
@@ -229,13 +233,13 @@ public class OptimizingNavigatorTest {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(0);
                     assertEquals("two", transaction.newPage.name);
                     assertNull(transaction.oldPage);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
                 {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(1);
                     assertEquals("start", transaction.newPage.name);
                     assertEquals("two", transaction.oldPage.name);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_POPPED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_POP, transaction.direction);
                 }
 
                 assertEquals(2, navigator.savedPages.size());
@@ -245,12 +249,10 @@ public class OptimizingNavigatorTest {
                 assertEquals(1, navigator.restoredStates.size());
                 assertEquals("start", navigator.restoredStates.get(0).name);
 
-                assertEquals(5, navigator.destinations.size());
                 assertEquals(1, (int) navigator.destinations.get(0));
                 assertEquals(2, (int) navigator.destinations.get(1));
                 assertEquals(3, (int) navigator.destinations.get(2));
-                assertEquals(2, (int) navigator.destinations.get(3));
-                assertEquals(1, (int) navigator.destinations.get(4));
+                assertEquals(1, (int) navigator.destinations.get(3));
             }
         });
     }
@@ -285,19 +287,18 @@ public class OptimizingNavigatorTest {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(0);
                     assertEquals("one", transaction.newPage.name);
                     assertNull(transaction.oldPage);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
                 {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(1);
                     assertEquals("two", transaction.newPage.name);
                     assertEquals("one", transaction.oldPage.name);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
 
                 assertEquals(1, (int) navigator.destinations.get(0));
                 assertEquals(2, (int) navigator.destinations.get(1));
-                assertEquals(1, (int) navigator.destinations.get(2));
-                assertEquals(3, (int) navigator.destinations.get(3));
+                assertEquals(3, (int) navigator.destinations.get(2));
             }
         });
     }
@@ -337,19 +338,19 @@ public class OptimizingNavigatorTest {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(0);
                     assertEquals("start", transaction.newPage.name);
                     assertNull(transaction.oldPage);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
                 {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(1);
                     assertEquals("one", transaction.newPage.name);
                     assertEquals("start", transaction.oldPage.name);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
                 {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(2);
                     assertEquals("start", transaction.newPage.name);
                     assertEquals("one", transaction.oldPage.name);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_POPPED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_POP, transaction.direction);
                 }
 
                 assertEquals(1, (int) navigator.destinations.get(0));
@@ -400,32 +401,31 @@ public class OptimizingNavigatorTest {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(0);
                     assertEquals("start", transaction.newPage.name);
                     assertNull(transaction.oldPage);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
                 {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(1);
                     assertEquals("one", transaction.newPage.name);
                     assertEquals("start", transaction.oldPage.name);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
                 {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(2);
                     assertEquals("two", transaction.newPage.name);
                     assertEquals("one", transaction.oldPage.name);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_ADDED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_PUSH, transaction.direction);
                 }
                 {
                     TestOptimizingNavigator.Transaction transaction = navigator.transactions.get(3);
                     assertEquals("start", transaction.newPage.name);
                     assertEquals("two", transaction.oldPage.name);
-                    assertEquals(Navigator.BACK_STACK_DESTINATION_POPPED, transaction.backStackEffect);
+                    assertEquals(DIRECTION_POP, transaction.direction);
                 }
 
                 assertEquals(1, (int) navigator.destinations.get(0));
                 assertEquals(2, (int) navigator.destinations.get(1));
-                assertEquals(1, (int) navigator.destinations.get(2));
-                assertEquals(3, (int) navigator.destinations.get(3));
-                assertEquals(1, (int) navigator.destinations.get(4));
+                assertEquals(3, (int) navigator.destinations.get(2));
+                assertEquals(1, (int) navigator.destinations.get(3));
             }
         });
     }

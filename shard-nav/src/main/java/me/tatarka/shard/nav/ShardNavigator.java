@@ -56,14 +56,14 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
         Context context = container.getContext();
         ShardTransition transition = null;
         switch (backStackEffect) {
-            case Navigator.BACK_STACK_DESTINATION_ADDED:
+            case DIRECTION_PUSH:
                 if (newPage.transition != 0) {
                     transition = ShardTransitionCompat.fromTransitionRes(context, newPage.transition);
                 } else {
                     transition = ShardTransition.fromAnimRes(context, newPage.enterAnim, newPage.exitAnim);
                 }
                 break;
-            case Navigator.BACK_STACK_DESTINATION_POPPED:
+            case DIRECTION_POP:
                 if (oldPage != null) {
                     if (oldPage.transition != 0) {
                         transition = ShardTransitionCompat.fromTransitionRes(context, oldPage.transition);
@@ -72,6 +72,8 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
                     }
                 }
                 break;
+            case DIRECTION_NONE:
+                // no animation
         }
         fm.replace(oldShard, newShard, container, transition);
     }

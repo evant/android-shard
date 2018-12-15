@@ -9,12 +9,13 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
 
 @Navigator.Name("test")
-public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingNavigator.TestDestination, TestOptimizingNavigator.TestPage, TestOptimizingNavigator.TestState> implements Navigator.OnNavigatorNavigatedListener {
+public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingNavigator.TestDestination, TestOptimizingNavigator.TestPage, TestOptimizingNavigator.TestState> implements NavController.OnDestinationChangedListener {
 
     public final List<Transaction> transactions = new ArrayList<>();
     public final List<Integer> destinations = new ArrayList<>();
@@ -22,7 +23,6 @@ public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingN
     public final List<TestState> restoredStates = new ArrayList<>();
 
     public TestOptimizingNavigator() {
-        addOnNavigatorNavigatedListener(this);
     }
 
     @NonNull
@@ -57,8 +57,8 @@ public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingN
     }
 
     @Override
-    public void onNavigatorNavigated(@NonNull Navigator navigator, int destId, int backStackEffect) {
-        destinations.add(destId);
+    public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+        destinations.add(destination.getId());
     }
 
     public static class Transaction {
@@ -66,12 +66,13 @@ public class TestOptimizingNavigator extends OptimizingNavigator<TestOptimizingN
         public final TestPage oldPage;
         @Nullable
         public final TestPage newPage;
-        public final int backStackEffect;
+        @Direction
+        public final int direction;
 
-        public Transaction(@Nullable TestPage oldPage, @Nullable TestPage newPage, int backStackEffect) {
+        public Transaction(@Nullable TestPage oldPage, @Nullable TestPage newPage, @Direction int direction) {
             this.oldPage = oldPage;
             this.newPage = newPage;
-            this.backStackEffect = backStackEffect;
+            this.direction = direction;
         }
     }
 

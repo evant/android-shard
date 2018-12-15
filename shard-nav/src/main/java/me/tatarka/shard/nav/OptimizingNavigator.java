@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.ParcelUuid;
 import android.os.Parcelable;
 import android.util.SparseArray;
 
+import java.io.PushbackInputStream;
 import java.lang.annotation.Retention;
 
 import androidx.annotation.CallSuper;
@@ -20,6 +22,10 @@ import androidx.navigation.Navigator;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 abstract class OptimizingNavigator<Destination extends NavDestination, Page, State extends Parcelable> extends Navigator<Destination> {
+
+    protected static final int DIRECTION_NONE = 0;
+    protected static final int DIRECTION_PUSH = 1;
+    protected static final int DIRECTION_POP = 2;
 
     private static final String STATE_BACK_STACK = "back_stack";
     private static final String STATE_BACK_STACK_STATE = "back_stack_state";
@@ -36,25 +42,24 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
     private Page currentPage;
 
     @Override
-    public void navigate(@NonNull Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Extras navigatorExtras) {
+    @Nullable
+    public NavDestination navigate(@NonNull Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Extras navigatorExtras) {
         boolean singleTop = navOptions != null && navOptions.shouldLaunchSingleTop();
 
         if (singleTop && currentId == destination.getId()) {
-            dispatchOnNavigatorNavigated(destination.getId(), BACK_STACK_UNCHANGED);
-            return;
+            return null;
         }
 
         Page newPage = createPage(destination, args, navOptions, navigatorExtras);
         push(newPage, destination.getId());
 
-        dispatchOnNavigatorNavigated(destination.getId(), BACK_STACK_DESTINATION_ADDED);
+        return destination;
     }
 
     @Override
     public boolean popBackStack() {
         if (backStack.size() > 0) {
             pop();
-            dispatchOnNavigatorNavigated(currentId, BACK_STACK_DESTINATION_POPPED);
             return true;
         }
         return false;
@@ -73,7 +78,7 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
     @NonNull
     protected abstract Page createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Extras navExtras);
 
-    protected abstract void replace(@Nullable Page oldPage, @NonNull Page newPage, @BackStackEffect int backStackEffect);
+    protected abstract void replace(@Nullable Page oldPage, @NonNull Page newPage, @Direction int backStackEffect);
 
     @NonNull
     protected abstract State savePageState(Page page);
@@ -105,7 +110,7 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
         currentId = savedState.getInt(STATE_CURRENT_ID);
         if (state != null) {
             currentPage = restorePageState(state);
-            replace(null, currentPage, BACK_STACK_UNCHANGED);
+            replace(null, currentPage, DIRECTION_NONE);
         }
     }
 
@@ -184,18 +189,18 @@ abstract class OptimizingNavigator<Destination extends NavDestination, Page, Sta
                 for (int i = 0; i < pagesToSave.size(); i++) {
                     backStackState.put(pagesToSave.keyAt(i), savePageState(pagesToSave.valueAt(i)));
                 }
-                replace(oldPage, newPage, BACK_STACK_DESTINATION_ADDED);
+                replace(oldPage, newPage, DIRECTION_PUSH);
             } else if (which == OP_POP) {
                 currentPage = restorePageState(backStackState.get(newId));
                 backStackState.remove(newId);
-                replace(oldPage, currentPage, BACK_STACK_DESTINATION_POPPED);
+                replace(oldPage, currentPage, DIRECTION_POP);
             }
             clear();
         }
     }
 
     @Retention(SOURCE)
-    @IntDef({BACK_STACK_UNCHANGED, BACK_STACK_DESTINATION_ADDED, BACK_STACK_DESTINATION_POPPED})
-    @interface BackStackEffect {
+    @IntDef({DIRECTION_NONE, DIRECTION_PUSH, DIRECTION_POP})
+    @interface Direction {
     }
 }
