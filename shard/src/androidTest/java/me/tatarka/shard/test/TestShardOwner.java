@@ -14,14 +14,14 @@ import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.content.ComponentCallbacksDispatcher;
-import me.tatarka.shard.state.InstanceStateRegistry;
-import me.tatarka.shard.state.InstanceStateStore;
+import me.tatarka.shard.savedstate.BundleSavedStateRegistry;
+import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 public class TestShardOwner implements ShardOwner {
 
     final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     final ViewModelStore viewModelStore = new ViewModelStore();
-    final InstanceStateRegistry stateStore = new InstanceStateRegistry();
+    final BundleSavedStateRegistry stateStore = new BundleSavedStateRegistry();
     final ActivityCallbacks activityCallbacks;
     final ComponentCallbacks componentCallbacks = new ComponentCallbacksDispatcher(this);
 
@@ -55,7 +55,7 @@ public class TestShardOwner implements ShardOwner {
 
     @NonNull
     @Override
-    public InstanceStateStore getInstanceStateStore() {
+    public SavedStateRegistry getSavedStateRegistry() {
         return stateStore;
     }
 

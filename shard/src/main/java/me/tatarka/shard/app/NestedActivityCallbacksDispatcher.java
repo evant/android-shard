@@ -12,10 +12,10 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
-import me.tatarka.shard.state.InstanceStateSaver;
+import me.tatarka.shard.savedstate.SavedStateProvider;
 
 final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher implements
-        InstanceStateSaver<NestedActivityCallbacksDispatcher.State>,
+        SavedStateProvider<NestedActivityCallbacksDispatcher.State>,
         LifecycleObserver,
         BaseActivityCallbacksDispatcher.NestedCallbackListener {
 
@@ -29,7 +29,7 @@ final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispa
         super(owner);
         this.parentCallbacks = parentCallbacks;
         parentCallbacks.addNestedCallbackListener(this);
-        owner.getInstanceStateStore().add(STATE_ACTIVITY_CALLBACK_DISPATCHER, this);
+        owner.getSavedStateRegistry().registerSavedStateProvider(STATE_ACTIVITY_CALLBACK_DISPATCHER, this);
         owner.getLifecycle().addObserver(this);
     }
 
@@ -78,14 +78,14 @@ final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispa
 
     @Nullable
     @Override
-    public State onSaveInstanceState() {
+    public State saveState() {
         return pendingActivityResult || pendingRequestPermission
                 ? new State(pendingActivityResult, pendingRequestPermission)
                 : null;
     }
 
     @Override
-    public void onRestoreInstanceState(@NonNull State instanceState) {
+    public void restoreState(@NonNull State instanceState) {
         pendingActivityResult = instanceState.pendingActivityResult;
         pendingRequestPermission = instanceState.pendingRequestPermission;
     }

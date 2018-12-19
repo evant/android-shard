@@ -9,8 +9,8 @@ import androidx.annotation.Nullable;
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.content.ComponentCallbacksDispatcher;
-import me.tatarka.shard.state.InstanceStateRegistry;
-import me.tatarka.shard.state.InstanceStateStore;
+import me.tatarka.shard.savedstate.BundleSavedStateRegistry;
+import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 /**
  * Helper to implement a {@link ShardActivity}.
@@ -20,7 +20,7 @@ public final class ShardActivityDelegate {
     private static final String STATE_SHARD = "me.tatarka.shard.app.Shard";
 
     private final ComponentActivity activity;
-    private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
+    private final BundleSavedStateRegistry stateStore = new BundleSavedStateRegistry();
     private ActivityCallbacksDispatcher activityCallbackDispatcher;
     private ComponentCallbacksDispatcher componentCallbacksDispatcher;
     private Shard.Factory shardFactory = Shard.DefaultFactory.getInstance();
@@ -32,16 +32,14 @@ public final class ShardActivityDelegate {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             Bundle state = savedInstanceState.getBundle(STATE_SHARD);
-            if (state != null) {
-                stateStore.onRestoreInstanceState(state);
-            }
+            stateStore.performRestore(state);
         }
         activityCallbackDispatcher = new ActivityCallbacksDispatcher(activity);
         componentCallbacksDispatcher = new ComponentCallbacksDispatcher((ShardOwner) activity);
     }
 
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putBundle(STATE_SHARD, stateStore.onSaveInstanceState());
+        outState.putBundle(STATE_SHARD, stateStore.performSave());
     }
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -80,7 +78,7 @@ public final class ShardActivityDelegate {
     }
 
     @NonNull
-    public InstanceStateStore getInstanceStateStore() {
+    public SavedStateRegistry getInstanceStateStore() {
         return stateStore;
     }
 }

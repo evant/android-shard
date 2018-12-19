@@ -21,8 +21,8 @@ import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.activity.ActivityCallbacksOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.content.ComponentCallbacksDispatcher;
-import me.tatarka.shard.state.InstanceStateRegistry;
-import me.tatarka.shard.state.InstanceStateStore;
+import me.tatarka.shard.savedstate.BundleSavedStateRegistry;
+import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 /**
  * Utilities to obtain a {@link ShardOwner}.
@@ -70,7 +70,7 @@ public final class ShardOwners {
         }
 
         private final Context context;
-        final InstanceStateRegistry stateStore = new InstanceStateRegistry();
+        final BundleSavedStateRegistry stateStore = new BundleSavedStateRegistry();
         final ComponentCallbacksDispatcher callbacks;
         @Nullable
         WrappingActivityCallbacks activityCallbacks;
@@ -94,7 +94,7 @@ public final class ShardOwners {
 
         @NonNull
         @Override
-        public InstanceStateStore getInstanceStateStore() {
+        public SavedStateRegistry getSavedStateRegistry() {
             return stateStore;
         }
 
@@ -243,9 +243,7 @@ public final class ShardOwners {
             WrappingShardOwner owner = WrappingShardOwner.of(activity);
             if (savedInstanceState != null) {
                 Bundle state = savedInstanceState.getBundle(STATE_SHARD);
-                if (state != null) {
-                    owner.stateStore.onRestoreInstanceState(state);
-                }
+                owner.stateStore.performRestore(state);
             }
         }
 
@@ -272,7 +270,7 @@ public final class ShardOwners {
         @Override
         public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
             WrappingShardOwner owner = WrappingShardOwner.of(activity);
-            Bundle state = owner.stateStore.onSaveInstanceState();
+            Bundle state = owner.stateStore.performSave();
             outState.putBundle(STATE_SHARD, state);
         }
 

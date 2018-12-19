@@ -1,4 +1,4 @@
-package me.tatarka.shard.state;
+package me.tatarka.shard.savedstate;
 
 import android.os.Parcelable;
 
@@ -8,18 +8,18 @@ import androidx.annotation.Nullable;
 /**
  * Provides callbacks for saving and restoring state.
  */
-public interface InstanceStateSaver<T extends Parcelable> {
+public interface SavedStateProvider<S extends Parcelable> {
 
     /**
      * Called when state should be saved. This will happen after {@code onStop()} and before
-     * {@code onDestroy()}. If null is returned, {@link #onRestoreInstanceState(Parcelable)}
+     * {@code onDestroy()}. If null is returned, {@link #restoreState(Parcelable)}
      * will not be called.
      */
     @Nullable
-    T onSaveInstanceState();
+    S saveState();
 
     /**
      * Called when state should be restored.
      */
-    void onRestoreInstanceState(@NonNull T instanceState);
+    void restoreState(@NonNull S state);
 }

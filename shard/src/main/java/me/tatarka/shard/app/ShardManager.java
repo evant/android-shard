@@ -6,7 +6,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import me.tatarka.shard.state.InstanceStateRegistry;
+import me.tatarka.shard.savedstate.BundleSavedStateRegistry;
 import me.tatarka.shard.transition.ShardTransition;
 
 public final class ShardManager {
@@ -43,7 +43,7 @@ public final class ShardManager {
 
     /**
      * Saves the shard's state and returns it. This will move the shard to the stopped state
-     * so that when {@link InstanceStateRegistry#onSaveInstanceState()} is called is consistent. Therefore you
+     * so that when {@link BundleSavedStateRegistry#performSave()} is called is consistent. Therefore you
      * should only call this method when the shard is being stopped or destroyed.
      *
      * @throws IllegalStateException If the shard is destroyed.

@@ -4,9 +4,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import me.tatarka.shard.state.InstanceStateSaver;
+import me.tatarka.shard.savedstate.SavedStateProvider;
 
-public class TestInstanceStateSaver implements InstanceStateSaver<Bundle> {
+public class TestInstanceStateSaver implements SavedStateProvider<Bundle> {
 
     private static final String STATE = "state";
 
@@ -23,7 +23,7 @@ public class TestInstanceStateSaver implements InstanceStateSaver<Bundle> {
 
     @Nullable
     @Override
-    public Bundle onSaveInstanceState() {
+    public Bundle saveState() {
         saveStateCalled = true;
         Bundle bundle = new Bundle();
         bundle.putInt(STATE, state);
@@ -31,7 +31,7 @@ public class TestInstanceStateSaver implements InstanceStateSaver<Bundle> {
     }
 
     @Override
-    public void onRestoreInstanceState(@NonNull Bundle instanceState) {
+    public void restoreState(@NonNull Bundle instanceState) {
         restoreStateCalled = true;
         this.state = instanceState.getInt(STATE);
     }

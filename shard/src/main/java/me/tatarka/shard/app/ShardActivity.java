@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.content.ComponentCallbacks;
-import me.tatarka.shard.state.InstanceStateStore;
+import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 /**
  * A base class for hosting {@link Shard}s. You can either subclass this or duplicate it's
@@ -36,7 +36,7 @@ public class ShardActivity extends ComponentActivity implements ShardOwner {
 
     @NonNull
     @Override
-    public InstanceStateStore getInstanceStateStore() {
+    public SavedStateRegistry getSavedStateRegistry() {
         return delegate.getInstanceStateStore();
     }
 

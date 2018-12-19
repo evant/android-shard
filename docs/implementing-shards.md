@@ -82,23 +82,23 @@ requireViewById<Button>(R.id.button).setOnClickListener {
 
 ## Saving Instance State
 
-You can save you own custom instance state by using the `InstanceStateStore`. You can access it with
-`getInstancesStateStore()`.
+You can save you own custom instance state by using the `SavedStateRegistry`. You can access it with
+`getSavedStateRegistry()`.
 
-Add an `InstanceStateSaver` and you'll get callbacks to save and restore your state.
+Add an `SavedStateprovider` and you'll get callbacks to save and restore your state.
 
 ```kotlin
 const val STATE_KEY = "state"
 
 class MyShard: Shard() {
     override fun onCreate() {
-        stateStore.addStateSaver(STATE_KEY, object: InstanceStateSaver<Bundle> {
-            override fun onSaveInstanceState() : Bundle? {
+        savedStateRegistry.registerSavedStateProvider(STATE_KEY, object: SavedStateProvider<Bundle> {
+            override fun saveState() : Bundle? {
                 // save state
                 return null
             }
 
-            override fun onRestoreInstanceState(instanceState: Bundle) {
+            override fun restoreState(state: Bundle) {
                 // restore state
             }
         }) 

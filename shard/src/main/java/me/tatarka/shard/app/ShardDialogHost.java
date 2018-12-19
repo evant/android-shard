@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
-import me.tatarka.shard.state.InstanceStateSaver;
+import me.tatarka.shard.savedstate.SavedStateProvider;
 
 /**
  * Responsible for showing {@link DialogShard}s and {@link AlertDialogShard}s, and restoring them
@@ -43,7 +43,7 @@ public class ShardDialogHost {
         this.owner = owner;
         fm = new ShardManager(owner);
         DialogHostCallbacks callbacks = new DialogHostCallbacks();
-        owner.getInstanceStateStore().add(DIALOG_STATE, callbacks);
+        owner.getSavedStateRegistry().registerSavedStateProvider(DIALOG_STATE, callbacks);
         owner.getLifecycle().addObserver(callbacks);
     }
 
@@ -77,11 +77,11 @@ public class ShardDialogHost {
         dialog.show();
     }
 
-    class DialogHostCallbacks implements InstanceStateSaver<State>, LifecycleObserver {
+    class DialogHostCallbacks implements SavedStateProvider<State>, LifecycleObserver {
 
         @Nullable
         @Override
-        public State onSaveInstanceState() {
+        public State saveState() {
             int size = dialogShards.size();
             if (size == 0) {
                 return null;
@@ -95,7 +95,7 @@ public class ShardDialogHost {
         }
 
         @Override
-        public void onRestoreInstanceState(@NonNull State instanceState) {
+        public void restoreState(@NonNull State instanceState) {
             ArrayMap<String, Shard.State> states = instanceState.shardStates;
             for (int i = 0, size = states.size(); i < size; i++) {
                 String name = states.keyAt(i);

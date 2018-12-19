@@ -25,7 +25,7 @@ import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwnerContextWrapper;
 import me.tatarka.shard.app.ShardOwners;
 import me.tatarka.shard.content.ComponentCallbacks;
-import me.tatarka.shard.state.InstanceStateStore;
+import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 /**
  * Implementation of {@link PagerAdapter} that represents each page as a {@link Shard}.
@@ -223,8 +223,8 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
 
         @NonNull
         @Override
-        public InstanceStateStore getInstanceStateStore() {
-            return parentOwner.getInstanceStateStore();
+        public SavedStateRegistry getSavedStateRegistry() {
+            return parentOwner.getSavedStateRegistry();
         }
 
         @NonNull

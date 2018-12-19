@@ -29,7 +29,7 @@ open class MyShard @Inject constructor(
         setContentView(R.layout.shard)
         requireViewById<TextView>(R.id.number).text = args.getInt(KEY_NUMBER).toString()
 
-        instanceStateStore.add("KEY", stateLogger)
+        savedStateRegistry.registerSavedStateProvider("KEY", stateLogger)
     }
 
 }

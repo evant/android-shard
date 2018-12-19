@@ -56,7 +56,7 @@ public class ShardHost extends FrameLayout {
             a.recycle();
         }
         if (!isInEditMode()) {
-            if (initialName != null && !owner.getInstanceStateStore().isStateRestored()) {
+            if (initialName != null && !owner.getSavedStateRegistry().isRestored()) {
                 shard = getShardFactory().newInstance(initialName, Bundle.EMPTY);
                 fm.add(shard, this);
             }

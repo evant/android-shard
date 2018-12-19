@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.widget.FrameLayout;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,7 +62,7 @@ public class ShardPageHost extends FrameLayout {
             a.recycle();
         }
         if (!isInEditMode()) {
-            if (startPage != 0 && !owner.getInstanceStateStore().isStateRestored()) {
+            if (startPage != 0 && !owner.getSavedStateRegistry().isRestored()) {
                 setCurrentPage(startPage, null);
             }
         }

@@ -1,15 +1,12 @@
 apply from: '../library.gradle'
 
 dependencies {
-    def nav_version = '1.0.0-alpha08'
-
     api project(':shard')
     implementation project(':shard-transition')
-    api "android.arch.navigation:navigation-runtime:$nav_version"
+    api "android.arch.navigation:navigation-runtime:1.0.0-alpha09"
 
     testImplementation 'junit:junit:4.12'
 
-    androidTestImplementation "android.arch.navigation:navigation-testing:$nav_version"
     androidTestImplementation "androidx.test.ext:junit:1.1.0"
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test:rules:1.1.1'

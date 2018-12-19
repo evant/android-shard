@@ -26,8 +26,8 @@ import androidx.lifecycle.ViewModelStore;
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.content.ComponentCallbacksDispatcher;
-import me.tatarka.shard.state.InstanceStateRegistry;
-import me.tatarka.shard.state.InstanceStateStore;
+import me.tatarka.shard.savedstate.BundleSavedStateRegistry;
+import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 /**
  * A simpler 'Shard' that lies on the android architecture components for most of the heavy-lifting.
@@ -49,7 +49,7 @@ public class Shard implements ShardOwner {
         });
     }
 
-    private final InstanceStateRegistry stateStore = new InstanceStateRegistry();
+    private final BundleSavedStateRegistry stateStore = new BundleSavedStateRegistry();
     private NestedActivityCallbacksDispatcher activityCallbackDispatcher;
     private ComponentCallbacksDispatcher componentCallbacksDispatcher;
     private final Observer observer = new Observer();
@@ -88,8 +88,8 @@ public class Shard implements ShardOwner {
         componentCallbacksDispatcher = new ComponentCallbacksDispatcher(this);
         this.container = container;
 
-        if (state != null && state.savedState != null) {
-            stateStore.onRestoreInstanceState(state.savedState);
+        if (state != null) {
+            stateStore.performRestore(state.savedState);
         }
         onCreate();
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
@@ -126,7 +126,7 @@ public class Shard implements ShardOwner {
                 state.viewState = new SparseArray();
                 frame.saveHierarchyState(state.viewState);
             }
-            state.savedState = stateStore.onSaveInstanceState();
+            state.savedState = stateStore.performSave();
         }
         return state;
     }
@@ -371,11 +371,11 @@ public class Shard implements ShardOwner {
     }
 
     /**
-     * Returns a {@link InstanceStateStore} for saving additional instance state.
+     * Returns a {@link SavedStateRegistry} for saving additional instance state.
      */
     @NonNull
     @Override
-    public InstanceStateStore getInstanceStateStore() {
+    public SavedStateRegistry getSavedStateRegistry() {
         return stateStore;
     }
 

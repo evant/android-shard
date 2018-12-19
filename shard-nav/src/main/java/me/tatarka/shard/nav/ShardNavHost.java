@@ -17,7 +17,6 @@ import androidx.navigation.NavGraph;
 import androidx.navigation.NavHost;
 import androidx.navigation.Navigation;
 import me.tatarka.shard.activity.ActivityCallbacks;
-import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwners;
 
@@ -45,7 +44,7 @@ public class ShardNavHost extends FrameLayout implements NavHost {
             ShardNavigator shardNavigator = new ShardNavigator(this);
             navController.getNavigatorProvider().addNavigator(shardNavigator);
         }
-        if (graphId != 0 && !owner.getInstanceStateStore().isStateRestored()) {
+        if (graphId != 0 && !owner.getSavedStateRegistry().isRestored()) {
             navController.setGraph(graphId);
         }
         if (!isInEditMode()) {
