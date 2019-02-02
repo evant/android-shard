@@ -19,9 +19,9 @@ class MyFragment : Fragment() {
 
 *Shard*
 ```kotlin
+@ContentView(R.layout.my_shard)
 class MyShard : Shard() {
     override fun onCreate() {
-        setContentView(R.layout.my_shard)
         requireViewById<TextView>(R.id.name).text = "My Name"
     }
 }
@@ -97,13 +97,10 @@ button.setOnClickListener {
 
 *Shard*
 ```kotlin
+@ContentView(R.layout.dialog)
 class MyDialogShard : DialogShard() {
     override fun onCreateDialog(context: Context): Dialog {
         return Dialog(context)
-    }
-    
-    override fun onCreate() {
-        setContentView(R.layout.dialog)
     }
 }
 ```

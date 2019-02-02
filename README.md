@@ -27,12 +27,11 @@ implementation "me.tatarka.shard:shard-transition:$shard_version"
 
 Creating a shard is as simple as
 ```kotlin
+@ContentView(R.layout.my_shard)
 class MyShard: Shard() {
     const val REQUEST_CODE = 1
 
     override fun onCreate() {
-        // set the layout
-        setContentView(R.layout.my_shard)
         // find a view
         val name: TextView = requireViewById(R.id.name)
         // get a ViewModel

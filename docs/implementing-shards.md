@@ -14,14 +14,15 @@ class MyShard: Shard() {
 
 ## Views
 
-You can set the contents of the shard with `setContentView(layout)` or `setContentView(view)`. You
-can find views with `findVieById()` or `requireViewById()`. You can access the root view 
-with `getView()`.
+The easiest way to set the contents of a shard is by annotating the class with `@ContentView`.
+Alternatively, you can use `setContentView(layout)` or `setContentView(view)` if you need something
+dynamic. You can find views with `findVieById()` or `requireViewById()`. You can access the root
+view with `getView()`.
 
 ```kotlin
+@ContentView(R.layout.my_shard)
 class MyShard: Shard() {
     override fun onCreate() {
-        setContentView(R.layout.my_shard)
         val name: TextView = requireViewById(R.id.name)
         name.text = "My Name"
     }
