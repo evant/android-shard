@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import java.lang.reflect.InvocationTargetException;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.ContentView;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -23,6 +24,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
+
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.content.ComponentCallbacksDispatcher;
@@ -32,7 +34,8 @@ import me.tatarka.shard.savedstate.SavedStateRegistry;
 /**
  * A simpler 'Shard' that lies on the android architecture components for most of the heavy-lifting.
  * <p>
- * It is a {@link LifecycleOwner} and {@link androidx.lifecycle.ViewModelStoreOwner}.
+ * It is a {@link LifecycleOwner} and {@link androidx.lifecycle.ViewModelStoreOwner}. You may use
+ * {@link ContentView} to set the content view for this shard.
  */
 public class Shard implements ShardOwner {
 
@@ -90,6 +93,10 @@ public class Shard implements ShardOwner {
 
         if (state != null) {
             stateStore.performRestore(state.savedState);
+        }
+        ContentView contentView = getClass().getAnnotation(ContentView.class);
+        if (contentView != null) {
+            setContentView(contentView.value());
         }
         onCreate();
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
@@ -205,7 +212,7 @@ public class Shard implements ShardOwner {
     /**
      * Inflates the given layout and sets the {@code Shard}'s content view to it. This will
      * immediately restore any view state. After calling this, {@link #getView()} will not return
-     * null.
+     * null. You may annotate the class with {@link ContentView} instead of calling this method.
      */
     @CallSuper
     public void setContentView(@LayoutRes int layoutId) {

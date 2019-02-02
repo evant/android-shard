@@ -2,6 +2,7 @@ package me.tatarka.shard.sample
 
 import android.content.Context
 import android.widget.TextView
+import androidx.annotation.ContentView
 import androidx.appcompat.app.AlertDialog
 import me.tatarka.shard.appcompat.app.AlertDialogShard
 import javax.inject.Inject
@@ -25,7 +26,6 @@ class MyAlertDialogShard @Inject constructor() : AlertDialogShard() {
     }
 
     override fun onCreate() {
-        super.onCreate()
         if (args.getBoolean(KEY_CUSTOM_VIEW)) {
             setContentView(R.layout.dialog)
             requireViewById<TextView>(R.id.number).text = args.getInt(KEY_NUMBER).toString()
