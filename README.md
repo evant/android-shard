@@ -8,7 +8,7 @@ Shards are 'Fragments' with a simpler api built on top of the android architectu
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/me.tatarka.shard/shard/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/me.tatarka.shard/shard)
 
 ```groovy
-def shard_version = '1.0.0-alpha03'
+def shard_version = '1.0.0-alpha04'
 // The core lib
 implementation "me.tatarka.shard:shard:$shard_version"
 // For use with appcompat
