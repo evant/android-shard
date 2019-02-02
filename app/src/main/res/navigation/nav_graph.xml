@@ -13,7 +13,7 @@
         <argument
             android:name="number"
             android:defaultValue="0"
-            app:argType="int" />
+            app:argType="integer" />
 
     </shard>
 
@@ -26,7 +26,7 @@
         <argument
             android:name="number"
             android:defaultValue="1"
-            app:argType="int" />
+            app:argType="integer" />
     </shard>
 
     <shard
@@ -38,7 +38,7 @@
         <argument
             android:name="number"
             android:defaultValue="2"
-            app:argType="int" />
+            app:argType="integer" />
     </shard>
 
     <action

@@ -5,7 +5,7 @@ dependencies {
 
     api "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-    api "androidx.activity:activity:1.0.0-alpha02"
+    api "androidx.activity:activity:1.0.0-alpha04"
     api 'androidx.transition:transition:1.0.0'
 
     testImplementation 'junit:junit:4.12'
