@@ -1,0 +1,6 @@
+apply from: '../library.gradle'
+
+dependencies {
+    api project(':shard')
+    api 'androidx.viewpager2:viewpager2:1.0.0-alpha05'
+}

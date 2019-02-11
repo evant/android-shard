@@ -30,6 +30,7 @@ dependencies {
     implementation project(':shard-ktx')
     implementation project(':shard-appcompat')
     implementation project(':shard-pager')
+    implementation project(':shard-pager2')
     implementation project(':shard-nav')
     implementation project(':shard-host-ui-ktx')
     implementation project(':shard-transition')
