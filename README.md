@@ -39,7 +39,7 @@ class MyShard: Shard() {
         // listen with LiveData
         vm.name.observe(this, Observer { value -> name.text = value })
         // handle back presses
-        activityCallbacks.addOnBackPrssedCallback { false }
+        activityCallbacks.addOnBackPressedCallback { false }
         // start an activity for result
         activityCallbacks.addOnActivityResultCallback(REQUEST_CODE) { resultCode, data -> }
         requireViewById<Button>(R.id.button).setOnClickListener {
