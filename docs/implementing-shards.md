@@ -93,7 +93,7 @@ const val STATE_KEY = "state"
 
 class MyShard: Shard() {
     override fun onCreate() {
-        savedStateRegistry.registerSavedStateProvider(STATE_KEY, object: SavedStateProvider<Bundle> {
+        shardSavedStateRegistry.registerSavedStateProvider(STATE_KEY, object: SavedStateProvider<Bundle> {
             override fun saveState() : Bundle? {
                 // save state
                 return null

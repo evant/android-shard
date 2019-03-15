@@ -55,7 +55,7 @@ public class TestShardOwner implements ShardOwner {
 
     @NonNull
     @Override
-    public SavedStateRegistry getSavedStateRegistry() {
+    public SavedStateRegistry getShardSavedStateRegistry() {
         return stateStore;
     }
 

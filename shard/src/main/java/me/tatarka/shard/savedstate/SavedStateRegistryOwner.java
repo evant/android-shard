@@ -4,5 +4,5 @@ import androidx.annotation.NonNull;
 
 public interface SavedStateRegistryOwner {
     @NonNull
-    SavedStateRegistry getSavedStateRegistry();
+    SavedStateRegistry getShardSavedStateRegistry();
 }

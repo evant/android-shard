@@ -52,7 +52,7 @@ public class ShardHostTest {
             @Override
             public void run() {
                 ShardHost host = shardHost();
-                host.getShard().getSavedStateRegistry().registerSavedStateProvider("test", new TestInstanceStateSaver(1));
+                host.getShard().getShardSavedStateRegistry().registerSavedStateProvider("test", new TestInstanceStateSaver(1));
             }
         });
         await(new Runnable() {
@@ -66,7 +66,7 @@ public class ShardHostTest {
             public void run() {
                 ShardHost host = shardHost();
                 TestInstanceStateSaver stateSaver = new TestInstanceStateSaver();
-                host.getShard().getSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
+                host.getShard().getShardSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
 
                 assertEquals(TestShard.class, host.getShard().getClass());
                 assertTrue(stateSaver.restoreStateCalled);
@@ -96,7 +96,7 @@ public class ShardHostTest {
                 ShardHost host = shardHost();
                 OtherShard shard = new OtherShard();
                 TestInstanceStateSaver stateSaver = new TestInstanceStateSaver(1);
-                shard.getSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
+                shard.getShardSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
                 host.setShard(shard);
             }
         });
@@ -112,7 +112,7 @@ public class ShardHostTest {
                 ShardHost host = shardHost();
                 Shard shard = host.getShard();
                 TestInstanceStateSaver stateSaver = new TestInstanceStateSaver();
-                shard.getSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
+                shard.getShardSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
 
                 assertEquals(OtherShard.class, shard.getClass());
                 assertTrue(stateSaver.restoreStateCalled);

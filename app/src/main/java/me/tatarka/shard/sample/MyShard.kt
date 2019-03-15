@@ -29,7 +29,7 @@ class MyShard @Inject constructor(
         ViewModelProviders.of(this).get<MyViewModel>()
         requireViewById<TextView>(R.id.number).text = args.getInt(KEY_NUMBER).toString()
 
-        savedStateRegistry.registerSavedStateProvider("KEY", stateLogger)
+        shardSavedStateRegistry.registerSavedStateProvider("KEY", stateLogger)
     }
 
 }

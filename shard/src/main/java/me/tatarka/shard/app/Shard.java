@@ -382,7 +382,7 @@ public class Shard implements ShardOwner {
      */
     @NonNull
     @Override
-    public SavedStateRegistry getSavedStateRegistry() {
+    public SavedStateRegistry getShardSavedStateRegistry() {
         return stateStore;
     }
 

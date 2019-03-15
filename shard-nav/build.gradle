@@ -3,7 +3,7 @@ apply from: '../library.gradle'
 dependencies {
     api project(':shard')
     implementation project(':shard-transition')
-    api "android.arch.navigation:navigation-runtime:1.0.0-alpha11"
+    api "android.arch.navigation:navigation-runtime:1.0.0"
 
     testImplementation 'junit:junit:4.12'
 

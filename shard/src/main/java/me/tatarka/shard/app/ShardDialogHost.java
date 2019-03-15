@@ -43,7 +43,7 @@ public class ShardDialogHost {
         this.owner = owner;
         fm = new ShardManager(owner);
         DialogHostCallbacks callbacks = new DialogHostCallbacks();
-        owner.getSavedStateRegistry().registerSavedStateProvider(DIALOG_STATE, callbacks);
+        owner.getShardSavedStateRegistry().registerSavedStateProvider(DIALOG_STATE, callbacks);
         owner.getLifecycle().addObserver(callbacks);
     }
 
