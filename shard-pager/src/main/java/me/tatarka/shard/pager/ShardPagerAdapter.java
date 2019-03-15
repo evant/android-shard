@@ -223,8 +223,8 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
 
         @NonNull
         @Override
-        public SavedStateRegistry getSavedStateRegistry() {
-            return parentOwner.getSavedStateRegistry();
+        public SavedStateRegistry getShardSavedStateRegistry() {
+            return parentOwner.getShardSavedStateRegistry();
         }
 
         @NonNull

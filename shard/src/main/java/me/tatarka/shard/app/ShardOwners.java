@@ -94,7 +94,7 @@ public final class ShardOwners {
 
         @NonNull
         @Override
-        public SavedStateRegistry getSavedStateRegistry() {
+        public SavedStateRegistry getShardSavedStateRegistry() {
             return stateStore;
         }
 

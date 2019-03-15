@@ -18,7 +18,7 @@ public class TestShard extends Shard implements SavedStateProvider<Bundle> {
     public void onCreate() {
         super.onCreate();
         createCalled = true;
-        getSavedStateRegistry().registerSavedStateProvider(STATE, this);
+        getShardSavedStateRegistry().registerSavedStateProvider(STATE, this);
     }
 
     @Nullable

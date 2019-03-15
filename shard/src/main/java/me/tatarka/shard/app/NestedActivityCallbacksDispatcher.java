@@ -29,7 +29,7 @@ final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispa
         super(owner);
         this.parentCallbacks = parentCallbacks;
         parentCallbacks.addNestedCallbackListener(this);
-        owner.getSavedStateRegistry().registerSavedStateProvider(STATE_ACTIVITY_CALLBACK_DISPATCHER, this);
+        owner.getShardSavedStateRegistry().registerSavedStateProvider(STATE_ACTIVITY_CALLBACK_DISPATCHER, this);
         owner.getLifecycle().addObserver(this);
     }
 

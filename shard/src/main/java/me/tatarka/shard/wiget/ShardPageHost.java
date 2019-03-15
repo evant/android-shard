@@ -62,7 +62,7 @@ public class ShardPageHost extends FrameLayout {
             a.recycle();
         }
         if (!isInEditMode()) {
-            if (startPage != 0 && !owner.getSavedStateRegistry().isRestored()) {
+            if (startPage != 0 && !owner.getShardSavedStateRegistry().isRestored()) {
                 setCurrentPage(startPage, null);
             }
         }

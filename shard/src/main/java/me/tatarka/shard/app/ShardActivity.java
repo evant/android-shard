@@ -36,7 +36,7 @@ public class ShardActivity extends ComponentActivity implements ShardOwner {
 
     @NonNull
     @Override
-    public SavedStateRegistry getSavedStateRegistry() {
+    public SavedStateRegistry getShardSavedStateRegistry() {
         return delegate.getInstanceStateStore();
     }
 

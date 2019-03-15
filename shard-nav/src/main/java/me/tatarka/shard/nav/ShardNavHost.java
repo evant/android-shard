@@ -44,7 +44,7 @@ public class ShardNavHost extends FrameLayout implements NavHost {
             ShardNavigator shardNavigator = new ShardNavigator(this);
             navController.getNavigatorProvider().addNavigator(shardNavigator);
         }
-        if (graphId != 0 && !owner.getSavedStateRegistry().isRestored()) {
+        if (graphId != 0 && !owner.getShardSavedStateRegistry().isRestored()) {
             navController.setGraph(graphId);
         }
         if (!isInEditMode()) {
