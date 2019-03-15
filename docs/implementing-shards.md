@@ -54,7 +54,7 @@ available depending on how you set up your base activity, see
 You can handle back presses
 
 ```kotlin
-activityCallbacks.addOnBackPrssedCallback { false }
+activityCallbacks.addOnBackPressedCallback { false }
 ```
 
 , start activities for result
