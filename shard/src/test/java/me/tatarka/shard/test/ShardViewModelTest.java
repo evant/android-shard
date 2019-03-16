@@ -3,13 +3,14 @@ package me.tatarka.shard.test;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.lifecycle.ViewModel;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import androidx.lifecycle.ViewModel;
-import androidx.test.InstrumentationRegistry;
-import androidx.test.runner.AndroidJUnit4;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardManager;
 import me.tatarka.shard.lifecycle.ViewModelProviders;
@@ -26,7 +27,7 @@ public class ShardViewModelTest {
     @Before
     public void setup() {
         fm = new ShardManager(new TestShardOwner(null));
-        container = new FrameLayout(InstrumentationRegistry.getTargetContext());
+        container = new FrameLayout(InstrumentationRegistry.getInstrumentation().getTargetContext());
     }
 
     @Test

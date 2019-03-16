@@ -3,14 +3,15 @@ package me.tatarka.shard.test;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleRegistry;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleRegistry;
-import androidx.test.InstrumentationRegistry;
-import androidx.test.runner.AndroidJUnit4;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardManager;
 
@@ -29,7 +30,7 @@ public class ShardLifecycleTest {
         TestShardOwner owner = new TestShardOwner(null);
         registry = owner.lifecycleRegistry;
         fm = new ShardManager(owner);
-        container = new FrameLayout(InstrumentationRegistry.getTargetContext());
+        container = new FrameLayout(InstrumentationRegistry.getInstrumentation().getTargetContext());
     }
 
     @Test

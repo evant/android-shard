@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.tatarka.shard.pager">
+
+    <application>
+        <activity android:name=".test.ShardPagerAdapterTest$CreatesPagesActivity" />
+        <activity android:name=".test.ShardPagerAdapterTest$SavesAndRestoresStateOnConfigChangeActivity" />
+    </application>
+</manifest>

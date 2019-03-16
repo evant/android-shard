@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.tatarka.shard.pager">
+    package="me.tatarka.shard.nav">
 
     <application>
-        <activity android:name=".test.TestActivity" />
+        <activity android:name=".TestNavActivity" />
     </application>
 </manifest>
