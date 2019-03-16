@@ -3,10 +3,10 @@ package me.tatarka.shard.test;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import me.tatarka.shard.savedstate.SavedStateProvider;
+import androidx.savedstate.SavedStateRegistry;
+import androidx.savedstate.SavedStateRegistryOwner;
 
-public class TestInstanceStateSaver implements SavedStateProvider<Bundle> {
+public class TestInstanceStateSaver {
 
     private static final String STATE = "state";
 
@@ -14,25 +14,26 @@ public class TestInstanceStateSaver implements SavedStateProvider<Bundle> {
     public boolean saveStateCalled;
     public boolean restoreStateCalled;
 
-    public TestInstanceStateSaver() {
+    public TestInstanceStateSaver(String key, SavedStateRegistryOwner owner) {
+        Bundle bundle = owner.getSavedStateRegistry().consumeRestoredStateForKey(key);
+        if (bundle != null) {
+            state = bundle.getInt(STATE);
+            restoreStateCalled = true;
+        }
+        owner.getSavedStateRegistry().registerSavedStateProvider(key, new SavedStateRegistry.SavedStateProvider() {
+            @NonNull
+            @Override
+            public Bundle saveState() {
+                saveStateCalled = true;
+                Bundle bundle = new Bundle();
+                bundle.putInt(STATE, state);
+                return bundle;
+            }
+        });
     }
 
-    public TestInstanceStateSaver(int state) {
-        this.state = state;
-    }
-
-    @Nullable
-    @Override
-    public Bundle saveState() {
-        saveStateCalled = true;
-        Bundle bundle = new Bundle();
-        bundle.putInt(STATE, state);
-        return bundle;
-    }
-
-    @Override
-    public void restoreState(@NonNull Bundle instanceState) {
-        restoreStateCalled = true;
-        this.state = instanceState.getInt(STATE);
+    public TestInstanceStateSaver(String key, int initialState, SavedStateRegistryOwner owner) {
+        this(key, owner);
+        this.state = initialState;
     }
 }

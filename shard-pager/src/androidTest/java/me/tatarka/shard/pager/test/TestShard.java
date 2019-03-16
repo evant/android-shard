@@ -3,11 +3,11 @@ package me.tatarka.shard.pager.test;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import me.tatarka.shard.app.Shard;
-import me.tatarka.shard.savedstate.SavedStateProvider;
+import androidx.savedstate.SavedStateRegistry;
 
-public class TestShard extends Shard implements SavedStateProvider<Bundle> {
+import me.tatarka.shard.app.Shard;
+
+public class TestShard extends Shard {
     private static final String STATE = "state";
 
     public int state;
@@ -18,21 +18,20 @@ public class TestShard extends Shard implements SavedStateProvider<Bundle> {
     public void onCreate() {
         super.onCreate();
         createCalled = true;
-        getShardSavedStateRegistry().registerSavedStateProvider(STATE, this);
-    }
-
-    @Nullable
-    @Override
-    public Bundle saveState() {
-        saveInstanceStateCalled = true;
-        Bundle bundle = new Bundle();
-        bundle.putInt(STATE, state);
-        return bundle;
-    }
-
-    @Override
-    public void restoreState(@NonNull Bundle instanceState) {
-        state = instanceState.getInt(STATE);
-
+        SavedStateRegistry registry = getSavedStateRegistry();
+        Bundle bundle = registry.consumeRestoredStateForKey(STATE);
+        if (bundle != null) {
+            state = bundle.getInt(STATE);
+        }
+        registry.registerSavedStateProvider(STATE, new SavedStateRegistry.SavedStateProvider() {
+            @NonNull
+            @Override
+            public Bundle saveState() {
+                saveInstanceStateCalled = true;
+                Bundle bundle = new Bundle();
+                bundle.putInt(STATE, state);
+                return bundle;
+            }
+        });
     }
 }

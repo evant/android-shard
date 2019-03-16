@@ -13,6 +13,7 @@ import androidx.test.InstrumentationRegistry;
 import androidx.test.annotation.UiThreadTest;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
+
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardActivity;
 import me.tatarka.shard.wiget.ShardHost;
@@ -52,7 +53,7 @@ public class ShardHostTest {
             @Override
             public void run() {
                 ShardHost host = shardHost();
-                host.getShard().getShardSavedStateRegistry().registerSavedStateProvider("test", new TestInstanceStateSaver(1));
+                new TestInstanceStateSaver("test", 1, host.getShard());
             }
         });
         await(new Runnable() {
@@ -65,8 +66,7 @@ public class ShardHostTest {
             @Override
             public void run() {
                 ShardHost host = shardHost();
-                TestInstanceStateSaver stateSaver = new TestInstanceStateSaver();
-                host.getShard().getShardSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
+                TestInstanceStateSaver stateSaver = new TestInstanceStateSaver("test", host.getShard());
 
                 assertEquals(TestShard.class, host.getShard().getClass());
                 assertTrue(stateSaver.restoreStateCalled);
@@ -95,9 +95,8 @@ public class ShardHostTest {
             public void run() {
                 ShardHost host = shardHost();
                 OtherShard shard = new OtherShard();
-                TestInstanceStateSaver stateSaver = new TestInstanceStateSaver(1);
-                shard.getShardSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
                 host.setShard(shard);
+                new TestInstanceStateSaver("test", 1, shard);
             }
         });
         await(new Runnable() {
@@ -111,8 +110,7 @@ public class ShardHostTest {
             public void run() {
                 ShardHost host = shardHost();
                 Shard shard = host.getShard();
-                TestInstanceStateSaver stateSaver = new TestInstanceStateSaver();
-                shard.getShardSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
+                TestInstanceStateSaver stateSaver = new TestInstanceStateSaver("test", shard);
 
                 assertEquals(OtherShard.class, shard.getClass());
                 assertTrue(stateSaver.restoreStateCalled);

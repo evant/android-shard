@@ -50,9 +50,8 @@ public class ShardTest {
     @Test
     public void saveStateCallsOnSaveInstanceState() {
         TestShard shard = new TestShard();
-        TestInstanceStateSaver stateSaver = new TestInstanceStateSaver();
-        shard.getShardSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
         fm.add(shard, container);
+        TestInstanceStateSaver stateSaver = new TestInstanceStateSaver("test", shard);
         fm.saveState(shard);
 
         assertTrue(stateSaver.saveStateCalled);
@@ -104,15 +103,13 @@ public class ShardTest {
     @Test
     public void shardSavesAndRestoresState() {
         TestShard shard = new TestShard();
-        TestInstanceStateSaver stateSaver = new TestInstanceStateSaver(1);
-        shard.getShardSavedStateRegistry().registerSavedStateProvider("test", stateSaver);
         fm.add(shard, container);
+        TestInstanceStateSaver stateSaver = new TestInstanceStateSaver("test", 1, shard);
         Shard.State state = fm.saveState(shard);
         TestShard newShard = new TestShard();
-        TestInstanceStateSaver newStateSaver = new TestInstanceStateSaver();
-        newShard.getShardSavedStateRegistry().registerSavedStateProvider("test", newStateSaver);
         fm.restoreState(newShard, state);
         fm.add(newShard, container);
+        TestInstanceStateSaver newStateSaver = new TestInstanceStateSaver("test", newShard);
 
         assertTrue(stateSaver.saveStateCalled);
         assertTrue(newStateSaver.restoreStateCalled);
