@@ -7,7 +7,7 @@ import androidx.savedstate.SavedStateRegistry;
 
 import java.util.WeakHashMap;
 
-class ShardUtil {
+final class ShardUtil {
 
     static final String KEY = "me.tatarka.shard.ShardUtil";
     static final WeakHashMap<ShardOwner, Boolean> restoredMap = new WeakHashMap<>();

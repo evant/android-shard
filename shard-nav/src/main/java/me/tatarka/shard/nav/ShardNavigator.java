@@ -14,6 +14,7 @@ import androidx.annotation.TransitionRes;
 import androidx.navigation.NavDestination;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
+
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardManager;
 import me.tatarka.shard.app.ShardOwner;
@@ -24,15 +25,17 @@ import me.tatarka.shard.transition.ShardTransitionCompat;
 @Navigator.Name("shard")
 public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destination, ShardNavigator.Page, ShardNavigator.PageState> {
 
-    private final ShardManager fm;
     private final FrameLayout container;
+    private ShardManager shardManager;
     private Shard.Factory factory;
 
     public ShardNavigator(FrameLayout container) {
         this.container = container;
-        ShardOwner owner = ShardOwners.get(container.getContext());
-        fm = new ShardManager(owner);
-        factory = owner.getShardFactory();
+        if (!container.isInEditMode()) {
+            ShardOwner owner = ShardOwners.get(container.getContext());
+            shardManager = new ShardManager(owner);
+            factory = owner.getShardFactory();
+        }
     }
 
     @NonNull
@@ -75,19 +78,19 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
             case DIRECTION_NONE:
                 // no animation
         }
-        fm.replace(oldShard, newShard, container, transition);
+        shardManager.replace(oldShard, newShard, container, transition);
     }
 
     @NonNull
     @Override
     protected PageState savePageState(Page page) {
-        return page.saveState(fm);
+        return page.saveState(shardManager);
     }
 
     @NonNull
     @Override
     protected Page restorePageState(PageState state) {
-        return state.restore(fm, factory);
+        return state.restore(shardManager, factory);
     }
 
     public static class Destination extends NavDestination {

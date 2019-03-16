@@ -158,7 +158,7 @@ findNavController(view).navigate(R.id.my_fragment2)
    android:id="@+id/nav_host"
    android:layout_width="match_parent"
    android:layout_height="match_parent"
-   app:graphId="@navigation/my_graph" />
+   app:navGraph="@navigation/my_graph" />
 ```
 
 ```kotlin

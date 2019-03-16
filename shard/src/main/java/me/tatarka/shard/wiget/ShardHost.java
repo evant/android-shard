@@ -10,8 +10,13 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import me.tatarka.shard.R;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardManager;
@@ -60,6 +65,19 @@ public class ShardHost extends FrameLayout {
             if (initialName != null && !ShardManager.isRestoringState(owner)) {
                 shard = getShardFactory().newInstance(initialName, Bundle.EMPTY);
                 fm.add(shard, this);
+            }
+        } else {
+            // If the shard is annotated we can show the layout in the preview.
+            if (initialName != null) {
+                try {
+                    Class<?> shardClass = Class.forName(initialName);
+                    ContentView contentView = shardClass.getAnnotation(ContentView.class);
+                    if (contentView != null) {
+                        inflate(context, contentView.value(), this);
+                    }
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

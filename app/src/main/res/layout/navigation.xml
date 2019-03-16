@@ -28,11 +28,11 @@
             android:id="@+id/nav"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:graphId="@navigation/nav_graph"
             app:layout_constraintBottom_toTopOf="@+id/root"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:navGraph="@navigation/nav_graph" />
 
         <Button
             android:id="@+id/root"

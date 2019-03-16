@@ -10,12 +10,16 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.ContentView;
 import androidx.annotation.NavigationRes;
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavHost;
+import androidx.navigation.NavInflater;
 import androidx.navigation.Navigation;
+
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.app.ShardManager;
 import me.tatarka.shard.app.ShardOwner;
@@ -25,7 +29,7 @@ public class ShardNavHost extends FrameLayout implements NavHost {
 
     private NavController navController;
     private ShardOwner owner;
-    private int graphId = 0;
+    private int graphId;
 
     public ShardNavHost(Context context) {
         this(context, null);
@@ -35,22 +39,40 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         super(context, attrs);
         if (!isInEditMode()) {
             owner = ShardOwners.get(context);
-            navController = new NavController(context);
         }
+        navController = new NavController(context);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ShardNavHost);
-            graphId = a.getResourceId(R.styleable.ShardNavHost_graphId, View.NO_ID);
+            graphId = a.getResourceId(R.styleable.ShardNavHost_navGraph, 0);
             a.recycle();
             Navigation.setViewNavController(this, navController);
             ShardNavigator shardNavigator = new ShardNavigator(this);
             navController.getNavigatorProvider().addNavigator(shardNavigator);
         }
-        if (graphId != 0 && !ShardManager.isRestoringState(owner)) {
-            navController.setGraph(graphId);
-        }
         if (!isInEditMode()) {
+            if (graphId != 0 && !ShardManager.isRestoringState(owner)) {
+                navController.setGraph(graphId);
+            }
             NavCallbacks navCallbacks = new NavCallbacks(owner, navController);
             addOnAttachStateChangeListener(navCallbacks);
+        } else {
+            // If the shard is annotated we can show the layout in the preview.
+           if (graphId != 0)  {
+               NavGraph graph = new NavInflater(context, navController.getNavigatorProvider()).inflate(graphId);
+               NavDestination destination = graph.findNode(graph.getStartDestination());
+               if (destination instanceof ShardNavigator.Destination) {
+                   String name = ((ShardNavigator.Destination) destination).getName();
+                   try {
+                       Class<?> shardClass = Class.forName(name);
+                       ContentView contentView = shardClass.getAnnotation(ContentView.class);
+                       if (contentView != null) {
+                           inflate(context, contentView.value(), this);
+                       }
+                   } catch (ClassNotFoundException e) {
+                       throw new RuntimeException(e);
+                   }
+               }
+           }
         }
     }
 

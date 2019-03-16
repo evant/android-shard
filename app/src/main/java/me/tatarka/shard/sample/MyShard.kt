@@ -1,7 +1,6 @@
 package me.tatarka.shard.sample
 
 import android.app.Application
-import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText

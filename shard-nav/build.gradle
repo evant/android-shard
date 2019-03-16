@@ -3,5 +3,5 @@ apply from: '../library.gradle'
 dependencies {
     api project(':shard')
     implementation project(':shard-transition')
-    api "android.arch.navigation:navigation-runtime:1.0.0"
+    api "androidx.navigation:navigation-runtime:2.0.0"
 }
