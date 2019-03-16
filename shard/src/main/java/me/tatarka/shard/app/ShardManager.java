@@ -1,6 +1,5 @@
 package me.tatarka.shard.app;
 
-import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
