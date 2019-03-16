@@ -160,7 +160,7 @@ is defined in `shard-nav`.
    android:id="@+id/nav"
    android:layout_width="match_parent"
    android:layout_height="match_parent"
-   app:graphId="@navigation/nav_graph" />
+   app:navGraph="@navigation/nav_graph" />
 ```
 
 Use the `<shard/>` tag in your navigation graph to define a shard as a navigation destination.

@@ -25,7 +25,7 @@ public class ShardNavHost extends FrameLayout implements NavHost {
 
     private NavController navController;
     private ShardOwner owner;
-    private int graphId = 0;
+    private int graphId;
 
     public ShardNavHost(Context context) {
         this(context, null);
@@ -39,7 +39,7 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         }
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ShardNavHost);
-            graphId = a.getResourceId(R.styleable.ShardNavHost_graphId, View.NO_ID);
+            graphId = a.getResourceId(R.styleable.ShardNavHost_navGraph, 0);
             a.recycle();
             Navigation.setViewNavController(this, navController);
             ShardNavigator shardNavigator = new ShardNavigator(this);
