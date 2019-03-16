@@ -15,10 +15,7 @@ const val REQUEST_CODE_ACTIVITY = 1
 const val REQUEST_CODE_PERMISSION = 2
 
 @ContentView(R.layout.dialogs)
-class DialogHostShard @Inject constructor() :
-    Shard() {
-
-    private val dialogHost: ShardDialogHost = ShardDialogHost(this)
+class DialogHostShard @Inject constructor() : Shard() {
 
     override fun onCreate() {
         activityCallbacks.addOnActivityResultCallback(REQUEST_CODE_ACTIVITY) { resultCode, _ ->
@@ -30,30 +27,24 @@ class DialogHostShard @Inject constructor() :
                     "Result: ${if (grantResults[0] == PackageManager.PERMISSION_GRANTED) "Granted" else "Denied"}"
         }
         requireViewById<View>(R.id.simple_dialog).setOnClickListener {
-            dialogHost.show(
-                shardFactory.newInstance<SimpleDialogShard>()
-                    .withNumber(1)
-            )
+            showDialog(shardFactory.newInstance<SimpleDialogShard>().withNumber(1))
         }
         requireViewById<View>(R.id.alert_dialog).setOnClickListener {
-            dialogHost.show(shardFactory.newInstance<MyAlertDialogShard>())
+            showDialog(shardFactory.newInstance<MyAlertDialogShard>())
         }
         requireViewById<View>(R.id.alert_dialog_custom_view).setOnClickListener {
-            dialogHost.show(
-                shardFactory.newInstance<MyAlertDialogShard>()
-                    .withCustomView(2)
-            )
+            showDialog(shardFactory.newInstance<MyAlertDialogShard>().withCustomView(2))
         }
         requireViewById<View>(R.id.start_activity_for_result).setOnClickListener {
             activityCallbacks.startActivityForResult(
-                Intent(context, ResultActivity::class.java),
-                REQUEST_CODE_ACTIVITY
+                    Intent(context, ResultActivity::class.java),
+                    REQUEST_CODE_ACTIVITY
             )
         }
         requireViewById<View>(R.id.request_permission).setOnClickListener {
             activityCallbacks.requestPermissions(
-                arrayOf(Manifest.permission.SEND_SMS),
-                REQUEST_CODE_PERMISSION
+                    arrayOf(Manifest.permission.SEND_SMS),
+                    REQUEST_CODE_PERMISSION
             )
         }
     }

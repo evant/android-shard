@@ -5,7 +5,6 @@ import android.view.View
 import me.tatarka.shard.app.ShardActivity
 
 class ResultActivity : ShardActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)

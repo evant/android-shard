@@ -24,12 +24,12 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
+import androidx.savedstate.SavedStateRegistry;
+import androidx.savedstate.SavedStateRegistryController;
 
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.content.ComponentCallbacksDispatcher;
-import me.tatarka.shard.savedstate.BundleSavedStateRegistry;
-import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 /**
  * A simpler 'Shard' that lies on the android architecture components for most of the heavy-lifting.
@@ -52,7 +52,7 @@ public class Shard implements ShardOwner {
         });
     }
 
-    private final BundleSavedStateRegistry stateStore = new BundleSavedStateRegistry();
+    private final SavedStateRegistryController stateRegistryController = SavedStateRegistryController.create(this);
     private NestedActivityCallbacksDispatcher activityCallbackDispatcher;
     private ComponentCallbacksDispatcher componentCallbacksDispatcher;
     private final Observer observer = new Observer();
@@ -87,13 +87,10 @@ public class Shard implements ShardOwner {
         }
         this.owner = owner;
         context = new ShardOwnerContextWrapper(owner.getContext(), this);
+        this.container = container;
+        stateRegistryController.performRestore(state != null ? state.savedState : null);
         activityCallbackDispatcher = new NestedActivityCallbacksDispatcher((BaseActivityCallbacksDispatcher) owner.getActivityCallbacks(), this);
         componentCallbacksDispatcher = new ComponentCallbacksDispatcher(this);
-        this.container = container;
-
-        if (state != null) {
-            stateStore.performRestore(state.savedState);
-        }
         ContentView contentView = getClass().getAnnotation(ContentView.class);
         if (contentView != null) {
             setContentView(contentView.value());
@@ -133,7 +130,8 @@ public class Shard implements ShardOwner {
                 state.viewState = new SparseArray();
                 frame.saveHierarchyState(state.viewState);
             }
-            state.savedState = stateStore.performSave();
+            state.savedState = new Bundle();
+            stateRegistryController.performSave(state.savedState);
         }
         return state;
     }
@@ -382,8 +380,8 @@ public class Shard implements ShardOwner {
      */
     @NonNull
     @Override
-    public SavedStateRegistry getShardSavedStateRegistry() {
-        return stateStore;
+    public SavedStateRegistry getSavedStateRegistry() {
+        return stateRegistryController.getSavedStateRegistry();
     }
 
     class Observer implements LifecycleObserver {

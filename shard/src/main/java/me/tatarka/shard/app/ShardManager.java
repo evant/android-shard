@@ -1,12 +1,14 @@
 package me.tatarka.shard.app;
 
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import me.tatarka.shard.savedstate.BundleSavedStateRegistry;
+import androidx.savedstate.SavedStateRegistry;
+
 import me.tatarka.shard.transition.ShardTransition;
 
 public final class ShardManager {
@@ -43,8 +45,8 @@ public final class ShardManager {
 
     /**
      * Saves the shard's state and returns it. This will move the shard to the stopped state
-     * so that when {@link BundleSavedStateRegistry#performSave()} is called is consistent. Therefore you
-     * should only call this method when the shard is being stopped or destroyed.
+     * so that when {@link SavedStateRegistry.SavedStateProvider#saveState()} is called is consistent.
+     * Therefore you should only call this method when the shard is being stopped or destroyed.
      *
      * @throws IllegalStateException If the shard is destroyed.
      */
@@ -109,6 +111,14 @@ public final class ShardManager {
                 transition.start();
             }
         }
+    }
+
+    /**
+     * Returns true if we are restoring previously saved state, false otherwise. This is useful in
+     * shard hosts to determine if they need to do any first-run setup.
+     */
+    public static boolean isRestoringState(ShardOwner owner) {
+        return ShardUtil.isRestoringState(owner);
     }
 
     static class ViewGroupContainer implements Shard.Container {

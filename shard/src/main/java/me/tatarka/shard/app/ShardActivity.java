@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.content.ComponentCallbacks;
-import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 /**
  * A base class for hosting {@link Shard}s. You can either subclass this or duplicate it's
@@ -24,20 +23,7 @@ public class ShardActivity extends ComponentActivity implements ShardOwner {
     @CallSuper
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        delegate.onCreate(savedInstanceState);
-    }
-
-    @Override
-    @CallSuper
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        delegate.onSaveInstanceState(outState);
-    }
-
-    @NonNull
-    @Override
-    public SavedStateRegistry getShardSavedStateRegistry() {
-        return delegate.getInstanceStateStore();
+        delegate.onCreate();
     }
 
     @NonNull

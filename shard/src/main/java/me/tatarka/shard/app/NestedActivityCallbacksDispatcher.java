@@ -12,14 +12,15 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
-import me.tatarka.shard.savedstate.SavedStateProvider;
+import androidx.savedstate.SavedStateRegistry;
 
 final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher implements
-        SavedStateProvider<NestedActivityCallbacksDispatcher.State>,
+        SavedStateRegistry.SavedStateProvider,
         LifecycleObserver,
         BaseActivityCallbacksDispatcher.NestedCallbackListener {
 
     private static final String STATE_ACTIVITY_CALLBACK_DISPATCHER = "me.tatarka.shard.ActivityCallbacksDispatcher";
+    private static final String KEY = "key";
 
     private final BaseActivityCallbacksDispatcher parentCallbacks;
     private boolean pendingActivityResult;
@@ -29,7 +30,9 @@ final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispa
         super(owner);
         this.parentCallbacks = parentCallbacks;
         parentCallbacks.addNestedCallbackListener(this);
-        owner.getShardSavedStateRegistry().registerSavedStateProvider(STATE_ACTIVITY_CALLBACK_DISPATCHER, this);
+        SavedStateRegistry registry = owner.getSavedStateRegistry();
+        restoreState(registry);
+        registry.registerSavedStateProvider(STATE_ACTIVITY_CALLBACK_DISPATCHER, this);
         owner.getLifecycle().addObserver(this);
     }
 
@@ -76,18 +79,29 @@ final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispa
         parentCallbacks.removeOnBackPressedCallback(callback);
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public State saveState() {
-        return pendingActivityResult || pendingRequestPermission
-                ? new State(pendingActivityResult, pendingRequestPermission)
-                : null;
+    public Bundle saveState() {
+        if (pendingActivityResult || pendingRequestPermission) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(KEY, new State(pendingActivityResult, pendingRequestPermission));
+            return bundle;
+        } else {
+            return Bundle.EMPTY;
+        }
     }
 
-    @Override
-    public void restoreState(@NonNull State instanceState) {
-        pendingActivityResult = instanceState.pendingActivityResult;
-        pendingRequestPermission = instanceState.pendingRequestPermission;
+    private void restoreState(SavedStateRegistry registry) {
+        Bundle stateBundle = registry.consumeRestoredStateForKey(STATE_ACTIVITY_CALLBACK_DISPATCHER);
+        if (stateBundle == null) {
+            return;
+        }
+        State state = stateBundle.getParcelable(KEY);
+        if (state == null) {
+            return;
+        }
+        pendingActivityResult = state.pendingActivityResult;
+        pendingRequestPermission = state.pendingRequestPermission;
     }
 
     @Override

@@ -38,6 +38,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'com.google.android.material:material:1.0.0'
 
+    implementation 'androidx.core:core-ktx:1.0.1'
     implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
     implementation "android.arch.navigation:navigation-common-ktx:1.0.0"
@@ -45,6 +46,7 @@ dependencies {
     implementation "android.arch.navigation:navigation-ui:1.0.0"
     implementation "android.arch.navigation:navigation-ui-ktx:1.0.0"
     implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha01'
 
     implementation 'com.google.dagger:dagger:2.20'
     kapt 'com.google.dagger:dagger-compiler:2.20'
