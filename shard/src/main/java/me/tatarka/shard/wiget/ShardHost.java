@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -56,7 +57,7 @@ public class ShardHost extends FrameLayout {
             a.recycle();
         }
         if (!isInEditMode()) {
-            if (initialName != null && !owner.getShardSavedStateRegistry().isRestored()) {
+            if (initialName != null && !ShardManager.isRestoringState(owner)) {
                 shard = getShardFactory().newInstance(initialName, Bundle.EMPTY);
                 fm.add(shard, this);
             }

@@ -2,12 +2,9 @@ package me.tatarka.shard.app;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import java.util.WeakHashMap;
 
 import androidx.activity.ComponentActivity;
 import androidx.activity.OnBackPressedCallback;
@@ -17,12 +14,15 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.savedstate.SavedStateRegistry;
+import androidx.savedstate.SavedStateRegistryOwner;
+
+import java.util.WeakHashMap;
+
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.activity.ActivityCallbacksOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.content.ComponentCallbacksDispatcher;
-import me.tatarka.shard.savedstate.BundleSavedStateRegistry;
-import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 /**
  * Utilities to obtain a {@link ShardOwner}.
@@ -43,7 +43,7 @@ public final class ShardOwners {
         if (context instanceof ShardOwner) {
             return (ShardOwner) context;
         }
-        if (context instanceof ViewModelStoreOwner && context instanceof LifecycleOwner) {
+        if (context instanceof ViewModelStoreOwner && context instanceof SavedStateRegistryOwner) {
             return WrappingShardOwner.of(context);
         }
         ShardOwner owner = (ShardOwner) context.getSystemService(ShardOwnerContextWrapper.SHARD_OWNER);
@@ -57,11 +57,11 @@ public final class ShardOwners {
         static WrappingShardOwner of(Context context) {
             if (context instanceof Activity) {
                 Activity activity = (Activity) context;
-                StateCallbacks stateCallbacks = StateCallbacks.getInstance(context);
-                WrappingShardOwner owner = stateCallbacks.map.get(activity);
+                WeakHashMap<Activity, WrappingShardOwner> map = MAP;
+                WrappingShardOwner owner = map.get(activity);
                 if (owner == null) {
                     owner = new WrappingShardOwner(context);
-                    stateCallbacks.map.put(activity, owner);
+                    map.put(activity, owner);
                 }
                 return owner;
             } else {
@@ -70,7 +70,6 @@ public final class ShardOwners {
         }
 
         private final Context context;
-        final BundleSavedStateRegistry stateStore = new BundleSavedStateRegistry();
         final ComponentCallbacksDispatcher callbacks;
         @Nullable
         WrappingActivityCallbacks activityCallbacks;
@@ -94,8 +93,8 @@ public final class ShardOwners {
 
         @NonNull
         @Override
-        public SavedStateRegistry getShardSavedStateRegistry() {
-            return stateStore;
+        public SavedStateRegistry getSavedStateRegistry() {
+            return ((SavedStateRegistryOwner) context).getSavedStateRegistry();
         }
 
         @NonNull
@@ -224,58 +223,5 @@ public final class ShardOwners {
         }
     }
 
-    static class StateCallbacks implements Application.ActivityLifecycleCallbacks {
-        private static final String STATE_SHARD = "me.tatarka.shard.app.Shard";
-        private static StateCallbacks INSTANCE;
-
-        static StateCallbacks getInstance(Context context) {
-            if (INSTANCE == null) {
-                INSTANCE = new StateCallbacks();
-                ((Application) context.getApplicationContext()).registerActivityLifecycleCallbacks(INSTANCE);
-            }
-            return INSTANCE;
-        }
-
-        final WeakHashMap<Activity, WrappingShardOwner> map = new WeakHashMap<>();
-
-        @Override
-        public void onActivityCreated(Activity activity, @Nullable Bundle savedInstanceState) {
-            WrappingShardOwner owner = WrappingShardOwner.of(activity);
-            if (savedInstanceState != null) {
-                Bundle state = savedInstanceState.getBundle(STATE_SHARD);
-                owner.stateStore.performRestore(state);
-            }
-        }
-
-        @Override
-        public void onActivityStarted(Activity activity) {
-
-        }
-
-        @Override
-        public void onActivityResumed(Activity activity) {
-
-        }
-
-        @Override
-        public void onActivityPaused(Activity activity) {
-
-        }
-
-        @Override
-        public void onActivityStopped(Activity activity) {
-
-        }
-
-        @Override
-        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-            WrappingShardOwner owner = WrappingShardOwner.of(activity);
-            Bundle state = owner.stateStore.performSave();
-            outState.putBundle(STATE_SHARD, state);
-        }
-
-        @Override
-        public void onActivityDestroyed(Activity activity) {
-        }
-    }
+    static final WeakHashMap<Activity, WrappingShardOwner> MAP = new WeakHashMap<>();
 }

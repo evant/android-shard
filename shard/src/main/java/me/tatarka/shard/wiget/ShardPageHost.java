@@ -11,6 +11,8 @@ import android.widget.FrameLayout;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.savedstate.SavedStateRegistry;
+
 import me.tatarka.shard.R;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardManager;
@@ -62,7 +64,7 @@ public class ShardPageHost extends FrameLayout {
             a.recycle();
         }
         if (!isInEditMode()) {
-            if (startPage != 0 && !owner.getShardSavedStateRegistry().isRestored()) {
+            if (startPage != 0 && !ShardManager.isRestoringState(owner)) {
                 setCurrentPage(startPage, null);
             }
         }

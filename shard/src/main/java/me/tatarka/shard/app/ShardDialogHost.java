@@ -3,18 +3,20 @@ package me.tatarka.shard.app;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.ArrayMap;
 
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
-import me.tatarka.shard.savedstate.SavedStateProvider;
+import androidx.savedstate.SavedStateRegistry;
+import androidx.savedstate.SavedStateRegistryOwner;
+
+import java.util.ArrayList;
+import java.util.WeakHashMap;
 
 /**
  * Responsible for showing {@link DialogShard}s and {@link AlertDialogShard}s, and restoring them
@@ -23,27 +25,51 @@ import me.tatarka.shard.savedstate.SavedStateProvider;
 public class ShardDialogHost {
 
     private static final String DIALOG_STATE = "me.tatarka.shard.widget.ShardDialogHost";
+    private static final String KEY = "key";
+
+    private static final WeakHashMap<ShardOwner, ShardDialogHost> hostsMap = new WeakHashMap<>();
 
     private final ShardOwner owner;
     private final ShardManager fm;
     private final ArrayList<BaseDialogShard> dialogShards = new ArrayList<>();
 
     /**
-     * Constructs a new instance from the given {@link Context}. A {@link ShardOwner} must be able
-     * to be obtained from the context.
+     * Obtains a new instance from the given {@link Context}. A {@link ShardOwner} must be able
+     * to be obtained from the context. This must be called in or after {@link Shard#onCreate()}.
      */
-    public ShardDialogHost(Context context) {
-        this(ShardOwners.get(context));
+    public static ShardDialogHost getInstance(Context context) {
+        return getInstance(ShardOwners.get(context));
+    }
+
+    /**
+     * Obtains a new instance from the given {@link ShardOwner}. This must be called in or after
+     * {@link Shard#onCreate()}.
+     */
+    public static ShardDialogHost getInstance(ShardOwner owner) {
+        SavedStateRegistry registry = owner.getSavedStateRegistry();
+        if (!registry.isRestored()) {
+            throw new IllegalStateException("Must not be called before onCreate()");
+        }
+        ShardDialogHost host = hostsMap.get(owner);
+        if (host != null) {
+            return host;
+        }
+        host = new ShardDialogHost(owner);
+        hostsMap.put(owner, host);
+        return host;
     }
 
     /**
      * Constructs a new instance from the given {@link ShardOwner}.
      */
-    public ShardDialogHost(ShardOwner owner) {
+    ShardDialogHost(ShardOwner owner) {
         this.owner = owner;
         fm = new ShardManager(owner);
         DialogHostCallbacks callbacks = new DialogHostCallbacks();
-        owner.getShardSavedStateRegistry().registerSavedStateProvider(DIALOG_STATE, callbacks);
+        SavedStateRegistry registry = owner.getSavedStateRegistry();
+        callbacks.restoreState(registry);
+        registry.registerSavedStateProvider(DIALOG_STATE, callbacks);
+        registry.runOnNextRecreation(RestoreShardDialogHost.class);
         owner.getLifecycle().addObserver(callbacks);
     }
 
@@ -77,26 +103,35 @@ public class ShardDialogHost {
         dialog.show();
     }
 
-    class DialogHostCallbacks implements SavedStateProvider<State>, LifecycleObserver {
+    class DialogHostCallbacks implements SavedStateRegistry.SavedStateProvider, LifecycleObserver {
 
-        @Nullable
+        @NonNull
         @Override
-        public State saveState() {
+        public Bundle saveState() {
             int size = dialogShards.size();
             if (size == 0) {
-                return null;
+                return Bundle.EMPTY;
             }
             ArrayMap<String, Shard.State> states = new ArrayMap<>(size);
             for (int i = 0; i < size; i++) {
                 Shard shard = dialogShards.get(i);
                 states.put(shard.getClass().getName(), fm.saveState(shard));
             }
-            return new State(states);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(KEY, new State(states));
+            return bundle;
         }
 
-        @Override
-        public void restoreState(@NonNull State instanceState) {
-            ArrayMap<String, Shard.State> states = instanceState.shardStates;
+        private void restoreState(SavedStateRegistry registry) {
+            Bundle bundle = registry.consumeRestoredStateForKey(DIALOG_STATE);
+            if (bundle == null) {
+                return;
+            }
+            State state = bundle.getParcelable(KEY);
+            if (state == null) {
+                return;
+            }
+            ArrayMap<String, Shard.State> states = state.shardStates;
             for (int i = 0, size = states.size(); i < size; i++) {
                 String name = states.keyAt(i);
                 Shard.State shardState = states.valueAt(i);
@@ -157,5 +192,15 @@ public class ShardDialogHost {
                 return new State[size];
             }
         };
+    }
+
+    static class RestoreShardDialogHost implements SavedStateRegistry.AutoRecreated {
+
+        @Override
+        public void onRecreated(@NonNull SavedStateRegistryOwner owner) {
+            ShardOwner shardOwner = (ShardOwner) owner;
+            ShardDialogHost host = new ShardDialogHost(shardOwner);
+            hostsMap.put(shardOwner, host);
+        }
     }
 }

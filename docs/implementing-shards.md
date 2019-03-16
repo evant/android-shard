@@ -86,25 +86,28 @@ requireViewById<Button>(R.id.button).setOnClickListener {
 You can save you own custom instance state by using the `SavedStateRegistry`. You can access it with
 `getSavedStateRegistry()`.
 
-Add an `SavedStateprovider` and you'll get callbacks to save and restore your state.
-
 ```kotlin
 const val STATE_KEY = "state"
 
 class MyShard: Shard() {
     override fun onCreate() {
-        shardSavedStateRegistry.registerSavedStateProvider(STATE_KEY, object: SavedStateProvider<Bundle> {
-            override fun saveState() : Bundle? {
+        val bundle = savedStateRegistry.consumeRestoredStateForKey(STATE_KEY)
+        if (bundle != null)  {
+            // restore state
+        }
+        savedStateRegistry.registerSavedStateProvider(STATE_KEY) {
+            Bundle().apply {
                 // save state
-                return null
             }
-
-            override fun restoreState(state: Bundle) {
-                // restore state
-            }
-        }) 
+        }
     }
 }
+```
+
+You can also save state from your [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate).
+
+```kotlin
+val vm = ViewModelProviders.of(this, SavedStateVMFactory(context.applicationContext as Application, this, args)).get<MyViewModel>()
 ```
 
 ## Args

@@ -11,11 +11,13 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
+import androidx.savedstate.SavedStateRegistry;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import me.tatarka.shard.activity.ActivityCallbacks;
@@ -25,7 +27,6 @@ import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwnerContextWrapper;
 import me.tatarka.shard.app.ShardOwners;
 import me.tatarka.shard.content.ComponentCallbacks;
-import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 /**
  * Implementation of {@link PagerAdapter} that represents each page as a {@link Shard}.
@@ -153,7 +154,7 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
         return state;
     }
 
-    static class Page implements ShardOwner, LifecycleObserver {
+    static class Page implements ShardOwner, LifecycleEventObserver {
         private final ShardOwner parentOwner;
         private final Context context;
         private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
@@ -185,9 +186,9 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
             isPrimary = value;
             if (isReallyResumed) {
                 if (isPrimary) {
-                    lifecycleRegistry.markState(Lifecycle.State.RESUMED);
+                    lifecycleRegistry.setCurrentState(Lifecycle.State.RESUMED);
                 } else {
-                    lifecycleRegistry.markState(Lifecycle.State.STARTED);
+                    lifecycleRegistry.setCurrentState(Lifecycle.State.STARTED);
                 }
             }
         }
@@ -204,18 +205,16 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
             return parentOwner.getViewModelStore();
         }
 
-        @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-        void onResume() {
-            isReallyResumed = true;
-        }
-
-        @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-        void onPause() {
-            isReallyResumed = false;
-        }
-
-        @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
-        void onLifecycleEvent(LifecycleOwner source, Lifecycle.Event event) {
+        @Override
+        public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+            switch (event) {
+                case ON_RESUME:
+                    isReallyResumed = true;
+                    break;
+                case ON_PAUSE:
+                    isReallyResumed = false;
+                    break;
+            }
             if (isPrimary || (event != Lifecycle.Event.ON_PAUSE && event != Lifecycle.Event.ON_RESUME)) {
                 lifecycleRegistry.handleLifecycleEvent(event);
             }
@@ -223,8 +222,8 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
 
         @NonNull
         @Override
-        public SavedStateRegistry getShardSavedStateRegistry() {
-            return parentOwner.getShardSavedStateRegistry();
+        public SavedStateRegistry getSavedStateRegistry() {
+            return parentOwner.getSavedStateRegistry();
         }
 
         @NonNull
