@@ -8,38 +8,19 @@
         android:id="@+id/my_shard1"
         android:name="me.tatarka.shard.sample.ShardSquareLeft"
         android:label="Navigation Root"
-        tools:layout="@layout/shard">
-
-        <argument
-            android:name="number"
-            android:defaultValue="0"
-            app:argType="integer" />
-
-    </shard>
+        tools:layout="@layout/shard" />
 
     <shard
         android:id="@+id/my_shard2"
         android:name="me.tatarka.shard.sample.ShardSquareMiddle"
         android:label="Navigation Dest1"
-        tools:layout="@layout/shard">
-
-        <argument
-            android:name="number"
-            android:defaultValue="1"
-            app:argType="integer" />
-    </shard>
+        tools:layout="@layout/shard" />
 
     <shard
         android:id="@+id/my_shard3"
         android:name="me.tatarka.shard.sample.ShardSquareRight"
         android:label="Navigation Dest2"
-        tools:layout="@layout/shard">
-
-        <argument
-            android:name="number"
-            android:defaultValue="2"
-            app:argType="integer" />
-    </shard>
+        tools:layout="@layout/shard" />
 
     <action
         android:id="@+id/root"
