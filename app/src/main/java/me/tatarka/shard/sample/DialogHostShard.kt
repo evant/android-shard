@@ -9,6 +9,8 @@ import android.widget.Button
 import androidx.annotation.ContentView
 import me.tatarka.shard.app.Shard
 import me.tatarka.shard.app.ShardDialogHost
+import me.tatarka.shard.app.newInstance
+import me.tatarka.shard.app.showDialog
 import javax.inject.Inject
 
 const val REQUEST_CODE_ACTIVITY = 1

@@ -1,7 +1,9 @@
 include ':app',
         ':shard',
+        ':shard-ktx',
         ':shard-appcompat',
         ':shard-host-ui',
+        ':shard-host-ui-ktx',
         ':shard-nav',
         ':shard-pager',
         ':shard-transition'

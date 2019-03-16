@@ -27,10 +27,11 @@ configurations {
 }
 
 dependencies {
+    implementation project(':shard-ktx')
     implementation project(':shard-appcompat')
     implementation project(':shard-pager')
     implementation project(':shard-nav')
-    implementation project(':shard-host-ui')
+    implementation project(':shard-host-ui-ktx')
     implementation project(':shard-transition')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
