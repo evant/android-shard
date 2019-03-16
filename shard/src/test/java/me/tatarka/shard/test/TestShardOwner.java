@@ -7,21 +7,22 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
+import androidx.savedstate.SavedStateRegistry;
+import androidx.savedstate.SavedStateRegistryController;
 import androidx.test.InstrumentationRegistry;
+
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.app.ActivityCallbacksDispatcher;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
 import me.tatarka.shard.content.ComponentCallbacksDispatcher;
-import me.tatarka.shard.savedstate.BundleSavedStateRegistry;
-import me.tatarka.shard.savedstate.SavedStateRegistry;
 
 public class TestShardOwner implements ShardOwner {
 
     final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     final ViewModelStore viewModelStore = new ViewModelStore();
-    final BundleSavedStateRegistry stateStore = new BundleSavedStateRegistry();
+    final SavedStateRegistryController savedStateRegistryController = SavedStateRegistryController.create(this);
     final ActivityCallbacks activityCallbacks;
     final ComponentCallbacks componentCallbacks = new ComponentCallbacksDispatcher(this);
 
@@ -55,12 +56,6 @@ public class TestShardOwner implements ShardOwner {
 
     @NonNull
     @Override
-    public SavedStateRegistry getShardSavedStateRegistry() {
-        return stateStore;
-    }
-
-    @NonNull
-    @Override
     public ActivityCallbacks getActivityCallbacks() {
         return activityCallbacks;
     }
@@ -69,5 +64,11 @@ public class TestShardOwner implements ShardOwner {
     @Override
     public ComponentCallbacks getComponentCallbacks() {
         return componentCallbacks;
+    }
+
+    @NonNull
+    @Override
+    public SavedStateRegistry getSavedStateRegistry() {
+        return savedStateRegistryController.getSavedStateRegistry();
     }
 }
