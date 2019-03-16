@@ -132,14 +132,14 @@ class MyAlertDialogShard: AlertDialogShard() {
 }
 ```
 
-Then, where you want to show it call `ShardDialogHost.getInstance(this).show(shard)`.
+Then, where you want to show it call `showDialog(shard)`.
 
 ```kotlin
 override fun onCreate() {
     setContentView(R.layout.content)
     val button: Button = requireViewById(R.id.button)
     buttion.setOnClickListener {
-        ShardDialogHost.getInstance(this).show(MyDialogShard())
+        showDialog(MyDialogShard())
     }
 }
 ```

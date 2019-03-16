@@ -1,0 +1,7 @@
+apply from: '../library.gradle'
+apply plugin: 'kotlin-android'
+
+dependencies {
+    api project(':shard-host-ui')
+    api "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
+}

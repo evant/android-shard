@@ -23,6 +23,15 @@ implementation "me.tatarka.shard:shard-pager:$shard_version"
 implementation "me.tatarka.shard:shard-transition:$shard_version"
 ```
 
+### Kotlin
+
+There's a few additional artifacts for kotlin extensions.
+
+```groovy
+implementation "me.tatarka.shard:shard-ktx:$shard_version"
+implementation "me.tatarka.shard:shard-host-ui-ktx:$shard_version"
+```
+
 ## Usage
 
 Creating a shard is as simple as

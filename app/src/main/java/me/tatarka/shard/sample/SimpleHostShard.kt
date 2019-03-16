@@ -3,6 +3,7 @@ package me.tatarka.shard.sample
 import android.view.View
 import androidx.annotation.ContentView
 import me.tatarka.shard.app.Shard
+import me.tatarka.shard.app.newInstance
 import me.tatarka.shard.transition.ShardTransitionCompat
 import me.tatarka.shard.wiget.ShardHost
 import javax.inject.Inject
