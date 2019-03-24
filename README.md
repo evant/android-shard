@@ -5,7 +5,8 @@ Shards are 'Fragments' with a simpler api built on top of the android architectu
 **Stability**: All important features are implemented but there may be some api changes before `1.0.0`.
 
 ## Download
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/me.tatarka.shard/shard/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/me.tatarka.shard/shard)
+[![Maven Central](https://img.shields.io/maven-central/v/me.tatarka.shard/shard.svg)](https://search.maven.org/search?q=g:me.tatarka.shard)
+[![Sonatype Snapshot](https://img.shields.io/nexus/s/https/oss.sonatype.org/me.tatarka.shard/shard.svg)](https://oss.sonatype.org/content/repositories/snapshots/me/tatarka/shard/)
 
 ```groovy
 def shard_version = '1.0.0-alpha05'
@@ -30,6 +31,16 @@ There's a few additional artifacts for kotlin extensions.
 ```groovy
 implementation "me.tatarka.shard:shard-ktx:$shard_version"
 implementation "me.tatarka.shard:shard-host-ui-ktx:$shard_version"
+```
+
+### SNAPSHOT
+
+You can also follow the bleeding-edge with SNAPSHOT releases.
+```groovy
+repositories {
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+def shard_version = '1.0.0-alpha06-SNAPSHOT'
 ```
 
 ## Usage
