@@ -404,14 +404,6 @@ public class Shard implements ShardOwner {
         Bundle savedState;
         SparseArray viewState;
 
-        /**
-         * Returns the arguments for this shard, you can only read these, you cannot modify them.
-         */
-        @NonNull
-        public Bundle getArgs() {
-            return args != null ? args : Bundle.EMPTY;
-        }
-
         State(int viewModelId, @Nullable Bundle args) {
             this.viewModelId = viewModelId;
             this.args = args;
@@ -456,14 +448,12 @@ public class Shard implements ShardOwner {
      */
     public interface Factory {
         /**
-         * Constructs a new instance of the shard with the given arguments.
+         * Constructs a new instance of the shard.
          *
          * @param name The shard's class name.
-         * @param args The args for the shard. You may pass {@link Bundle#EMPTY} if there are
-         *             none.
          */
         @NonNull
-        <T extends Shard> T newInstance(@NonNull String name, @NonNull Bundle args);
+        <T extends Shard> T newInstance(@NonNull String name);
     }
 
     /**
@@ -482,7 +472,7 @@ public class Shard implements ShardOwner {
         @NonNull
         @Override
         @SuppressWarnings("unchecked")
-        public <T extends Shard> T newInstance(@NonNull String name, @NonNull Bundle args) {
+        public <T extends Shard> T newInstance(@NonNull String name) {
             try {
                 return (T) Class.forName(name).getConstructor().newInstance();
             } catch (ClassNotFoundException e) {

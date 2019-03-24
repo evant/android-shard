@@ -28,8 +28,8 @@ class LeakLifecycleWatcher(private val shard: Shard) : LifecycleObserver {
         }
 
         fun wrap(factory: Shard.Factory): Shard.Factory = object : Shard.Factory {
-            override fun <T : Shard> newInstance(name: String, args: Bundle): T =
-                attach(factory.newInstance(name, args))
+            override fun <T : Shard> newInstance(name: String): T =
+                attach(factory.newInstance(name))
         }
     }
 }
