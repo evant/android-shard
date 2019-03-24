@@ -3,8 +3,6 @@ package me.tatarka.shard.nav;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
@@ -16,24 +14,22 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.Navigator;
 
 import me.tatarka.shard.app.Shard;
-import me.tatarka.shard.app.ShardManager;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwners;
-import me.tatarka.shard.transition.ShardTransition;
-import me.tatarka.shard.transition.ShardTransitionCompat;
+import me.tatarka.shard.backstack.ShardBackStack;
 
 @Navigator.Name("shard")
-public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destination, ShardNavigator.Page, ShardNavigator.PageState> {
+public class ShardNavigator extends Navigator<ShardNavigator.Destination> {
 
-    private final FrameLayout container;
-    private ShardManager shardManager;
+    private static final String STATE_BACK_STACK = "back_stack";
+
+    private ShardBackStack backStack;
     private Shard.Factory factory;
 
     public ShardNavigator(FrameLayout container) {
-        this.container = container;
         if (!container.isInEditMode()) {
             ShardOwner owner = ShardOwners.get(container.getContext());
-            shardManager = new ShardManager(owner);
+            backStack = new ShardBackStack(owner, container);
             factory = owner.getShardFactory();
         }
     }
@@ -44,53 +40,33 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
         return new Destination(this, factory);
     }
 
-    @NonNull
+    @Nullable
     @Override
-    protected Page createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Navigator.Extras navExtras) {
+    public NavDestination navigate(@NonNull Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Navigator.Extras navigatorExtras) {
         Shard shard = destination.shardFactory.newInstance(destination.getName());
         shard.setArgs(args);
-        return new Page(factory, shard, navOptions, (Extras) navExtras);
+        backStack.push(shard, destination.getId(), convertNavOptions(navOptions, navigatorExtras));
+        return backStack.willPerformAction() ? destination : null;
     }
 
     @Override
-    protected void replace(@Nullable Page oldPage, @NonNull Page newPage, int backStackEffect) {
-        Shard oldShard = oldPage != null ? oldPage.shard : null;
-        Shard newShard = newPage.shard;
-        Context context = container.getContext();
-        ShardTransition transition = null;
-        switch (backStackEffect) {
-            case DIRECTION_PUSH:
-                if (newPage.transition != 0) {
-                    transition = ShardTransitionCompat.fromTransitionRes(context, newPage.transition);
-                } else {
-                    transition = ShardTransition.fromAnimRes(context, newPage.enterAnim, newPage.exitAnim);
-                }
-                break;
-            case DIRECTION_POP:
-                if (oldPage != null) {
-                    if (oldPage.transition != 0) {
-                        transition = ShardTransitionCompat.fromTransitionRes(context, oldPage.transition);
-                    } else {
-                        transition = ShardTransition.fromAnimRes(context, oldPage.popEnterAnim, oldPage.popExitAnim);
-                    }
-                }
-                break;
-            case DIRECTION_NONE:
-                // no animation
-        }
-        shardManager.replace(oldShard, newShard, container, transition);
+    public boolean popBackStack() {
+        backStack.pop();
+        return backStack.willPerformAction();
     }
 
-    @NonNull
+    @Nullable
     @Override
-    protected PageState savePageState(Page page) {
-        return page.saveState(shardManager);
+    public Bundle onSaveState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(STATE_BACK_STACK, backStack.saveState());
+        return bundle;
     }
 
-    @NonNull
     @Override
-    protected Page restorePageState(PageState state) {
-        return state.restore(shardManager, factory);
+    public void onRestoreState(@NonNull Bundle savedState) {
+        ShardBackStack.State state = savedState.getParcelable(STATE_BACK_STACK);
+        backStack.restoreState(state);
     }
 
     public static class Destination extends NavDestination {
@@ -120,94 +96,16 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
         }
     }
 
-    static class Page {
-        final Shard.Factory factory;
-        final Shard shard;
-        final int enterAnim;
-        final int exitAnim;
-        final int popEnterAnim;
-        final int popExitAnim;
-        final int transition;
-
-        Page(Shard.Factory factory, Shard shard, @Nullable NavOptions navOptions, @Nullable Extras extras) {
-            this.factory = factory;
-            this.shard = shard;
-            enterAnim = navOptions != null ? navOptions.getEnterAnim() : 0;
-            exitAnim = navOptions != null ? navOptions.getExitAnim() : 0;
-            popEnterAnim = navOptions != null ? navOptions.getPopEnterAnim() : 0;
-            popExitAnim = navOptions != null ? navOptions.getPopExitAnim() : 0;
-            transition = extras != null ? extras.transition : 0;
+    private static me.tatarka.shard.backstack.NavOptions convertNavOptions(@Nullable NavOptions options, @Nullable Navigator.Extras navigationExtras) {
+        me.tatarka.shard.backstack.NavOptions.Builder builder = new me.tatarka.shard.backstack.NavOptions.Builder();
+        if (options != null) {
+            builder.singleTop(options.shouldLaunchSingleTop());
+            builder.animate(options.getEnterAnim(), options.getExitAnim(), options.getPopEnterAnim(), options.getPopExitAnim());
         }
-
-        Page(Shard.Factory factory, Shard shard, PageState state) {
-            this.factory = factory;
-            this.shard = shard;
-            enterAnim = 0;
-            exitAnim = 0;
-            popEnterAnim = state.popEnterAnim;
-            popExitAnim = state.popExitAnim;
-            transition = state.transition;
+        if (navigationExtras instanceof Extras) {
+            builder.transition(((Extras) navigationExtras).transition);
         }
-
-        PageState saveState(ShardManager fm) {
-            return new PageState(shard.getClass().getName(), fm.saveState(shard), popEnterAnim, popExitAnim, transition);
-        }
-    }
-
-    static class PageState implements Parcelable {
-        final String name;
-        final Shard.State state;
-        final int popEnterAnim;
-        final int popExitAnim;
-        final int transition;
-
-        PageState(String name, Shard.State state, int popEnterAnim, int popExitAnim, int transition) {
-            this.name = name;
-            this.state = state;
-            this.popEnterAnim = popEnterAnim;
-            this.popExitAnim = popExitAnim;
-            this.transition = transition;
-        }
-
-        PageState(Parcel in) {
-            name = in.readString();
-            state = in.readParcelable(Shard.State.class.getClassLoader());
-            popEnterAnim = in.readInt();
-            popExitAnim = in.readInt();
-            transition = in.readInt();
-        }
-
-        Page restore(ShardManager fm, Shard.Factory factory) {
-            Shard shard = factory.newInstance(name);
-            fm.restoreState(shard, state);
-            return new Page(factory, shard, this);
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(name);
-            dest.writeParcelable(state, flags);
-            dest.writeInt(popEnterAnim);
-            dest.writeInt(popExitAnim);
-            dest.writeInt(transition);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<PageState> CREATOR = new Creator<PageState>() {
-            @Override
-            public PageState createFromParcel(Parcel in) {
-                return new PageState(in);
-            }
-
-            @Override
-            public PageState[] newArray(int size) {
-                return new PageState[size];
-            }
-        };
+        return builder.build();
     }
 
     public static class Extras implements Navigator.Extras {

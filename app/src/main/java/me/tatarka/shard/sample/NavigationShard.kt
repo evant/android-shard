@@ -6,7 +6,6 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import me.tatarka.shard.app.Shard
-import me.tatarka.shard.nav.ShardNavigator
 import javax.inject.Inject
 
 class NavigationShard @Inject constructor() : Shard() {

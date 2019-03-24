@@ -2,5 +2,5 @@ apply from: '../library.gradle'
 
 dependencies {
     api project(':shard')
-    api 'com.google.android.material:material:1.0.0'
+    implementation project(':shard-transition')
 }

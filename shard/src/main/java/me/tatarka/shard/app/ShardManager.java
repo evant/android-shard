@@ -59,7 +59,7 @@ public final class ShardManager {
      * Note: you should not call this on configuration changes, only when you are actually done with
      * it.
      *
-     * @throws IllegalStateException If the shard is already destroyed.
+     * @throws IllegalStateException If the shard is already destroyed or was never created.
      */
     public void remove(Shard shard) {
         shard.remove();
@@ -71,6 +71,7 @@ public final class ShardManager {
      * @param oldShard  The shard to remove, if present.
      * @param newShard  The shard to add, if present.
      * @param container The container hosting the shards.
+     * @throws IllegalStateException If the old shard is not null but is not created.
      */
     public void replace(@Nullable Shard oldShard,
                         @Nullable Shard newShard,
@@ -85,6 +86,7 @@ public final class ShardManager {
      * @param newShard   The shard to add, if present.
      * @param container  The container hosting the shards.
      * @param transition An optional transition to animate between shards.
+     * @throws IllegalStateException If the old shard is not null but is not created.
      */
     public void replace(@Nullable Shard oldShard,
                         @Nullable Shard newShard,
