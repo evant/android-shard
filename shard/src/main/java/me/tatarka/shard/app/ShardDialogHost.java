@@ -135,7 +135,7 @@ public class ShardDialogHost {
             for (int i = 0, size = states.size(); i < size; i++) {
                 String name = states.keyAt(i);
                 Shard.State shardState = states.valueAt(i);
-                BaseDialogShard shard = getShardFactory().newInstance(name, shardState.getArgs());
+                BaseDialogShard shard = getShardFactory().newInstance(name);
                 fm.restoreState(shard, shardState);
                 dialogShards.add(shard);
                 if (owner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.CREATED)) {

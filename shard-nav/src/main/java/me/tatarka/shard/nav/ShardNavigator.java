@@ -47,7 +47,7 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
     @NonNull
     @Override
     protected Page createPage(Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Navigator.Extras navExtras) {
-        Shard shard = destination.shardFactory.newInstance(destination.getName(), args != null ? args : Bundle.EMPTY);
+        Shard shard = destination.shardFactory.newInstance(destination.getName());
         shard.setArgs(args);
         return new Page(factory, shard, navOptions, (Extras) navExtras);
     }
@@ -178,7 +178,7 @@ public class ShardNavigator extends OptimizingNavigator<ShardNavigator.Destinati
         }
 
         Page restore(ShardManager fm, Shard.Factory factory) {
-            Shard shard = factory.newInstance(name, state.getArgs());
+            Shard shard = factory.newInstance(name);
             fm.restoreState(shard, state);
             return new Page(factory, shard, this);
         }

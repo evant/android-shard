@@ -63,7 +63,7 @@ public class ShardHost extends FrameLayout {
         }
         if (!isInEditMode()) {
             if (initialName != null && !ShardManager.isRestoringState(owner)) {
-                shard = getShardFactory().newInstance(initialName, Bundle.EMPTY);
+                shard = getShardFactory().newInstance(initialName);
                 fm.add(shard, this);
             }
         } else {
@@ -125,7 +125,7 @@ public class ShardHost extends FrameLayout {
         String name = savedState.name;
         Shard.State shardState = savedState.shardState;
         if (name != null && shardState != null) {
-            shard = getShardFactory().newInstance(name, shardState.getArgs());
+            shard = getShardFactory().newInstance(name);
             fm.restoreState(shard, shardState);
             fm.add(shard, this);
         }

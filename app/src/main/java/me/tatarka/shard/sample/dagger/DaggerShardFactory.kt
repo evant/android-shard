@@ -1,10 +1,5 @@
 package me.tatarka.shard.sample.dagger
 
-import android.os.Bundle
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import com.squareup.leakcanary.LeakCanary
 import me.tatarka.shard.app.Shard
 import javax.inject.Inject
 import javax.inject.Provider
@@ -17,6 +12,6 @@ class DaggerShardFactory @Inject constructor(
 
     private val shardMap = shardMap.mapKeys { it.key.name }
 
-    override fun <T : Shard> newInstance(name: String, args: Bundle): T =
+    override fun <T : Shard> newInstance(name: String): T =
         shardMap.getValue(name).get() as T
 }
