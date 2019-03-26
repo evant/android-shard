@@ -44,6 +44,12 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ShardNavHost);
             graphId = a.getResourceId(R.styleable.ShardNavHost_navGraph, 0);
+            if (isInEditMode()) {
+                int layout = a.getResourceId(R.styleable.ShardNavHost_layout, 0);
+                if (layout != 0) {
+                    inflate(context, layout, this);
+                }
+            }
             a.recycle();
             Navigation.setViewNavController(this, navController);
             ShardNavigator shardNavigator = new ShardNavigator(this);
@@ -55,24 +61,6 @@ public class ShardNavHost extends FrameLayout implements NavHost {
             }
             NavCallbacks navCallbacks = new NavCallbacks(owner, navController);
             addOnAttachStateChangeListener(navCallbacks);
-        } else {
-            // If the shard is annotated we can show the layout in the preview.
-           if (graphId != 0)  {
-               NavGraph graph = new NavInflater(context, navController.getNavigatorProvider()).inflate(graphId);
-               NavDestination destination = graph.findNode(graph.getStartDestination());
-               if (destination instanceof ShardNavigator.Destination) {
-                   String name = ((ShardNavigator.Destination) destination).getName();
-                   try {
-                       Class<?> shardClass = Class.forName(name);
-                       ContentView contentView = shardClass.getAnnotation(ContentView.class);
-                       if (contentView != null) {
-                           inflate(context, contentView.value(), this);
-                       }
-                   } catch (ClassNotFoundException e) {
-                       throw new RuntimeException(e);
-                   }
-               }
-           }
         }
     }
 

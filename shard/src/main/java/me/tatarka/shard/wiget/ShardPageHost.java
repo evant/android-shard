@@ -61,6 +61,12 @@ public class ShardPageHost extends FrameLayout {
                     defaultTransition = ShardTransition.fromAnimRes(context, enterAnimId, exitAnimId);
                 }
             }
+            if (isInEditMode()) {
+                int layout = a.getResourceId(R.styleable.ShardPageHost_layout, 0);
+                if (layout != 0) {
+                    inflate(context, layout, this);
+                }
+            }
             a.recycle();
         }
         if (!isInEditMode()) {

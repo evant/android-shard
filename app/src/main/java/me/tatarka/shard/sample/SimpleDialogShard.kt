@@ -7,7 +7,6 @@ import javax.inject.Inject
 
 private const val KEY_NUMBER = "number"
 
-@ContentView(R.layout.dialog)
 class SimpleDialogShard @Inject constructor() : DialogShard() {
 
     fun withNumber(number: Int): SimpleDialogShard = apply {
@@ -15,6 +14,7 @@ class SimpleDialogShard @Inject constructor() : DialogShard() {
     }
 
     override fun onCreate() {
+        setContentView(R.layout.dialog)
         requireViewById<TextView>(R.id.number).text = args.getInt(KEY_NUMBER).toString()
     }
 }

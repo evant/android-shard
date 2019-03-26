@@ -91,10 +91,6 @@ public class Shard implements ShardOwner {
         stateRegistryController.performRestore(state != null ? state.savedState : null);
         activityCallbackDispatcher = new NestedActivityCallbacksDispatcher((BaseActivityCallbacksDispatcher) owner.getActivityCallbacks(), this);
         componentCallbacksDispatcher = new ComponentCallbacksDispatcher(this);
-        ContentView contentView = getClass().getAnnotation(ContentView.class);
-        if (contentView != null) {
-            setContentView(contentView.value());
-        }
         onCreate();
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
 
