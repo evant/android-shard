@@ -14,7 +14,6 @@ import javax.inject.Inject
 
 private const val KEY_NUMBER = "number"
 
-@ContentView(R.layout.shard)
 class MyShard @Inject constructor(
         private val lifecycleLogger: LifecycleLogger,
         private val stateLogger: InstanceStateLogger,
@@ -26,6 +25,7 @@ class MyShard @Inject constructor(
     }
 
     override fun onCreate() {
+        setContentView(R.layout.shard)
         activityCallbacks.addOnMultiWindowModeChangedCallback(callbacksLogger)
         activityCallbacks.addOnPictureInPictureModeChangedCallback(callbacksLogger)
         componentCallbacks.addOnConfigurationChangedListener(callbacksLogger)

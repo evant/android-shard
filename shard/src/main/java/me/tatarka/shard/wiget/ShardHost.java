@@ -59,25 +59,18 @@ public class ShardHost extends FrameLayout {
                     defaultTransition = ShardTransition.fromAnimRes(context, enterAnimId, exitAnimId);
                 }
             }
+            if (isInEditMode()) {
+                int layout = a.getResourceId(R.styleable.ShardHost_layout, 0);
+                if (layout != 0) {
+                    inflate(context, layout, this);
+                }
+            }
             a.recycle();
         }
         if (!isInEditMode()) {
             if (initialName != null && !ShardManager.isRestoringState(owner)) {
                 shard = getShardFactory().newInstance(initialName);
                 fm.add(shard, this);
-            }
-        } else {
-            // If the shard is annotated we can show the layout in the preview.
-            if (initialName != null) {
-                try {
-                    Class<?> shardClass = Class.forName(initialName);
-                    ContentView contentView = shardClass.getAnnotation(ContentView.class);
-                    if (contentView != null) {
-                        inflate(context, contentView.value(), this);
-                    }
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }
     }

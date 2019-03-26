@@ -47,11 +47,11 @@ def shard_version = '1.0.0-alpha06-SNAPSHOT'
 
 Creating a shard is as simple as
 ```kotlin
-@ContentView(R.layout.my_shard)
 class MyShard: Shard() {
     const val REQUEST_CODE = 1
 
     override fun onCreate() {
+        setContentView(R.layout.my_shard)
         // find a view
         val name: TextView = requireViewById(R.id.name)
         // get a ViewModel
@@ -74,7 +74,8 @@ class MyShard: Shard() {
     android:id="@+id/host"
     android:name="com.example.MyShard"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    tools:layout="@layout/my_shard" />
 ```
 
 ## Full Documentation
