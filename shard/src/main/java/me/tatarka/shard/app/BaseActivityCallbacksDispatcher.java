@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import me.tatarka.shard.activity.ActivityCallbacks;
 
-abstract class BaseActivityCallbacksDispatcher implements ActivityCallbacks {
+public abstract class BaseActivityCallbacksDispatcher implements ActivityCallbacks {
 
     protected final LifecycleOwner lifecycleOwner;
     private final ArrayList<NestedCallbackListener> nestedCallbackListeners = new ArrayList<>();

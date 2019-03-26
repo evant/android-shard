@@ -1,0 +1,6 @@
+apply from: '../library.gradle'
+
+dependencies {
+    api project(':shard')
+    api 'androidx.fragment:fragment:1.1.0-alpha05'
+}

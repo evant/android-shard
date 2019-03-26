@@ -13,8 +13,9 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.savedstate.SavedStateRegistry;
+import androidx.savedstate.SavedStateRegistryOwner;
 
-final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher implements
+public final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher implements
         SavedStateRegistry.SavedStateProvider,
         LifecycleObserver,
         BaseActivityCallbacksDispatcher.NestedCallbackListener {
@@ -26,7 +27,7 @@ final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispa
     private boolean pendingActivityResult;
     private boolean pendingRequestPermission;
 
-    NestedActivityCallbacksDispatcher(BaseActivityCallbacksDispatcher parentCallbacks, ShardOwner owner) {
+    public <O extends SavedStateRegistryOwner & LifecycleOwner> NestedActivityCallbacksDispatcher(BaseActivityCallbacksDispatcher parentCallbacks, O owner) {
         super(owner);
         this.parentCallbacks = parentCallbacks;
         parentCallbacks.addNestedCallbackListener(this);
