@@ -135,11 +135,11 @@ public final class ShardOwners {
 
     static class WrappingActivityCallbacks implements ActivityCallbacks {
         final ComponentActivity activity;
-        final ActivityCallbacksDispatcher dispatcher;
+        final ActivityCallbacksActivityDispatcher dispatcher;
 
         WrappingActivityCallbacks(ComponentActivity activity) {
             this.activity = activity;
-            dispatcher = new ActivityCallbacksDispatcher(activity);
+            dispatcher = new ActivityCallbacksActivityDispatcher(activity);
         }
 
         @Override
@@ -158,7 +158,7 @@ public final class ShardOwners {
         }
 
         @Override
-        public void removeActivityResultCallback(int requestCode) {
+        public void removeActivityResultCallback(@NonNull OnActivityResultCallback callback) {
             throw new UnsupportedOperationException();
         }
 
@@ -178,7 +178,7 @@ public final class ShardOwners {
         }
 
         @Override
-        public void removeOnRequestPermissionResultCallback(int requestCode) {
+        public void removeOnRequestPermissionResultCallback(@NonNull OnRequestPermissionResultCallback onRequestPermissionResultCallback) {
             throw new UnsupportedOperationException();
         }
 
@@ -218,8 +218,23 @@ public final class ShardOwners {
         }
 
         @Override
+        public void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback onBackPressedCallback) {
+
+        }
+
+        @Override
         public void removeOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback) {
             dispatcher.removeOnBackPressedCallback(onBackPressedCallback);
+        }
+
+        @Override
+        public void addOnActivityCallbacks(OnActivityCallbacks callbacks) {
+
+        }
+
+        @Override
+        public void removeOnActivityCallbacks(OnActivityCallbacks callbacks) {
+
         }
     }
 

@@ -9,28 +9,32 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.OnLifecycleEvent;
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryOwner;
 
-public final class NestedActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher implements
-        SavedStateRegistry.SavedStateProvider,
-        LifecycleObserver,
-        BaseActivityCallbacksDispatcher.NestedCallbackListener {
+import me.tatarka.shard.activity.ActivityCallbacks;
 
-    private static final String STATE_ACTIVITY_CALLBACK_DISPATCHER = "me.tatarka.shard.ActivityCallbacksDispatcher";
+/**
+ * Helps dispatch {@link ActivityCallbacks} to nested components.
+ */
+public final class ActivityCallbacksNestedDispatcher extends ActivityCallbacksDispatcher implements
+        SavedStateRegistry.SavedStateProvider,
+        LifecycleEventObserver,
+        ActivityCallbacks.OnActivityCallbacks {
+
+    private static final String STATE_ACTIVITY_CALLBACK_DISPATCHER = "me.tatarka.shard.ActivityCallbacksActivityDispatcher";
     private static final String KEY = "key";
 
-    private final BaseActivityCallbacksDispatcher parentCallbacks;
+    private final ActivityCallbacks parentCallbacks;
     private boolean pendingActivityResult;
     private boolean pendingRequestPermission;
 
-    public <O extends SavedStateRegistryOwner & LifecycleOwner> NestedActivityCallbacksDispatcher(BaseActivityCallbacksDispatcher parentCallbacks, O owner) {
+    public <O extends SavedStateRegistryOwner & LifecycleOwner> ActivityCallbacksNestedDispatcher(ActivityCallbacks parentCallbacks, O owner) {
         super(owner);
         this.parentCallbacks = parentCallbacks;
-        parentCallbacks.addNestedCallbackListener(this);
+        parentCallbacks.addOnActivityCallbacks(this);
         SavedStateRegistry registry = owner.getSavedStateRegistry();
         restoreState(registry);
         registry.registerSavedStateProvider(STATE_ACTIVITY_CALLBACK_DISPATCHER, this);
@@ -135,10 +139,12 @@ public final class NestedActivityCallbacksDispatcher extends BaseActivityCallbac
         dispatchOnMultiWindowModeChanged(isInPictureInPictureMode);
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    void onDestroy() {
-        parentCallbacks.removeNestedCallbackListener(this);
-        lifecycleOwner.getLifecycle().removeObserver(this);
+    @Override
+    public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+        if (event == Lifecycle.Event.ON_DESTROY) {
+            parentCallbacks.removeOnActivityCallbacks(this);
+            lifecycleOwner.getLifecycle().removeObserver(this);
+        }
     }
 
     public static class State implements Parcelable {

@@ -13,7 +13,7 @@ public class ShardOwnerDelegate {
 
     private final ShardOwner owner;
     private ActivityCallbacksDispatcherFactory activityCallbacksDispatcherFactory;
-    private BaseActivityCallbacksDispatcher activityCallbacksDispatcher;
+    private ActivityCallbacksDispatcher activityCallbacksDispatcher;
     private ComponentCallbacksDispatcher componentCallbacksDispatcher;
     private Shard.Factory shardFactory = Shard.DefaultFactory.getInstance();
 
@@ -63,6 +63,6 @@ public class ShardOwnerDelegate {
     }
 
     public interface ActivityCallbacksDispatcherFactory {
-        BaseActivityCallbacksDispatcher create(ShardOwner owner);
+        ActivityCallbacksDispatcher create(ShardOwner owner);
     }
 }

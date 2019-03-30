@@ -32,8 +32,7 @@ import java.io.PrintWriter;
 import java.util.Map;
 
 import me.tatarka.shard.activity.ActivityCallbacks;
-import me.tatarka.shard.app.BaseActivityCallbacksDispatcher;
-import me.tatarka.shard.app.NestedActivityCallbacksDispatcher;
+import me.tatarka.shard.app.ActivityCallbacksNestedDispatcher;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.content.ComponentCallbacks;
 
@@ -48,7 +47,7 @@ public abstract class FragmentShard extends Shard {
     private HostCallback hostCallback;
     private FragmentController fragmentController;
 
-    private final Map<Fragment, NestedActivityCallbacksDispatcher> fragmentDispatchers = new ArrayMap<>();
+    private final Map<Fragment, ActivityCallbacksNestedDispatcher> fragmentDispatchers = new ArrayMap<>();
     private boolean created;
 
     public FragmentShard() {
@@ -63,7 +62,7 @@ public abstract class FragmentShard extends Shard {
                         fragmentController.getSupportFragmentManager().registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
                             @Override
                             public void onFragmentPreAttached(@NonNull FragmentManager fm, @NonNull Fragment f, @NonNull Context context) {
-                                NestedActivityCallbacksDispatcher dispatcher = new NestedActivityCallbacksDispatcher((BaseActivityCallbacksDispatcher) getActivityCallbacks(), f);
+                                ActivityCallbacksNestedDispatcher dispatcher = new ActivityCallbacksNestedDispatcher(getActivityCallbacks(), f);
                                 dispatcher.addOnMultiWindowModeChangedCallback(hostCallback);
                                 dispatcher.addOnPictureInPictureModeChangedCallback(hostCallback);
                                 fragmentDispatchers.put(f, dispatcher);

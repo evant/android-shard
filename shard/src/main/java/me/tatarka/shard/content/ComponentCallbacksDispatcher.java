@@ -8,7 +8,9 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 import me.tatarka.shard.app.ShardActivity;
 import me.tatarka.shard.app.ShardOwner;
@@ -65,7 +67,7 @@ public class ComponentCallbacksDispatcher implements ComponentCallbacks {
         }
     }
 
-    class Callbacks implements ComponentCallbacks2, LifecycleObserver {
+    class Callbacks implements ComponentCallbacks2, LifecycleEventObserver {
 
         @Override
         public void onTrimMemory(int level) {
@@ -83,10 +85,12 @@ public class ComponentCallbacksDispatcher implements ComponentCallbacks {
             }
         }
 
-        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        void onDestroy() {
-            lifecycle.removeObserver(this);
-            context.unregisterComponentCallbacks(this);
+        @Override
+        public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                lifecycle.removeObserver(this);
+                context.unregisterComponentCallbacks(this);
+            }
         }
 
         @Override

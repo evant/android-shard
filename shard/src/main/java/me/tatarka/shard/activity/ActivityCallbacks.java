@@ -86,7 +86,7 @@ public interface ActivityCallbacks {
 
     void addOnActivityResultCallback(int requestCode, @NonNull OnActivityResultCallback onActivityResultCallback);
 
-    void removeActivityResultCallback(int requestCode);
+    void removeActivityResultCallback(@NonNull OnActivityResultCallback callback);
 
     /**
      * Requests permissions to be granted to this application. These permissions
@@ -196,7 +196,7 @@ public interface ActivityCallbacks {
 
     void addOnRequestPermissionResultCallback(int requestCode, @NonNull OnRequestPermissionResultCallback onRequestPermissionResultCallback);
 
-    void removeOnRequestPermissionResultCallback(int requestCode);
+    void removeOnRequestPermissionResultCallback(@NonNull OnRequestPermissionResultCallback onRequestPermissionResultCallback);
 
     boolean isInMultiWindowMode();
 
@@ -244,6 +244,8 @@ public interface ActivityCallbacks {
      */
     void addOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback);
 
+    void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback onBackPressedCallback);
+
     /**
      * Remove a previously
      * {@link #addOnBackPressedCallback(OnBackPressedCallback)} added}
@@ -257,4 +259,57 @@ public interface ActivityCallbacks {
      * @param onBackPressedCallback The callback to remove
      */
     void removeOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback);
+
+    interface OnActivityCallbacks extends OnMultiWindowModeChangedCallback, OnPictureInPictureModeChangedCallback {
+
+        /**
+         * Called when an activity you launched exits, giving you the requestCode
+         * you started it with, the resultCode it returned, and any additional
+         * data from it.  The <var>resultCode</var> will be
+         * {@link android.app.Activity#RESULT_CANCELED} if the activity explicitly returned that,
+         * didn't return any result, or crashed during its operation.
+         *
+         * <p>You will receive this call immediately before onResume() when your
+         * activity is re-starting.
+         *
+         * <p>This method is never invoked if your activity sets
+         * {@link android.R.styleable#AndroidManifestActivity_noHistory noHistory} to
+         * <code>true</code>.
+         *
+         * @param requestCode The integer request code originally supplied to
+         *                    startActivityForResult(), allowing you to identify who this
+         *                    result came from.
+         * @param resultCode The integer result code returned by the child activity
+         *                   through its setResult().
+         * @param data       An Intent, which can return result data to the caller
+         *                   (various data can be attached to Intent "extras").
+         * @see android.app.Activity#startActivityForResult
+         * @see android.app.Activity#createPendingResult
+         * @see android.app.Activity#setResult(int)
+         */
+        boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data);
+
+        /**
+         * Callback for the result from requesting permissions. This method
+         * is invoked for every call on {@link #requestPermissions(String[], int)}.
+         * <p>
+         * <strong>Note:</strong> It is possible that the permissions request interaction
+         * with the user is interrupted. In this case you will receive empty permissions
+         * and results arrays which should be treated as a cancellation.
+         * </p>
+         *
+         * @param requestCode The request code passed in {@link #requestPermissions(String[], int)}.
+         * @param permissions The requested permissions. Never null.
+         * @param grantResults The grant results for the corresponding permissions
+         *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+         *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+         *
+         * @see #requestPermissions(String[], int)
+         */
+        boolean onRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
+    }
+
+    void addOnActivityCallbacks(OnActivityCallbacks callbacks);
+
+    void removeOnActivityCallbacks(OnActivityCallbacks callbacks);
 }

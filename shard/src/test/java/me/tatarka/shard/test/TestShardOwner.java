@@ -12,7 +12,7 @@ import androidx.savedstate.SavedStateRegistryController;
 import androidx.test.InstrumentationRegistry;
 
 import me.tatarka.shard.activity.ActivityCallbacks;
-import me.tatarka.shard.app.ActivityCallbacksDispatcher;
+import me.tatarka.shard.app.ActivityCallbacksActivityDispatcher;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
@@ -27,7 +27,7 @@ public class TestShardOwner implements ShardOwner {
     final ComponentCallbacks componentCallbacks = new ComponentCallbacksDispatcher(this);
 
     public TestShardOwner(ComponentActivity activity) {
-        activityCallbacks = new ActivityCallbacksDispatcher(activity);
+        activityCallbacks = new ActivityCallbacksActivityDispatcher(activity);
     }
 
     @NonNull

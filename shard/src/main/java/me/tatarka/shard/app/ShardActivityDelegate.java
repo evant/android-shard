@@ -10,8 +10,8 @@ public final class ShardActivityDelegate extends ShardOwnerDelegate {
     public <A extends ComponentActivity & ShardOwner> ShardActivityDelegate(A activity) {
         super(activity, new ActivityCallbacksDispatcherFactory() {
             @Override
-            public ActivityCallbacksDispatcher create(ShardOwner owner) {
-                return new ActivityCallbacksDispatcher((ComponentActivity) owner);
+            public ActivityCallbacksActivityDispatcher create(ShardOwner owner) {
+                return new ActivityCallbacksActivityDispatcher((ComponentActivity) owner);
             }
         });
     }

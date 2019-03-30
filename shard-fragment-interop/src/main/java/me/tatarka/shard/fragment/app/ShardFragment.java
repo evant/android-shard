@@ -3,6 +3,7 @@ package me.tatarka.shard.fragment.app;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
@@ -27,10 +28,16 @@ public class ShardFragment extends Fragment implements ShardOwner {
         delegate.onCreate();
     }
 
-    @NonNull
+    @Nullable
     @Override
     public Context getContext() {
-        return super.requireContext();
+        return delegate.wrapContext(super.getContext());
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        return delegate.wrapLayoutInflater(super.onGetLayoutInflater(savedInstanceState));
     }
 
     @NonNull

@@ -19,6 +19,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
@@ -53,7 +54,7 @@ public class Shard implements ShardOwner {
     }
 
     private final SavedStateRegistryController stateRegistryController = SavedStateRegistryController.create(this);
-    private NestedActivityCallbacksDispatcher activityCallbackDispatcher;
+    private ActivityCallbacksNestedDispatcher activityCallbackDispatcher;
     private ComponentCallbacksDispatcher componentCallbacksDispatcher;
     private final Observer observer = new Observer();
     private int viewModelId = -1;
@@ -89,7 +90,7 @@ public class Shard implements ShardOwner {
         context = new ShardOwnerContextWrapper(owner.getContext(), this);
         this.container = container;
         stateRegistryController.performRestore(state != null ? state.savedState : null);
-        activityCallbackDispatcher = new NestedActivityCallbacksDispatcher((BaseActivityCallbacksDispatcher) owner.getActivityCallbacks(), this);
+        activityCallbackDispatcher = new ActivityCallbacksNestedDispatcher(owner.getActivityCallbacks(), this);
         componentCallbacksDispatcher = new ComponentCallbacksDispatcher(this);
         onCreate();
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
@@ -380,9 +381,9 @@ public class Shard implements ShardOwner {
         return stateRegistryController.getSavedStateRegistry();
     }
 
-    class Observer implements LifecycleObserver {
-        @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
-        void onLifecyleEvent(LifecycleOwner owner, Lifecycle.Event event) {
+    class Observer implements LifecycleEventObserver {
+        @Override
+        public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
             lifecycleRegistry.handleLifecycleEvent(event);
             if (event == Lifecycle.Event.ON_DESTROY) {
                 owner.getLifecycle().removeObserver(this);

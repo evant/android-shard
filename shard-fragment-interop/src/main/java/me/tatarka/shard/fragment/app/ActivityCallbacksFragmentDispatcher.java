@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 
 import me.tatarka.shard.activity.ActivityCallbacksOwner;
-import me.tatarka.shard.app.BaseActivityCallbacksDispatcher;
+import me.tatarka.shard.app.ActivityCallbacksDispatcher;
 import me.tatarka.shard.app.ShardActivity;
 
 /**
@@ -20,11 +20,11 @@ import me.tatarka.shard.app.ShardActivity;
  *
  * @see ShardActivity for an example of how to use.
  */
-public final class FragmentActivityCallbacksDispatcher extends BaseActivityCallbacksDispatcher {
+public final class ActivityCallbacksFragmentDispatcher extends ActivityCallbacksDispatcher {
 
     private final Fragment fragment;
 
-    public FragmentActivityCallbacksDispatcher(Fragment fragment) {
+    public ActivityCallbacksFragmentDispatcher(Fragment fragment) {
         super(fragment);
         this.fragment = fragment;
     }
