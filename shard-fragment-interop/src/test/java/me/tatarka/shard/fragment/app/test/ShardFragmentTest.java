@@ -1,11 +1,9 @@
 package me.tatarka.shard.fragment.app.test;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
+import android.app.Instrumentation;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -86,14 +84,14 @@ public class ShardFragmentTest {
 
     @Test
     public void dispatches_start_activity_for_result() {
+        InstrumentationRegistry.getInstrumentation().addMonitor(ResultActivity.class.getName(), new Instrumentation.ActivityResult(Activity.RESULT_OK, null), true);
         FragmentScenario<TestShardFragment> scenario = FragmentScenario.launchInContainer(TestShardFragment.class);
         scenario.onFragment(new FragmentScenario.FragmentAction<TestShardFragment>() {
             @Override
             public void perform(@NonNull TestShardFragment fragment) {
-                fragment.getShard().startActivityForResult();
+                fragment.getShard().startActivityForResult(ResultActivity.class);
             }
         });
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         scenario.onFragment(new FragmentScenario.FragmentAction<TestShardFragment>() {
             @Override
             public void perform(@NonNull TestShardFragment fragment) {
@@ -102,12 +100,4 @@ public class ShardFragmentTest {
         });
     }
 
-    public static class ResultActivity extends Activity {
-        @Override
-        protected void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setResult(RESULT_OK, new Intent());
-            finish();
-        }
-    }
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 
 import androidx.activity.ComponentActivity;
@@ -149,6 +150,19 @@ public final class ShardOwners {
 
         @Override
         public void startActivityForResult(@NonNull Intent intent, int requestCode, @Nullable Bundle options) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void startIntentSenderForResult(IntentSender intent, int requestCode,
+                                               @Nullable Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags) throws IntentSender.SendIntentException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void startIntentSenderForResult(@NonNull IntentSender intent, int requestCode,
+                                               @Nullable Intent fillIntent, int flagsMask, int flagsValues, int extraFlags,
+                                               Bundle options) throws IntentSender.SendIntentException {
             throw new UnsupportedOperationException();
         }
 

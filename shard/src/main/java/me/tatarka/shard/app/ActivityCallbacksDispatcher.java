@@ -106,30 +106,32 @@ public abstract class ActivityCallbacksDispatcher implements ActivityCallbacks {
         this.callbacks.remove(callbacks);
     }
 
-    public final void dispatchOnActivityResult(int requestCode, int resultCode, Intent data) {
+    public final boolean dispatchOnActivityResult(int requestCode, int resultCode, Intent data) {
         for (OnActivityCallbacks callback : callbacks) {
             if (callback.onActivityResult(requestCode, resultCode, data)) {
-                return;
+                return true;
             }
         }
         for (OnActivityCallbacksAdapter adapterCallback : adapterCallbacks) {
             if (adapterCallback.onActivityResult(requestCode, resultCode, data)) {
-                return;
+                return true;
             }
         }
+        return false;
     }
 
-    public final void dispatchOnRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public final boolean dispatchOnRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         for (OnActivityCallbacks callback : callbacks) {
             if (callback.onRequestPermissionResult(requestCode, permissions, grantResults)) {
-                return;
+                return true;
             }
         }
         for (OnActivityCallbacksAdapter adapterCallback : adapterCallbacks) {
             if (adapterCallback.onRequestPermissionResult(requestCode, permissions, grantResults)) {
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     public final void dispatchOnMultiWindowModeChanged(boolean isInMultiWindowMode) {

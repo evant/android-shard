@@ -18,7 +18,7 @@ public class TestShardFragment extends ShardFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.test_shard_fragment, container, false);
+        return inflater.inflate(R.layout.test_shard_host, container, false);
     }
 
     public TestShard getShard() {

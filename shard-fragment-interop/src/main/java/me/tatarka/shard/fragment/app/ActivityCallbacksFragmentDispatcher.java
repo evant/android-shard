@@ -1,6 +1,7 @@
 package me.tatarka.shard.fragment.app;
 
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -47,6 +48,19 @@ public final class ActivityCallbacksFragmentDispatcher extends ActivityCallbacks
     @Override
     public void startActivityForResult(@NonNull Intent intent, int requestCode, @Nullable Bundle options) {
         fragment.startActivityForResult(intent, requestCode, options);
+    }
+
+    @Override
+    public void startIntentSenderForResult(IntentSender intent, int requestCode,
+                                           @Nullable Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags) throws IntentSender.SendIntentException {
+        fragment.startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags, null);
+    }
+
+    @Override
+    public void startIntentSenderForResult(@NonNull IntentSender intent, int requestCode,
+                                           @Nullable Intent fillIntent, int flagsMask, int flagsValues, int extraFlags,
+                                           Bundle options) throws IntentSender.SendIntentException {
+        fragment.startIntentSenderForResult(intent, requestCode, fillIntent, flagsMask, flagsValues, extraFlags, options);
     }
 
     @Override

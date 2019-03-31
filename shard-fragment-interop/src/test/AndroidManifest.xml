@@ -2,6 +2,7 @@
     package="me.tatarka.shard.fragment">
 
     <application>
-        <activity android:name=".app.test.ShardFragmentTest$ResultActivity" />
+        <activity android:name=".app.test.ResultActivity" />
+        <activity android:name=".app.test.TestActivity" />
     </application>
 </manifest>

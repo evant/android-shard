@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -69,6 +68,7 @@ public class Shard implements ShardOwner {
     private State state;
     @Nullable
     private Shard.Factory shardFactory;
+    private final CompositeLayoutInflater inflater = new CompositeLayoutInflater();
 
     void restoreState(@Nullable State state) {
         checkNotCreated();
@@ -207,15 +207,19 @@ public class Shard implements ShardOwner {
     /**
      * Inflates the given layout and sets the {@code Shard}'s content view to it. This will
      * immediately restore any view state. After calling this, {@link #getView()} will not return
-     * null. You may annotate the class with {@link ContentView} instead of calling this method.
+     * null.
      */
     @CallSuper
     public void setContentView(@LayoutRes int layoutId) {
         checkCreated();
         ViewGroup frame = createFrame();
         frame.removeAllViews();
-        LayoutInflater.from(context).inflate(layoutId, frame, true);
+        inflater.get(context).inflate(layoutId, frame, true);
         restoreViewState(frame);
+    }
+
+    public final CompositeLayoutInflater getCompositLayoutInflater() {
+        return inflater;
     }
 
     private ViewGroup createFrame() {

@@ -46,6 +46,8 @@ import androidx.appcompat.widget.VectorEnabledTintResources;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
+import androidx.fragment.app.Fragment;
+
 import me.tatarka.shard.app.ShardActivity;
 
 /**
@@ -65,7 +67,7 @@ import me.tatarka.shard.app.ShardActivity;
  * </div>
  */
 @SuppressLint("RestrictedApi")
-public class AppCompatActivity extends ShardActivity implements AppCompatCallback,
+public class ShardAppCompatActivity extends ShardActivity implements AppCompatCallback,
         TaskStackBuilder.SupportParentable, ActionBarDrawerToggle.DelegateProvider {
 
     private AppCompatDelegate mDelegate;

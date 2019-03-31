@@ -2,6 +2,7 @@ package me.tatarka.shard.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -57,6 +58,54 @@ public interface ActivityCallbacks {
      * @see android.app.Activity#startActivity
      */
     void startActivityForResult(@NonNull Intent intent, int requestCode, @Nullable Bundle options);
+
+    /**
+     * Same as calling {@link #startIntentSenderForResult(IntentSender, int,
+     * Intent, int, int, int, Bundle)} with no options.
+     *
+     * @param intent The IntentSender to launch.
+     * @param requestCode If >= 0, this code will be returned in
+     *                    onActivityResult() when the activity exits.
+     * @param fillInIntent If non-null, this will be provided as the
+     * intent parameter to {@link IntentSender#sendIntent}.
+     * @param flagsMask Intent flags in the original IntentSender that you
+     * would like to change.
+     * @param flagsValues Desired values for any bits set in
+     * <var>flagsMask</var>
+     * @param extraFlags Always set to 0.
+     */
+    void startIntentSenderForResult(IntentSender intent, int requestCode,
+                                           @Nullable Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags)
+            throws IntentSender.SendIntentException;
+
+    /**
+     * Like {@link #startActivityForResult(Intent, int)}, but allowing you
+     * to use a IntentSender to describe the activity to be started.  If
+     * the IntentSender is for an activity, that activity will be started
+     * as if you had called the regular {@link #startActivityForResult(Intent, int)}
+     * here; otherwise, its associated action will be executed (such as
+     * sending a broadcast) as if you had called
+     * {@link IntentSender#sendIntent IntentSender.sendIntent} on it.
+     *
+     * @param intent The IntentSender to launch.
+     * @param requestCode If >= 0, this code will be returned in
+     *                    onActivityResult() when the activity exits.
+     * @param fillInIntent If non-null, this will be provided as the
+     * intent parameter to {@link IntentSender#sendIntent}.
+     * @param flagsMask Intent flags in the original IntentSender that you
+     * would like to change.
+     * @param flagsValues Desired values for any bits set in
+     * <var>flagsMask</var>
+     * @param extraFlags Always set to 0.
+     * @param options Additional options for how the Activity should be started.
+     * See {@link android.content.Context#startActivity(Intent, Bundle)}
+     * Context.startActivity(Intent, Bundle)} for more details.  If options
+     * have also been supplied by the IntentSender, options given here will
+     * override any that conflict with those given by the IntentSender.
+     */
+    void startIntentSenderForResult(@NonNull IntentSender intent, int requestCode,
+                                    @Nullable Intent fillIntent, int flagsMask, int flagsValues, int extraFlags,
+                                    Bundle options) throws IntentSender.SendIntentException;
 
     interface OnActivityResultCallback {
         /**

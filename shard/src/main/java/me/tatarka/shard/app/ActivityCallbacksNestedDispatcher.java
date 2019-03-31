@@ -1,6 +1,7 @@
 package me.tatarka.shard.app;
 
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -51,6 +52,22 @@ public final class ActivityCallbacksNestedDispatcher extends ActivityCallbacksDi
     public void startActivityForResult(@NonNull Intent intent, int requestCode, @Nullable Bundle options) {
         pendingActivityResult = true;
         parentCallbacks.startActivityForResult(intent, requestCode, options);
+    }
+
+    @Override
+    public void startIntentSenderForResult(IntentSender intent, int requestCode,
+                                           @Nullable Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags) throws IntentSender.SendIntentException {
+        pendingActivityResult = true;
+        parentCallbacks.startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags);
+    }
+
+    @Override
+    public void startIntentSenderForResult(@NonNull IntentSender intent, int requestCode,
+                                           @Nullable Intent fillIntent, int flagsMask, int flagsValues, int extraFlags,
+                                           Bundle options) throws IntentSender.SendIntentException {
+        pendingActivityResult = true;
+        parentCallbacks.startIntentSenderForResult(intent, requestCode, fillIntent, flagsMask, flagsValues, extraFlags, options);
+
     }
 
     @Override

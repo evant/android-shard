@@ -4,14 +4,14 @@ import android.os.Bundle
 import androidx.lifecycle.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import me.tatarka.shard.app.newInstance
-import me.tatarka.shard.appcompat.app.AppCompatActivity
+import me.tatarka.shard.appcompat.app.ShardAppCompatActivity
 import me.tatarka.shard.host.setupWithPageHost
 import me.tatarka.shard.lifecycle.ViewModelProviders
 import me.tatarka.shard.sample.dagger.injector
 import me.tatarka.shard.wiget.ShardPageHost
 import me.tatarka.shard.wiget.ShardPageHost.Adapter
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ShardAppCompatActivity() {
 
     lateinit var pageHost: ShardPageHost
 
