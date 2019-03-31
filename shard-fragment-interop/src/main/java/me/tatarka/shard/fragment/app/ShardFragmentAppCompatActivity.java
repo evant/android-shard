@@ -15,7 +15,7 @@ import me.tatarka.shard.app.ShardActivityDelegate;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
 
-public class ShardAppCompatActivity extends AppCompatActivity implements ShardOwner {
+public class ShardFragmentAppCompatActivity extends AppCompatActivity implements ShardOwner {
 
     private final ShardActivityDelegate delegate = new ShardActivityDelegate(this);
 
