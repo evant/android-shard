@@ -1,0 +1,10 @@
+apply from: '../library.gradle'
+
+dependencies {
+    api project(':shard')
+    api 'androidx.fragment:fragment:1.1.0-alpha05'
+    api 'androidx.appcompat:appcompat:1.0.0'
+
+    testImplementation 'androidx.fragment:fragment-testing:1.1.0-alpha05'
+    androidTestImplementation 'androidx.fragment:fragment-testing:1.1.0-alpha05'
+}

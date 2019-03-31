@@ -9,10 +9,10 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryController;
-import androidx.test.InstrumentationRegistry;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import me.tatarka.shard.activity.ActivityCallbacks;
-import me.tatarka.shard.app.ActivityCallbacksDispatcher;
+import me.tatarka.shard.app.ActivityCallbacksActivityDispatcher;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
@@ -27,7 +27,7 @@ public class TestShardOwner implements ShardOwner {
     final ComponentCallbacks componentCallbacks = new ComponentCallbacksDispatcher(this);
 
     public TestShardOwner(ComponentActivity activity) {
-        activityCallbacks = new ActivityCallbacksDispatcher(activity);
+        activityCallbacks = new ActivityCallbacksActivityDispatcher(activity);
     }
 
     @NonNull
@@ -45,7 +45,7 @@ public class TestShardOwner implements ShardOwner {
     @NonNull
     @Override
     public Context getContext() {
-        return InstrumentationRegistry.getTargetContext();
+        return InstrumentationRegistry.getInstrumentation().getTargetContext();
     }
 
     @NonNull

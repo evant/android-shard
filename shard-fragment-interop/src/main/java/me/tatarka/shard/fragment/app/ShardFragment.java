@@ -1,62 +1,70 @@
-package me.tatarka.shard.app;
+package me.tatarka.shard.fragment.app;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 
-import androidx.activity.ComponentActivity;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import me.tatarka.shard.activity.ActivityCallbacks;
+import me.tatarka.shard.app.Shard;
+import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
 
 /**
- * A base class for hosting {@link Shard}s. You can either subclass this or duplicate it's
- * implementation into your own base activity.
+ * A {@link Fragment} that can hosts shards.
  */
-public class ShardActivity extends ComponentActivity implements ShardOwner {
+public class ShardFragment extends Fragment implements ShardOwner {
 
-    private final ShardActivityDelegate delegate = new ShardActivityDelegate(this);
+    private final ShardFragmentDelegate delegate = new ShardFragmentDelegate(this);
 
     @Override
-    @CallSuper
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         delegate.onCreate();
     }
 
-    @NonNull
+    @Nullable
     @Override
     public Context getContext() {
-        return this;
+        return delegate.wrapContext(super.getContext());
     }
 
     @NonNull
     @Override
-    public final Shard.Factory getShardFactory() {
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        return delegate.wrapLayoutInflater(super.onGetLayoutInflater(savedInstanceState));
+    }
+
+    @NonNull
+    @Override
+    public Shard.Factory getShardFactory() {
         return delegate.getShardFactory();
     }
 
-    public final void setShardFactory(@NonNull Shard.Factory factory) {
+    public void setShardFactory(@NonNull Shard.Factory factory) {
         delegate.setShardFactory(factory);
     }
 
     @NonNull
     @Override
-    public final ActivityCallbacks getActivityCallbacks() {
+    public ActivityCallbacks getActivityCallbacks() {
         return delegate.getActivityCallbacks();
     }
 
     @NonNull
     @Override
-    public final ComponentCallbacks getComponentCallbacks() {
+    public ComponentCallbacks getComponentCallbacks() {
         return delegate.getComponentCallbacks();
     }
 
     @Override
     @CallSuper
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         delegate.onActivityResult(requestCode, resultCode, data);
     }
 

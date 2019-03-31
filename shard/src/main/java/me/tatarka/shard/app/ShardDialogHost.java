@@ -10,7 +10,9 @@ import android.util.ArrayMap;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryOwner;
@@ -103,7 +105,7 @@ public class ShardDialogHost {
         dialog.show();
     }
 
-    class DialogHostCallbacks implements SavedStateRegistry.SavedStateProvider, LifecycleObserver {
+    class DialogHostCallbacks implements SavedStateRegistry.SavedStateProvider, LifecycleEventObserver {
 
         @NonNull
         @Override
@@ -144,17 +146,16 @@ public class ShardDialogHost {
             }
         }
 
-        @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-        void onCreate() {
-            for (BaseDialogShard shard : dialogShards) {
-                doShow(shard);
-            }
-        }
-
-        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        void onDestroy() {
-            for (BaseDialogShard shard : dialogShards) {
-                shard.destroyDialog();
+        @Override
+        public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+            if (event == Lifecycle.Event.ON_CREATE) {
+                for (BaseDialogShard shard : dialogShards) {
+                    doShow(shard);
+                }
+            } else if (event == Lifecycle.Event.ON_DESTROY) {
+                for (BaseDialogShard shard : dialogShards) {
+                    shard.destroyDialog();
+                }
             }
         }
     }
@@ -199,8 +200,10 @@ public class ShardDialogHost {
         @Override
         public void onRecreated(@NonNull SavedStateRegistryOwner owner) {
             ShardOwner shardOwner = (ShardOwner) owner;
-            ShardDialogHost host = new ShardDialogHost(shardOwner);
-            hostsMap.put(shardOwner, host);
+            if (hostsMap.get(shardOwner) == null) {
+                ShardDialogHost host = new ShardDialogHost(shardOwner);
+                hostsMap.put(shardOwner, host);
+            }
         }
     }
 }

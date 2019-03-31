@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 
 import androidx.activity.ComponentActivity;
@@ -135,11 +136,11 @@ public final class ShardOwners {
 
     static class WrappingActivityCallbacks implements ActivityCallbacks {
         final ComponentActivity activity;
-        final ActivityCallbacksDispatcher dispatcher;
+        final ActivityCallbacksActivityDispatcher dispatcher;
 
         WrappingActivityCallbacks(ComponentActivity activity) {
             this.activity = activity;
-            dispatcher = new ActivityCallbacksDispatcher(activity);
+            dispatcher = new ActivityCallbacksActivityDispatcher(activity);
         }
 
         @Override
@@ -153,12 +154,25 @@ public final class ShardOwners {
         }
 
         @Override
+        public void startIntentSenderForResult(IntentSender intent, int requestCode,
+                                               @Nullable Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags) throws IntentSender.SendIntentException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void startIntentSenderForResult(@NonNull IntentSender intent, int requestCode,
+                                               @Nullable Intent fillIntent, int flagsMask, int flagsValues, int extraFlags,
+                                               Bundle options) throws IntentSender.SendIntentException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public void addOnActivityResultCallback(int requestCode, @NonNull OnActivityResultCallback onActivityResultCallback) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void removeActivityResultCallback(int requestCode) {
+        public void removeActivityResultCallback(@NonNull OnActivityResultCallback callback) {
             throw new UnsupportedOperationException();
         }
 
@@ -178,7 +192,7 @@ public final class ShardOwners {
         }
 
         @Override
-        public void removeOnRequestPermissionResultCallback(int requestCode) {
+        public void removeOnRequestPermissionResultCallback(@NonNull OnRequestPermissionResultCallback onRequestPermissionResultCallback) {
             throw new UnsupportedOperationException();
         }
 
@@ -218,8 +232,23 @@ public final class ShardOwners {
         }
 
         @Override
+        public void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback onBackPressedCallback) {
+
+        }
+
+        @Override
         public void removeOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback) {
             dispatcher.removeOnBackPressedCallback(onBackPressedCallback);
+        }
+
+        @Override
+        public void addOnActivityCallbacks(OnActivityCallbacks callbacks) {
+
+        }
+
+        @Override
+        public void removeOnActivityCallbacks(OnActivityCallbacks callbacks) {
+
         }
     }
 

@@ -2,6 +2,7 @@ package me.tatarka.shard.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -58,6 +59,54 @@ public interface ActivityCallbacks {
      */
     void startActivityForResult(@NonNull Intent intent, int requestCode, @Nullable Bundle options);
 
+    /**
+     * Same as calling {@link #startIntentSenderForResult(IntentSender, int,
+     * Intent, int, int, int, Bundle)} with no options.
+     *
+     * @param intent The IntentSender to launch.
+     * @param requestCode If >= 0, this code will be returned in
+     *                    onActivityResult() when the activity exits.
+     * @param fillInIntent If non-null, this will be provided as the
+     * intent parameter to {@link IntentSender#sendIntent}.
+     * @param flagsMask Intent flags in the original IntentSender that you
+     * would like to change.
+     * @param flagsValues Desired values for any bits set in
+     * <var>flagsMask</var>
+     * @param extraFlags Always set to 0.
+     */
+    void startIntentSenderForResult(IntentSender intent, int requestCode,
+                                           @Nullable Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags)
+            throws IntentSender.SendIntentException;
+
+    /**
+     * Like {@link #startActivityForResult(Intent, int)}, but allowing you
+     * to use a IntentSender to describe the activity to be started.  If
+     * the IntentSender is for an activity, that activity will be started
+     * as if you had called the regular {@link #startActivityForResult(Intent, int)}
+     * here; otherwise, its associated action will be executed (such as
+     * sending a broadcast) as if you had called
+     * {@link IntentSender#sendIntent IntentSender.sendIntent} on it.
+     *
+     * @param intent The IntentSender to launch.
+     * @param requestCode If >= 0, this code will be returned in
+     *                    onActivityResult() when the activity exits.
+     * @param fillInIntent If non-null, this will be provided as the
+     * intent parameter to {@link IntentSender#sendIntent}.
+     * @param flagsMask Intent flags in the original IntentSender that you
+     * would like to change.
+     * @param flagsValues Desired values for any bits set in
+     * <var>flagsMask</var>
+     * @param extraFlags Always set to 0.
+     * @param options Additional options for how the Activity should be started.
+     * See {@link android.content.Context#startActivity(Intent, Bundle)}
+     * Context.startActivity(Intent, Bundle)} for more details.  If options
+     * have also been supplied by the IntentSender, options given here will
+     * override any that conflict with those given by the IntentSender.
+     */
+    void startIntentSenderForResult(@NonNull IntentSender intent, int requestCode,
+                                    @Nullable Intent fillIntent, int flagsMask, int flagsValues, int extraFlags,
+                                    Bundle options) throws IntentSender.SendIntentException;
+
     interface OnActivityResultCallback {
         /**
          * Called when an activity you launched exits, giving you the requestCode
@@ -86,7 +135,7 @@ public interface ActivityCallbacks {
 
     void addOnActivityResultCallback(int requestCode, @NonNull OnActivityResultCallback onActivityResultCallback);
 
-    void removeActivityResultCallback(int requestCode);
+    void removeActivityResultCallback(@NonNull OnActivityResultCallback callback);
 
     /**
      * Requests permissions to be granted to this application. These permissions
@@ -196,7 +245,7 @@ public interface ActivityCallbacks {
 
     void addOnRequestPermissionResultCallback(int requestCode, @NonNull OnRequestPermissionResultCallback onRequestPermissionResultCallback);
 
-    void removeOnRequestPermissionResultCallback(int requestCode);
+    void removeOnRequestPermissionResultCallback(@NonNull OnRequestPermissionResultCallback onRequestPermissionResultCallback);
 
     boolean isInMultiWindowMode();
 
@@ -244,6 +293,8 @@ public interface ActivityCallbacks {
      */
     void addOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback);
 
+    void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback onBackPressedCallback);
+
     /**
      * Remove a previously
      * {@link #addOnBackPressedCallback(OnBackPressedCallback)} added}
@@ -257,4 +308,57 @@ public interface ActivityCallbacks {
      * @param onBackPressedCallback The callback to remove
      */
     void removeOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback);
+
+    interface OnActivityCallbacks extends OnMultiWindowModeChangedCallback, OnPictureInPictureModeChangedCallback {
+
+        /**
+         * Called when an activity you launched exits, giving you the requestCode
+         * you started it with, the resultCode it returned, and any additional
+         * data from it.  The <var>resultCode</var> will be
+         * {@link android.app.Activity#RESULT_CANCELED} if the activity explicitly returned that,
+         * didn't return any result, or crashed during its operation.
+         *
+         * <p>You will receive this call immediately before onResume() when your
+         * activity is re-starting.
+         *
+         * <p>This method is never invoked if your activity sets
+         * {@link android.R.styleable#AndroidManifestActivity_noHistory noHistory} to
+         * <code>true</code>.
+         *
+         * @param requestCode The integer request code originally supplied to
+         *                    startActivityForResult(), allowing you to identify who this
+         *                    result came from.
+         * @param resultCode The integer result code returned by the child activity
+         *                   through its setResult().
+         * @param data       An Intent, which can return result data to the caller
+         *                   (various data can be attached to Intent "extras").
+         * @see android.app.Activity#startActivityForResult
+         * @see android.app.Activity#createPendingResult
+         * @see android.app.Activity#setResult(int)
+         */
+        boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data);
+
+        /**
+         * Callback for the result from requesting permissions. This method
+         * is invoked for every call on {@link #requestPermissions(String[], int)}.
+         * <p>
+         * <strong>Note:</strong> It is possible that the permissions request interaction
+         * with the user is interrupted. In this case you will receive empty permissions
+         * and results arrays which should be treated as a cancellation.
+         * </p>
+         *
+         * @param requestCode The request code passed in {@link #requestPermissions(String[], int)}.
+         * @param permissions The requested permissions. Never null.
+         * @param grantResults The grant results for the corresponding permissions
+         *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+         *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+         *
+         * @see #requestPermissions(String[], int)
+         */
+        boolean onRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
+    }
+
+    void addOnActivityCallbacks(OnActivityCallbacks callbacks);
+
+    void removeOnActivityCallbacks(OnActivityCallbacks callbacks);
 }
