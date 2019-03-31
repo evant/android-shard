@@ -22,6 +22,8 @@ implementation "me.tatarka.shard:shard-nav:$shard_version"
 implementation "me.tatarka.shard:shard-pager:$shard_version"
 // For using androidx.transition
 implementation "me.tatarka.shard:shard-transition:$shard_version"
+// For interop with fragments
+implementation "me.tatarka.shard:shard-fragment-interop:$shard_version"
 ```
 
 ### Kotlin
