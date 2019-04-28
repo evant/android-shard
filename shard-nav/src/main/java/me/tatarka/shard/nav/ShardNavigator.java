@@ -16,6 +16,7 @@ import androidx.navigation.Navigator;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwners;
+import me.tatarka.shard.backstack.NavShardTransition;
 import me.tatarka.shard.backstack.ShardBackStack;
 
 @Navigator.Name("shard")
@@ -45,7 +46,7 @@ public class ShardNavigator extends Navigator<ShardNavigator.Destination> {
     public NavDestination navigate(@NonNull Destination destination, @Nullable Bundle args, @Nullable NavOptions navOptions, @Nullable Navigator.Extras navigatorExtras) {
         Shard shard = destination.shardFactory.newInstance(destination.getName());
         shard.setArgs(args);
-        backStack.push(shard, destination.getId(), convertNavOptions(navOptions, navigatorExtras));
+        backStack.push(shard, destination.getId(), navOptions != null && navOptions.shouldLaunchSingleTop(), navShardTransition(navOptions, navigatorExtras));
         return backStack.willPerformAction() ? destination : null;
     }
 
@@ -96,16 +97,15 @@ public class ShardNavigator extends Navigator<ShardNavigator.Destination> {
         }
     }
 
-    private static me.tatarka.shard.backstack.NavOptions convertNavOptions(@Nullable NavOptions options, @Nullable Navigator.Extras navigationExtras) {
-        me.tatarka.shard.backstack.NavOptions.Builder builder = new me.tatarka.shard.backstack.NavOptions.Builder();
-        if (options != null) {
-            builder.singleTop(options.shouldLaunchSingleTop());
-            builder.animate(options.getEnterAnim(), options.getExitAnim(), options.getPopEnterAnim(), options.getPopExitAnim());
-        }
+    @Nullable
+    private static NavShardTransition navShardTransition(@Nullable NavOptions options, @Nullable Navigator.Extras navigationExtras) {
         if (navigationExtras instanceof Extras) {
-            builder.transition(((Extras) navigationExtras).transition);
+            return NavShardTransition.fromTransitionRes(((Extras) navigationExtras).transition);
         }
-        return builder.build();
+        if (options != null) {
+            return NavShardTransition.fromAnimRes(options.getEnterAnim(), options.getExitAnim(), options.getPopEnterAnim(), options.getPopExitAnim());
+        }
+        return null;
     }
 
     public static class Extras implements Navigator.Extras {

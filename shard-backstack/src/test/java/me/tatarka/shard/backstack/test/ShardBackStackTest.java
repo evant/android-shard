@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import me.tatarka.shard.backstack.NavOptions;
+import me.tatarka.shard.backstack.NavShardTransition;
 import me.tatarka.shard.backstack.ShardBackStack;
 
 import static me.tatarka.shard.backstack.test.LooperTestHelper.withPausedMainLooper;
@@ -177,9 +177,7 @@ public class ShardBackStackTest {
             @Override
             public void run() {
                 backStack.pop()
-                        .push(TestShard.create("one"), 1, new NavOptions.Builder()
-                                .singleTop(true)
-                                .build())
+                        .push(TestShard.create("one"), 1, true)
                         .commit();
             }
         });

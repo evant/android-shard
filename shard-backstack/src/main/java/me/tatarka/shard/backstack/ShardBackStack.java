@@ -19,8 +19,10 @@ import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.transition.ShardTransition;
 import me.tatarka.shard.transition.ShardTransitionCompat;
 
+/**
+ * A simple back stack implementation for shards.
+ */
 public class ShardBackStack {
-
     @IdRes
     public static final int NO_ID = -1;
 
@@ -41,22 +43,36 @@ public class ShardBackStack {
     private Entry oldEntry;
     private Entry newEntry;
 
+    /**
+     * Constructs a new back stack that puts shards in the given container. You probably want to use
+     * {@link ShardBackStackHost} instead of constructing this directly as it will handle saving
+     * and restoring state as well as the system back button.
+     */
     public ShardBackStack(ShardOwner owner, FrameLayout container) {
         this.owner = owner;
         this.container = container;
         sm = new ShardManager(owner);
     }
 
+    /**
+     * Returns the number of entries in the back stack.
+     */
     public int size() {
         return backStack.size();
     }
 
+    /**
+     * Saves the back stacks's state and returns it.
+     */
     public State saveState() {
         commit();
         currentEntry.save(sm);
         return new State(backStack, currentEntry);
     }
 
+    /**
+     * Restores the back stack from the given state.
+     */
     public void restoreState(@NonNull State saveState) {
         backStack = saveState.backStack;
         currentEntry = saveState.currentEntry;
@@ -64,31 +80,85 @@ public class ShardBackStack {
         sm.replace(null, currentEntry.shard, container);
     }
 
+    /**
+     * Sets the starting shard for the back stack. You will not be able to pop this shard. This is
+     * an asynchronous operation to allow optimizations when you make multiple back stack operations.
+     * If you need it to happen immediately you can call {@link #commit()}.
+     */
     public ShardBackStack setStarting(Shard shard) {
         return setStarting(shard, NO_ID);
     }
 
+    /**
+     * Sets the starting shard for the back stack. You will not be able to pop this shard. This is
+     * an asynchronous operation to allow optimizations when you make multiple back stack operations.
+     * If you need it to happen immediately you can call {@link #commit()}.
+     *
+     * @param id A unique id for the shard for use with {@link #popToId(int, boolean)}.
+     */
     public ShardBackStack setStarting(Shard shard, @IdRes int id) {
         if (currentEntry == null) {
-            push(shard, id);
+            push(shard, id, false);
         }
         return this;
     }
 
+    /**
+     * Pushes the given shard onto the back stack. This is an asynchronous operation to allow
+     * optimizations when you make multiple back stack operations. If you need it to happen
+     * immediately you can call {@link #commit()}.
+     */
     public ShardBackStack push(Shard shard) {
-        return push(shard, NO_ID);
+        return push(shard, NO_ID, false);
     }
 
+    /**
+     * Pushes the given shard onto the back stack. This is an asynchronous operation to allow
+     * optimizations when you make multiple back stack operations. If you need it to happen
+     * immediately you can call {@link #commit()}.
+     *
+     * @param id A unique id for the shard for use with {@link #popToId(int, boolean)}.
+     */
     public ShardBackStack push(Shard shard, @IdRes int id) {
-        return push(shard, id, null);
+        return push(shard, id, false);
     }
 
-    public ShardBackStack push(Shard shard, @Nullable NavOptions navOptions) {
-        return push(shard, NO_ID, navOptions);
+    /**
+     * Pushes the given shard onto the back stack. This is an asynchronous operation to allow
+     * optimizations when you make multiple back stack operations. If you need it to happen
+     * immediately you can call {@link #commit()}.
+     *
+     * @param id        A unique id for the shard for use with {@link #popToId(int, boolean)}.
+     * @param singleTop If true and a shard with the same id is on the top of the back stack, this
+     *                  push will do nothing.
+     */
+    public ShardBackStack push(Shard shard, @IdRes int id, boolean singleTop) {
+        return push(shard, id, singleTop, null);
     }
 
-    public ShardBackStack push(Shard shard, @IdRes int id, @Nullable NavOptions navOptions) {
-        if (navOptions != null && navOptions.singleTop) {
+    /**
+     * Pushes the given shard onto the back stack. This is an asynchronous operation to allow
+     * optimizations when you make multiple back stack operations. If you need it to happen
+     * immediately you can call {@link #commit()}.
+     *
+     * @param navShardTransition Additional navigation options to control ex: animations.
+     */
+    public ShardBackStack push(Shard shard, @Nullable NavShardTransition navShardTransition) {
+        return push(shard, NO_ID, false, navShardTransition);
+    }
+
+    /**
+     * Pushes the given shard onto the back stack. This is an asynchronous operation to allow
+     * optimizations when you make multiple back stack operations. If you need it to happen
+     * immediately you can call {@link #commit()}.
+     *
+     * @param id                 A unique id for the shard for use with {@link #popToId(int, boolean)}.
+     * @param singleTop          If true and a shard with the same id is on the top of the back stack, this
+     *                           push will do nothing.
+     * @param navShardTransition Transition animations to run when pushing and popping the shard.
+     */
+    public ShardBackStack push(Shard shard, @IdRes int id, boolean singleTop, @Nullable NavShardTransition navShardTransition) {
+        if (singleTop) {
             if (id == NO_ID) {
                 throw new IllegalArgumentException("Must set an id when using singleTop");
             }
@@ -97,7 +167,7 @@ public class ShardBackStack {
             }
         }
 
-        Entry newEntry = new Entry(shard, id, navOptions);
+        Entry newEntry = new Entry(shard, id, navShardTransition);
         Entry oldEntry = currentEntry;
         currentEntry = newEntry;
         if (oldEntry != null) {
@@ -106,7 +176,6 @@ public class ShardBackStack {
 
         if (which == OP_UNSET) {
             this.oldEntry = oldEntry;
-        } else if (which == OP_PUSH) {
         }
 
         this.which = OP_PUSH;
@@ -115,6 +184,11 @@ public class ShardBackStack {
         return this;
     }
 
+    /**
+     * Pops the top shard off the back stack if possible, otherwise does nothing. This is an
+     * asynchronous operation to allow optimizations when you make multiple back stack operations.
+     * If you need it to happen immediately you can call {@link #commit()}.
+     */
     public ShardBackStack pop() {
         if (backStack.size() == 0) {
             return this;
@@ -130,8 +204,6 @@ public class ShardBackStack {
 
         if (which == OP_UNSET) {
             this.oldEntry = oldEntry;
-        } else if (which == OP_POP) {
-            //?
         }
 
         this.which = OP_POP;
@@ -139,6 +211,14 @@ public class ShardBackStack {
         return this;
     }
 
+    /**
+     * Pops shards off the back stack until the given index, where 0 is the starting shard, 1 is the
+     * next shard up, etc.
+     *
+     * @param inclusive If true then the shard at the given index will be popped, otherwise it will
+     *                  not.
+     * @throws IndexOutOfBoundsException If the index is negative or larger than the back stack size.
+     */
     public ShardBackStack popToIndex(int index, boolean inclusive) {
         int size = backStack.size();
         if (index < 0 || index >= size) {
@@ -151,6 +231,13 @@ public class ShardBackStack {
         return this;
     }
 
+    /**
+     * Pops shards off the back stack until the given id. If no entries have the given id then
+     * nothing will happen.
+     *
+     * @param inclusive If true then the Shard at the given index will be popped, otherwise it will
+     *                  not.
+     */
     public ShardBackStack popToId(@IdRes int id, boolean inclusive) {
         if (id == NO_ID) {
             return this;
@@ -169,11 +256,25 @@ public class ShardBackStack {
         return popToIndex(index, inclusive);
     }
 
+    /**
+     * Immediately runs all pending shard actions. While you don't normally need to call this, it
+     * can be useful for when you need to ensure the latest shard is showing.
+     *
+     * @return true if actions were run, false otherwise.
+     */
     public boolean commit() {
         handler.removeMessages(MSG);
         boolean willPerformAction = willPerformAction();
         doCommit();
         return willPerformAction;
+    }
+
+    /**
+     * Returns true if there are any pending shard actions to run. This can be useful to know if a
+     * previous push or pop will actually do anything.
+     */
+    public boolean willPerformAction() {
+        return which != OP_UNSET;
     }
 
     void doCommit() {
@@ -223,10 +324,6 @@ public class ShardBackStack {
         }
     }
 
-    public boolean willPerformAction() {
-        return which != OP_UNSET;
-    }
-
     private final Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -249,16 +346,16 @@ public class ShardBackStack {
         int popExitAnim;
         int transition;
 
-        Entry(Shard shard, int id, @Nullable NavOptions navOptions) {
+        Entry(Shard shard, int id, @Nullable NavShardTransition navShardTransition) {
             this.name = shard.getClass().getName();
             this.shard = shard;
             this.id = id;
-            if (navOptions != null) {
-                enterAnim = navOptions.enterAnim;
-                exitAnim = navOptions.exitAnim;
-                popEnterAnim = navOptions.popEnterAnim;
-                popExitAnim = navOptions.popExitAnim;
-                transition = navOptions.transition;
+            if (navShardTransition != null) {
+                enterAnim = navShardTransition.enterAnim;
+                exitAnim = navShardTransition.exitAnim;
+                popEnterAnim = navShardTransition.popEnterAnim;
+                popExitAnim = navShardTransition.popExitAnim;
+                transition = navShardTransition.transition;
             }
         }
 
