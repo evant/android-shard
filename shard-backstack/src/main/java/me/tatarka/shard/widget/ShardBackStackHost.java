@@ -1,4 +1,4 @@
-package me.tatarka.shard.backstack;
+package me.tatarka.shard.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -16,6 +16,8 @@ import androidx.annotation.Nullable;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwners;
+import me.tatarka.shard.backstack.R;
+import me.tatarka.shard.backstack.ShardBackStack;
 
 public class ShardBackStackHost extends FrameLayout {
 
@@ -37,12 +39,18 @@ public class ShardBackStackHost extends FrameLayout {
         if (!isInEditMode()) {
             owner = ShardOwners.get(context);
             backStack = new ShardBackStack(owner, this);
+            backStack.addOnNavigatedListener(new ShardBackStack.OnNavigatedListener() {
+                @Override
+                public void onNavigated(Shard shard, int id) {
+                    backPressedCallback.setEnabled(backStack.size() > 0);
+                }
+            });
         }
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ShardBackStackHost);
             if (!isInEditMode()) {
-                String name = a.getString(R.styleable.ShardBackStackHost_startDestination);
-                int id = a.getInt(R.styleable.ShardBackStackHost_startDestinationId, ShardBackStack.NO_ID);
+                String name = a.getString(R.styleable.ShardBackStackHost_startingShard);
+                int id = a.getInt(R.styleable.ShardBackStackHost_startingId, ShardBackStack.NO_ID);
                 if (name != null) {
                     Shard shard = owner.getShardFactory().newInstance(name);
                     backStack.setStarting(shard, id);

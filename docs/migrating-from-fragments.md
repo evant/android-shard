@@ -149,14 +149,14 @@ findNavController(view).navigate(R.id.my_fragment2)
 *Shard (with shard-backstack)*
 ```xml
 <me.tatarka.shard.backstack.ShardBackStackHost
-   android:id="@+id/nav_host"
+   android:id="@+id/container"
    android:layout_width="match_parent"
    android:layout_height="match_parent"
-   app:startingDestination="com.example.MyShard1" />
+   app:startingShard="com.example.MyShard1" />
 ```
 
 ```kotlin
-val host: ShardBackStackHost = findViewById(R.id.nav_host)
+val host: ShardBackStackHost = findViewById(R.id.container)
 host.backStack.push(MyShard2())
 ```
 

@@ -12,12 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardManager;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.transition.ShardTransition;
 import me.tatarka.shard.transition.ShardTransitionCompat;
+import me.tatarka.shard.widget.ShardBackStackHost;
 
 /**
  * A simple back stack implementation for shards.
@@ -42,6 +44,8 @@ public class ShardBackStack {
     private int which = 0;
     private Entry oldEntry;
     private Entry newEntry;
+
+    private final CopyOnWriteArrayList<OnNavigatedListener> onNavigatedListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Constructs a new back stack that puts shards in the given container. You probably want to use
@@ -81,18 +85,20 @@ public class ShardBackStack {
     }
 
     /**
-     * Sets the starting shard for the back stack. You will not be able to pop this shard. This is
-     * an asynchronous operation to allow optimizations when you make multiple back stack operations.
-     * If you need it to happen immediately you can call {@link #commit()}.
+     * Sets the starting shard for the back stack. Nothing will happen if a starting shard has
+     * already been set. This is an asynchronous operation to allow optimizations when you make
+     * multiple back stack operations. If you need it to happen immediately you can call
+     * {@link #commit()}.
      */
     public ShardBackStack setStarting(Shard shard) {
         return setStarting(shard, NO_ID);
     }
 
     /**
-     * Sets the starting shard for the back stack. You will not be able to pop this shard. This is
-     * an asynchronous operation to allow optimizations when you make multiple back stack operations.
-     * If you need it to happen immediately you can call {@link #commit()}.
+     * Sets the starting shard for the back stack. Nothing will happen if a starting shard has
+     * already been set. This is an asynchronous operation to allow optimizations when you make
+     * multiple back stack operations. If you need it to happen immediately you can call
+     * {@link #commit()}.
      *
      * @param id A unique id for the shard for use with {@link #popToId(int, boolean)}.
      */
@@ -265,7 +271,9 @@ public class ShardBackStack {
     public boolean commit() {
         handler.removeMessages(MSG);
         boolean willPerformAction = willPerformAction();
-        doCommit();
+        if (willPerformAction) {
+            doCommit();
+        }
         return willPerformAction;
     }
 
@@ -275,6 +283,25 @@ public class ShardBackStack {
      */
     public boolean willPerformAction() {
         return which != OP_UNSET;
+    }
+
+    /**
+     * Adds a {@link OnNavigatedListener} to listen to navigation events.
+     * {@link OnNavigatedListener#onNavigated(Shard, int)} will be called immediately with the
+     * current shard if one is present.
+     */
+    public void addOnNavigatedListener(OnNavigatedListener onNavigatedListener) {
+        onNavigatedListeners.add(onNavigatedListener);
+        if (currentEntry != null) {
+            onNavigatedListener.onNavigated(currentEntry.shard, currentEntry.id);
+        }
+    }
+
+    /**
+     * Removes the given {@link OnNavigatedListener}.
+     */
+    public void removeOnNavigatedListener(OnNavigatedListener onNavigatedListener) {
+        onNavigatedListeners.remove(onNavigatedListener);
     }
 
     void doCommit() {
@@ -306,6 +333,9 @@ public class ShardBackStack {
             sm.replace(oldEntry != null ? oldEntry.shard : null, currentEntry.shard, container, transition);
         }
         clear();
+        for (OnNavigatedListener listener : onNavigatedListeners) {
+            listener.onNavigated(currentEntry.shard, currentEntry.id);
+        }
     }
 
     void clear() {
@@ -327,7 +357,9 @@ public class ShardBackStack {
     private final Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            doCommit();
+            if (willPerformAction()) {
+                doCommit();
+            }
             return true;
         }
     });
@@ -455,5 +487,16 @@ public class ShardBackStack {
                 return new State[size];
             }
         };
+    }
+
+    public interface OnNavigatedListener {
+        /**
+         * Called on navigation. Note: intermediate navigations might be optimized away so this will
+         * only be called with the 'final' state after navigating.
+         *
+         * @param shard The shard that was navigated to.
+         * @param id    The id of the back stack entry if present. {@link #NO_ID} otherwise.
+         */
+        void onNavigated(Shard shard, @IdRes int id);
     }
 }

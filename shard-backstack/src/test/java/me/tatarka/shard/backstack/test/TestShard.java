@@ -14,11 +14,8 @@ public class TestShard extends Shard {
         return testShard;
     }
 
-    public boolean createCalled;
-
     @Override
     public void onCreate() {
-        createCalled = true;
         setContentView(new View(getContext()));
     }
 

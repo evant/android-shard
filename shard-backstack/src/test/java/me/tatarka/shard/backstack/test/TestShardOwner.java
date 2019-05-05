@@ -3,6 +3,7 @@ package me.tatarka.shard.backstack.test;
 import android.content.Context;
 
 import androidx.activity.ComponentActivity;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
@@ -14,7 +15,6 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.app.ActivityCallbacksActivityDispatcher;
-import me.tatarka.shard.app.ActivityCallbacksDispatcher;
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.content.ComponentCallbacks;
@@ -27,7 +27,7 @@ public class TestShardOwner implements ShardOwner {
     final SavedStateRegistryController savedStateRegistryController = SavedStateRegistryController.create(this);
     final ActivityCallbacks activityCallbacks;
     final ComponentCallbacks componentCallbacks = new ComponentCallbacksDispatcher(this);
-    final TestShardFactory shardFactory = new TestShardFactory();
+    final OnBackPressedDispatcher dispatcher = new OnBackPressedDispatcher();
 
     public TestShardOwner() {
         this(null);
@@ -58,7 +58,7 @@ public class TestShardOwner implements ShardOwner {
     @NonNull
     @Override
     public Shard.Factory getShardFactory() {
-        return shardFactory;
+        return Shard.DefaultFactory.getInstance();
     }
 
     @NonNull
@@ -77,5 +77,11 @@ public class TestShardOwner implements ShardOwner {
     @Override
     public SavedStateRegistry getSavedStateRegistry() {
         return savedStateRegistryController.getSavedStateRegistry();
+    }
+
+    @NonNull
+    @Override
+    public OnBackPressedDispatcher getOnBackPressedDispatcher() {
+        return dispatcher;
     }
 }

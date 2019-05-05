@@ -2,6 +2,7 @@ package me.tatarka.shard.backstack.test;
 
 import android.widget.FrameLayout;
 
+import androidx.annotation.IdRes;
 import androidx.test.annotation.UiThreadTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -9,7 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import me.tatarka.shard.backstack.NavShardTransition;
+import java.util.ArrayList;
+import java.util.List;
+
+import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.backstack.ShardBackStack;
 
 import static me.tatarka.shard.backstack.test.LooperTestHelper.withPausedMainLooper;
@@ -20,14 +24,15 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class ShardBackStackTest {
 
-    private final TestShardOwner owner = new TestShardOwner();
-    private final FrameLayout container = new FrameLayout(owner.getContext());
+    private final TestOnNavigatedListener listener = new TestOnNavigatedListener();
     private ShardBackStack backStack;
 
     @Before
     @UiThreadTest
     public void setup() {
-        backStack = new ShardBackStack(owner, container);
+        TestShardOwner owner = new TestShardOwner();
+        backStack = new ShardBackStack(owner, new FrameLayout(owner.getContext()));
+        backStack.addOnNavigatedListener(listener);
     }
 
     @Test
@@ -37,25 +42,21 @@ public class ShardBackStackTest {
         backStack.setStarting(shard).commit();
 
         assertEquals(0, backStack.size());
-        assertTrue(shard.createCalled);
+        assertEquals(listener.shards.size(), 1);
+        assertEquals(shard, listener.shards.get(0));
     }
 
     @Test
     @UiThreadTest
     public void push_and_pop() {
-        final TestShard shard1 = TestShard.create("one");
-        final TestShard shard2 = TestShard.create("two");
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.setStarting(shard1).push(shard2).commit();
+                backStack.setStarting(TestShard.create("one"))
+                        .push(TestShard.create("two"))
+                        .commit();
             }
         });
-
-        assertEquals(1, backStack.size());
-        assertFalse(shard1.createCalled);
-        assertTrue(shard2.createCalled);
 
         withPausedMainLooper(new Runnable() {
             @Override
@@ -65,56 +66,45 @@ public class ShardBackStackTest {
         });
 
         assertEquals(0, backStack.size());
-        TestShard shard = getShard(0);
-        assertTrue(shard.createCalled);
-        assertEquals("one", shard.getName());
+        assertEquals(2, listener.shards.size());
+        assertEquals("two", listener.shards.get(0).getName());
+        assertEquals("one", listener.shards.get(1).getName());
     }
 
     @Test
     @UiThreadTest
     public void double_push() {
-        final TestShard shard1 = TestShard.create("one");
-        final TestShard shard2 = TestShard.create("two");
-        final TestShard shard3 = TestShard.create("three");
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.setStarting(shard1).commit();
+                backStack.setStarting(TestShard.create("one")).commit();
             }
         });
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.push(shard2).push(shard3).commit();
+                backStack.push(TestShard.create("two")).push(TestShard.create("three")).commit();
             }
         });
 
         assertEquals(2, backStack.size());
-        assertTrue(shard1.createCalled);
-        assertFalse(shard2.createCalled);
-        assertTrue(shard3.createCalled);
+        assertEquals(2, listener.shards.size());
+        assertEquals("one", listener.shards.get(0).getName());
+        assertEquals("three", listener.shards.get(1).getName());
     }
 
     @Test
     @UiThreadTest
     public void double_pop() {
-        final TestShard shard1 = TestShard.create("one");
-        final TestShard shard2 = TestShard.create("two");
-        final TestShard shard3 = TestShard.create("three");
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.setStarting(shard1).push(shard2).push(shard3).commit();
+                backStack.setStarting(TestShard.create("one"))
+                        .push(TestShard.create("two"))
+                        .push(TestShard.create("three"))
+                        .commit();
             }
         });
-
-        assertEquals(2, backStack.size());
-        assertFalse(shard1.createCalled);
-        assertFalse(shard2.createCalled);
-        assertTrue(shard3.createCalled);
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
@@ -123,54 +113,48 @@ public class ShardBackStackTest {
         });
 
         assertEquals(0, backStack.size());
-        TestShard shard = getShard(0);
-        assertTrue(shard.createCalled);
-        assertEquals("one", shard.getName());
+        assertEquals(2, listener.shards.size());
+        assertEquals("three", listener.shards.get(0).getName());
+        assertEquals("one", listener.shards.get(1).getName());
     }
 
     @Test
     @UiThreadTest
     public void replace_top() {
-        final TestShard shard1 = TestShard.create("one");
-        final TestShard shard2 = TestShard.create("two");
-        final TestShard shard3 = TestShard.create("three");
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.setStarting(shard1).push(shard2).commit();
+                backStack.setStarting(TestShard.create("one"))
+                        .push(TestShard.create("two"))
+                        .commit();
             }
         });
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.pop().push(shard3).commit();
+                backStack.pop().push(TestShard.create("three")).commit();
             }
         });
 
         assertEquals(1, backStack.size());
-        assertFalse(shard1.createCalled);
-        assertTrue(shard2.createCalled);
-        assertTrue(shard3.createCalled);
+        assertEquals(2, listener.shards.size());
+        assertEquals("two", listener.shards.get(0).getName());
+        assertEquals("three", listener.shards.get(1).getName());
     }
 
     @Test
     @UiThreadTest
     public void pop_and_push_single_top() {
-        final TestShard shard1 = TestShard.create("one");
-        final TestShard shard2 = TestShard.create("two");
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.setStarting(shard1, 1).commit();
+                backStack.setStarting(TestShard.create("one"), 1).commit();
             }
         });
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.push(shard2).commit();
+                backStack.push(TestShard.create("two")).commit();
             }
         });
         withPausedMainLooper(new Runnable() {
@@ -183,53 +167,54 @@ public class ShardBackStackTest {
         });
 
         assertEquals(0, backStack.size());
+        assertEquals(3, listener.shards.size());
+        assertEquals("one", listener.shards.get(0).getName());
+        assertEquals(1, (int) listener.ids.get(0));
+        assertEquals("two", listener.shards.get(1).getName());
+        assertEquals("one", listener.shards.get(2).getName());
+        assertEquals(1, (int) listener.ids.get(2));
     }
 
     @Test
     @UiThreadTest
     public void pop_and_replace() {
-        final TestShard shard1 = TestShard.create("one");
-        final TestShard shard2 = TestShard.create("two");
-        final TestShard shard3 = TestShard.create("three");
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.setStarting(shard1).commit();
+                backStack.setStarting(TestShard.create("one")).commit();
             }
         });
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.push(shard2).commit();
+                backStack.push(TestShard.create("two")).commit();
             }
         });
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.pop().push(shard3).commit();
+                backStack.pop().push(TestShard.create("three")).commit();
             }
         });
 
         assertEquals(1, backStack.size());
+        assertEquals(3, listener.shards.size());
+        assertEquals("one", listener.shards.get(0).getName());
+        assertEquals("two", listener.shards.get(1).getName());
+        assertEquals("three", listener.shards.get(2).getName());
     }
 
     @Test
     @UiThreadTest
     public void pops_to_index_0_exclusive() {
-        final TestShard shard1 = TestShard.create("one");
-        final TestShard shard2 = TestShard.create("two");
-        final TestShard shard3 = TestShard.create("three");
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.setStarting(shard1).push(shard2).push(shard3).commit();
+                backStack.setStarting(TestShard.create("one"))
+                        .push(TestShard.create("two"))
+                        .push(TestShard.create("three")).commit();
             }
         });
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
@@ -238,22 +223,23 @@ public class ShardBackStackTest {
         });
 
         assertEquals(0, backStack.size());
+        assertEquals(2, listener.shards.size());
+        assertEquals("three", listener.shards.get(0).getName());
+        assertEquals("one", listener.shards.get(1).getName());
     }
 
     @Test
     @UiThreadTest
     public void pops_to_index_1_inclusive() {
-        final TestShard shard1 = TestShard.create("one");
-        final TestShard shard2 = TestShard.create("two");
-        final TestShard shard3 = TestShard.create("three");
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.setStarting(shard1).push(shard2).push(shard3).commit();
+                backStack.setStarting(TestShard.create("one"))
+                        .push(TestShard.create("two"))
+                        .push(TestShard.create("three"))
+                        .commit();
             }
         });
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
@@ -262,22 +248,23 @@ public class ShardBackStackTest {
         });
 
         assertEquals(0, backStack.size());
+        assertEquals(2, listener.shards.size());
+        assertEquals("three", listener.shards.get(0).getName());
+        assertEquals("one", listener.shards.get(1).getName());
     }
 
     @Test
     @UiThreadTest
     public void pops_to_first_id_exclusive() {
-        final TestShard shard1 = TestShard.create("one");
-        final TestShard shard2 = TestShard.create("two");
-        final TestShard shard3 = TestShard.create("three");
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.setStarting(shard1, 1).push(shard2).push(shard3).commit();
+                backStack.setStarting(TestShard.create("one"), 1)
+                        .push(TestShard.create("two"))
+                        .push(TestShard.create("three"))
+                        .commit();
             }
         });
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
@@ -286,19 +273,22 @@ public class ShardBackStackTest {
         });
 
         assertEquals(0, backStack.size());
+        assertEquals(2, listener.shards.size());
+        assertEquals("three", listener.shards.get(0).getName());
+        assertEquals("one", listener.shards.get(1).getName());
+        assertEquals(1, (int) listener.ids.get(1));
     }
 
     @Test
     @UiThreadTest
     public void pops_to_second_id_inclusive() {
-        final TestShard shard1 = TestShard.create("one");
-        final TestShard shard2 = TestShard.create("two");
-        final TestShard shard3 = TestShard.create("three");
-
         withPausedMainLooper(new Runnable() {
             @Override
             public void run() {
-                backStack.setStarting(shard1, 1).push(shard2, 2).push(shard3).commit();
+                backStack.setStarting(TestShard.create("one"), 1)
+                        .push(TestShard.create("two"), 2)
+                        .push(TestShard.create("three"))
+                        .commit();
             }
         });
 
@@ -310,10 +300,52 @@ public class ShardBackStackTest {
         });
 
         assertEquals(0, backStack.size());
+        assertEquals(2, listener.shards.size());
+        assertEquals("three", listener.shards.get(0).getName());
+        assertEquals("one", listener.shards.get(1).getName());
+        assertEquals(1, (int) listener.ids.get(1));
     }
 
-    private TestShard getShard(int index) {
-        return (TestShard) owner.shardFactory.createdShards.get(index);
+    @Test
+    @UiThreadTest
+    public void push_recreate_pop() {
+        withPausedMainLooper(new Runnable() {
+            @Override
+            public void run() {
+                backStack.setStarting(TestShard.create("one")).push(TestShard.create("two")).commit();
+            }
+        });
+        recreate();
+        withPausedMainLooper(new Runnable() {
+            @Override
+            public void run() {
+                backStack.pop().commit();
+            }
+        });
+
+        assertEquals(0, backStack.size());
+        assertEquals(3, listener.shards.size());
+        assertEquals("two", listener.shards.get(0).getName());
+        assertEquals("two", listener.shards.get(1).getName());
+        assertEquals("one", listener.shards.get(2).getName());
     }
 
+    private void recreate() {
+        ShardBackStack.State state = backStack.saveState();
+        TestShardOwner owner = new TestShardOwner();
+        backStack = new ShardBackStack(owner, new FrameLayout(owner.getContext()));
+        backStack.restoreState(state);
+        backStack.addOnNavigatedListener(listener);
+    }
+
+    static class TestOnNavigatedListener implements ShardBackStack.OnNavigatedListener {
+        final List<TestShard> shards = new ArrayList<>();
+        final List<Integer> ids = new ArrayList<>();
+
+        @Override
+        public void onNavigated(Shard shard, @IdRes int id) {
+            shards.add((TestShard) shard);
+            ids.add(id);
+        }
+    }
 }
