@@ -9,18 +9,19 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.ContentView;
+import androidx.activity.OnBackPressedDispatcher;
+import androidx.activity.OnBackPressedDispatcherOwner;
 import androidx.annotation.NavigationRes;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavHost;
-import androidx.navigation.NavInflater;
 import androidx.navigation.Navigation;
 
-import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.app.ShardManager;
 import me.tatarka.shard.app.ShardOwner;
 import me.tatarka.shard.app.ShardOwners;
@@ -59,8 +60,11 @@ public class ShardNavHost extends FrameLayout implements NavHost {
             if (graphId != 0 && !ShardManager.isRestoringState(owner)) {
                 navController.setGraph(graphId);
             }
-            NavCallbacks navCallbacks = new NavCallbacks(owner, navController);
-            addOnAttachStateChangeListener(navCallbacks);
+            navController.setHostViewModelStore(owner.getViewModelStore());
+
+            ViewLifecycleOwner lifecycleOwner = new ViewLifecycleOwner(owner);
+            navController.setHostOnBackPressedDispatcherOwner(lifecycleOwner);
+            addOnAttachStateChangeListener(lifecycleOwner);
         }
     }
 
@@ -125,28 +129,51 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         };
     }
 
-    static class NavCallbacks implements OnAttachStateChangeListener, OnBackPressedCallback {
-        final ActivityCallbacks callbacks;
-        final NavController navController;
+    /**
+     * Wraps the parent's lifecycle so that this lifecycle is stopped when the view is detached.
+     */
+    static class ViewLifecycleOwner implements
+            OnBackPressedDispatcherOwner,
+            LifecycleEventObserver,
+            OnAttachStateChangeListener {
+        private final ShardOwner owner;
+        private final LifecycleRegistry registry = new LifecycleRegistry(this);
+        private boolean isAttached;
 
-        NavCallbacks(ShardOwner owner, NavController navController) {
-            this.callbacks = owner.getActivityCallbacks();
-            this.navController = navController;
+        ViewLifecycleOwner(ShardOwner owner) {
+            this.owner = owner;
+            owner.getLifecycle().addObserver(this);
+        }
+
+        @NonNull
+        @Override
+        public OnBackPressedDispatcher getOnBackPressedDispatcher() {
+            return owner.getOnBackPressedDispatcher();
+        }
+
+        @NonNull
+        @Override
+        public Lifecycle getLifecycle() {
+            return registry;
         }
 
         @Override
-        public boolean handleOnBackPressed() {
-            return navController.popBackStack();
+        public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+            if (isAttached) {
+                registry.handleLifecycleEvent(event);
+            }
         }
 
         @Override
         public void onViewAttachedToWindow(View v) {
-            callbacks.addOnBackPressedCallback(this);
+            isAttached = true;
+            registry.setCurrentState(owner.getLifecycle().getCurrentState());
         }
 
         @Override
         public void onViewDetachedFromWindow(View v) {
-            callbacks.removeOnBackPressedCallback(this);
+            isAttached = false;
+            registry.setCurrentState(Lifecycle.State.CREATED);
         }
     }
 }

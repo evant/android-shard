@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 
 import java.lang.reflect.InvocationTargetException;
 
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.CallSuper;
 import androidx.annotation.ContentView;
 import androidx.annotation.IdRes;
@@ -374,6 +375,15 @@ public class Shard implements ShardOwner {
     @Override
     public Lifecycle getLifecycle() {
         return lifecycleRegistry;
+    }
+
+    /**
+     * Returns a {@link OnBackPressedDispatcher} for this {@code Shard}.
+     */
+    @NonNull
+    @Override
+    public OnBackPressedDispatcher getOnBackPressedDispatcher() {
+        return owner.getOnBackPressedDispatcher();
     }
 
     /**

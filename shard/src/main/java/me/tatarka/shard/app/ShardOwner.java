@@ -2,6 +2,8 @@ package me.tatarka.shard.app;
 
 import android.content.Context;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcherOwner;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -15,7 +17,8 @@ import me.tatarka.shard.content.ComponentCallbacksOwner;
  * a {@link ViewModelStoreOwner}, and a {@link SavedStateRegistryOwner}.See {@link ShardActivity}
  * for a simple implementation.
  */
-public interface ShardOwner extends LifecycleOwner,
+public interface ShardOwner extends
+        OnBackPressedDispatcherOwner,
         ViewModelStoreOwner,
         SavedStateRegistryOwner,
         ActivityCallbacksOwner,

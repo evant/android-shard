@@ -31,16 +31,6 @@ public final class ActivityCallbacksFragmentDispatcher extends ActivityCallbacks
     }
 
     @Override
-    public void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback callback) {
-        fragment.requireActivity().addOnBackPressedCallback(owner, callback);
-    }
-
-    @Override
-    public void removeOnBackPressedCallback(OnBackPressedCallback callback) {
-        fragment.requireActivity().removeOnBackPressedCallback(callback);
-    }
-
-    @Override
     public void startActivityForResult(@NonNull Intent intent, int requestCode) {
         fragment.startActivityForResult(intent, requestCode);
     }

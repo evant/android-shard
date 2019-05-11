@@ -9,6 +9,8 @@ import android.os.Bundle;
 
 import androidx.activity.ComponentActivity;
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
+import androidx.activity.OnBackPressedDispatcherOwner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
@@ -44,7 +46,7 @@ public final class ShardOwners {
         if (context instanceof ShardOwner) {
             return (ShardOwner) context;
         }
-        if (context instanceof ViewModelStoreOwner && context instanceof SavedStateRegistryOwner) {
+        if (context instanceof ViewModelStoreOwner && context instanceof SavedStateRegistryOwner && context instanceof OnBackPressedDispatcherOwner) {
             return WrappingShardOwner.of(context);
         }
         ShardOwner owner = (ShardOwner) context.getSystemService(ShardOwnerContextWrapper.SHARD_OWNER);
@@ -84,6 +86,12 @@ public final class ShardOwners {
         @Override
         public Lifecycle getLifecycle() {
             return ((LifecycleOwner) context).getLifecycle();
+        }
+
+        @NonNull
+        @Override
+        public OnBackPressedDispatcher getOnBackPressedDispatcher() {
+            return ((OnBackPressedDispatcherOwner) context).getOnBackPressedDispatcher();
         }
 
         @NonNull
@@ -224,21 +232,6 @@ public final class ShardOwners {
         @Override
         public void removeOnPictureInPictureModeChangedCallback(@NonNull OnPictureInPictureModeChangedCallback onPictureInPictureModeChangedCallback) {
             throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void addOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback) {
-            dispatcher.addOnBackPressedCallback(onBackPressedCallback);
-        }
-
-        @Override
-        public void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback onBackPressedCallback) {
-
-        }
-
-        @Override
-        public void removeOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback) {
-            dispatcher.removeOnBackPressedCallback(onBackPressedCallback);
         }
 
         @Override

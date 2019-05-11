@@ -62,11 +62,6 @@ public abstract class ActivityCallbacksDispatcher implements ActivityCallbacks {
     }
 
     @Override
-    public final void addOnBackPressedCallback(OnBackPressedCallback callback) {
-        addOnBackPressedCallback(lifecycleOwner, callback);
-    }
-
-    @Override
     public final void addOnMultiWindowModeChangedCallback(@NonNull final OnMultiWindowModeChangedCallback listener) {
         adapterCallbacks.add(new OnActivityCallbacksAdapter(listener) {
             @Override
