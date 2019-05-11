@@ -5,7 +5,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.TextView
-import androidx.annotation.ContentView
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.get
 import me.tatarka.shard.app.Shard
@@ -47,5 +46,4 @@ class MyShard @Inject constructor(
 
         stateLogger.register(savedStateRegistry, "KEY")
     }
-
 }

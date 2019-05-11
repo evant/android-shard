@@ -3,6 +3,8 @@ package me.tatarka.shard.test;
 import android.content.Context;
 
 import androidx.activity.ComponentActivity;
+import androidx.activity.OnBackPressedDispatcher;
+import androidx.activity.OnBackPressedDispatcherOwner;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleRegistry;
@@ -25,6 +27,7 @@ public class TestShardOwner implements ShardOwner {
     final SavedStateRegistryController savedStateRegistryController = SavedStateRegistryController.create(this);
     final ActivityCallbacks activityCallbacks;
     final ComponentCallbacks componentCallbacks = new ComponentCallbacksDispatcher(this);
+    final OnBackPressedDispatcher dispatcher = new OnBackPressedDispatcher();
 
     public TestShardOwner(ComponentActivity activity) {
         activityCallbacks = new ActivityCallbacksActivityDispatcher(activity);
@@ -70,5 +73,11 @@ public class TestShardOwner implements ShardOwner {
     @Override
     public SavedStateRegistry getSavedStateRegistry() {
         return savedStateRegistryController.getSavedStateRegistry();
+    }
+
+    @NonNull
+    @Override
+    public OnBackPressedDispatcher getOnBackPressedDispatcher() {
+        return dispatcher;
     }
 }

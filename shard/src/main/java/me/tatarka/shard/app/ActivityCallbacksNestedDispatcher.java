@@ -91,16 +91,6 @@ public final class ActivityCallbacksNestedDispatcher extends ActivityCallbacksDi
         return parentCallbacks.isInPictureInPictureMode();
     }
 
-    @Override
-    public void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback callback) {
-        parentCallbacks.addOnBackPressedCallback(owner, callback);
-    }
-
-    @Override
-    public void removeOnBackPressedCallback(OnBackPressedCallback callback) {
-        parentCallbacks.removeOnBackPressedCallback(callback);
-    }
-
     @NonNull
     @Override
     public Bundle saveState() {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -84,5 +85,11 @@ public class ShardFragment extends Fragment implements ShardOwner {
     @CallSuper
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
         delegate.onPictureInPictureModeChanged(isInPictureInPictureMode);
+    }
+
+    @NonNull
+    @Override
+    public OnBackPressedDispatcher getOnBackPressedDispatcher() {
+        return requireActivity().getOnBackPressedDispatcher();
     }
 }

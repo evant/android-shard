@@ -3,19 +3,13 @@ package me.tatarka.shard.wiget;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 import me.tatarka.shard.R;
 import me.tatarka.shard.app.Shard;
@@ -27,7 +21,7 @@ import me.tatarka.shard.transition.ShardTransition;
 public class ShardHost extends FrameLayout {
 
     private ShardOwner owner;
-    private ShardManager fm;
+    private ShardManager sm;
     @Nullable
     private Shard shard;
     @Nullable
@@ -44,7 +38,7 @@ public class ShardHost extends FrameLayout {
         super(context, attrs);
         if (!isInEditMode()) {
             owner = ShardOwners.get(context);
-            fm = new ShardManager(owner);
+            sm = new ShardManager(owner);
         }
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ShardHost);
@@ -70,7 +64,7 @@ public class ShardHost extends FrameLayout {
         if (!isInEditMode()) {
             if (initialName != null && !ShardManager.isRestoringState(owner)) {
                 shard = getShardFactory().newInstance(initialName);
-                fm.add(shard, this);
+                sm.add(shard, this);
             }
         }
     }
@@ -82,7 +76,7 @@ public class ShardHost extends FrameLayout {
     public void setShard(@Nullable Shard shard, @Nullable ShardTransition transition) {
         Shard oldShard = this.shard;
         this.shard = shard;
-        fm.replace(oldShard, shard, this, transition != null ? transition : defaultTransition);
+        sm.replace(oldShard, shard, this, transition != null ? transition : defaultTransition);
     }
 
     @Nullable
@@ -108,7 +102,7 @@ public class ShardHost extends FrameLayout {
     protected Parcelable onSaveInstanceState() {
         return new SavedState(super.onSaveInstanceState(),
                 shard != null ? shard.getClass().getName() : null,
-                shard != null ? fm.saveState(shard) : null);
+                shard != null ? sm.saveState(shard) : null);
     }
 
     @Override
@@ -119,8 +113,8 @@ public class ShardHost extends FrameLayout {
         Shard.State shardState = savedState.shardState;
         if (name != null && shardState != null) {
             shard = getShardFactory().newInstance(name);
-            fm.restoreState(shard, shardState);
-            fm.add(shard, this);
+            sm.restoreState(shard, shardState);
+            sm.add(shard, this);
         }
     }
 

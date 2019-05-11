@@ -1,15 +1,11 @@
 package me.tatarka.shard.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 
 public interface ActivityCallbacks {
 
@@ -279,35 +275,6 @@ public interface ActivityCallbacks {
     void addOnPictureInPictureModeChangedCallback(@NonNull OnPictureInPictureModeChangedCallback onPictureInPictureModeChangedCallback);
 
     void removeOnPictureInPictureModeChangedCallback(@NonNull OnPictureInPictureModeChangedCallback onPictureInPictureModeChangedCallback);
-
-    /**
-     * Add a new {@link OnBackPressedCallback}. Callbacks are invoked in order of recency, so
-     * this newly added {@link OnBackPressedCallback} will be the first callback to receive a
-     * callback if {@link Activity#onBackPressed()} is called. Only if this callback returns
-     * <code>false</code> from its {@link OnBackPressedCallback#handleOnBackPressed()} will any
-     * previously added callback be called.
-     *
-     * @param onBackPressedCallback The callback to add
-     * @see Activity#onBackPressed()
-     * @see #removeOnBackPressedCallback(OnBackPressedCallback)
-     */
-    void addOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback);
-
-    void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback onBackPressedCallback);
-
-    /**
-     * Remove a previously
-     * {@link #addOnBackPressedCallback(OnBackPressedCallback)} added}
-     * {@link OnBackPressedCallback} instance. The callback won't be called for any future
-     * {@link Activity#onBackPressed()} calls, but may still receive a callback if this method is called
-     * during the dispatch of an ongoing {@link Activity#onBackPressed()} call.
-     * <p>
-     * This call is usually not necessary as callbacks will be automatically removed when their
-     * associated {@link LifecycleOwner} is {@link Lifecycle.State#DESTROYED destroyed}.
-     *
-     * @param onBackPressedCallback The callback to remove
-     */
-    void removeOnBackPressedCallback(OnBackPressedCallback onBackPressedCallback);
 
     interface OnActivityCallbacks extends OnMultiWindowModeChangedCallback, OnPictureInPictureModeChangedCallback {
 

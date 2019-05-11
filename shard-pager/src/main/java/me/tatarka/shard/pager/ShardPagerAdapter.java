@@ -7,6 +7,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -195,14 +196,8 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
 
         @NonNull
         @Override
-        public Lifecycle getLifecycle() {
-            return lifecycleRegistry;
-        }
-
-        @NonNull
-        @Override
-        public ViewModelStore getViewModelStore() {
-            return parentOwner.getViewModelStore();
+        public Context getContext() {
+            return context;
         }
 
         @Override
@@ -222,16 +217,27 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
 
         @NonNull
         @Override
-        public SavedStateRegistry getSavedStateRegistry() {
-            return parentOwner.getSavedStateRegistry();
+        public Lifecycle getLifecycle() {
+            return lifecycleRegistry;
         }
 
         @NonNull
         @Override
-        public Context getContext() {
-            return context;
+        public OnBackPressedDispatcher getOnBackPressedDispatcher() {
+            return parentOwner.getOnBackPressedDispatcher();
         }
 
+        @NonNull
+        @Override
+        public ViewModelStore getViewModelStore() {
+            return parentOwner.getViewModelStore();
+        }
+
+        @NonNull
+        @Override
+        public SavedStateRegistry getSavedStateRegistry() {
+            return parentOwner.getSavedStateRegistry();
+        }
         @NonNull
         @Override
         public Shard.Factory getShardFactory() {

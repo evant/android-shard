@@ -29,16 +29,6 @@ public final class ActivityCallbacksActivityDispatcher extends ActivityCallbacks
     }
 
     @Override
-    public void addOnBackPressedCallback(LifecycleOwner owner, OnBackPressedCallback callback) {
-        activity.addOnBackPressedCallback(owner, callback);
-    }
-
-    @Override
-    public void removeOnBackPressedCallback(OnBackPressedCallback callback) {
-        activity.removeOnBackPressedCallback(callback);
-    }
-
-    @Override
     public void startActivityForResult(@NonNull Intent intent, int requestCode) {
         activity.startActivityForResult(intent, requestCode);
     }
