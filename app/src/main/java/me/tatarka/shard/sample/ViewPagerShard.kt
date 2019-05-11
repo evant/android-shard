@@ -6,11 +6,12 @@ import me.tatarka.shard.app.newInstance
 import me.tatarka.shard.pager.ShardPagerAdapter
 import javax.inject.Inject
 
-class ViewPagerShard @Inject constructor() : Shard() {
+class ViewPagerShard @Inject constructor() : Shard(), Resetable {
+    lateinit var pager: ViewPager
 
     override fun onCreate() {
         setContentView(R.layout.view_pager)
-        val pager: ViewPager = requireViewById(R.id.pager)
+        pager = requireViewById(R.id.pager)
         pager.adapter = object : ShardPagerAdapter(this) {
             override fun getItem(position: Int): Shard {
                 return shardFactory.newInstance<MyShard>().withNumber(position)
@@ -20,5 +21,9 @@ class ViewPagerShard @Inject constructor() : Shard() {
                 return 4
             }
         }
+    }
+
+    override fun reset() {
+        pager.currentItem = 0
     }
 }
