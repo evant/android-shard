@@ -34,5 +34,12 @@ class MainActivity : ShardAppCompatActivity() {
             }
         }
         bottomNav.setupWithPageHost(pageHost)
+
+        bottomNav.setOnNavigationItemReselectedListener { item ->
+            val shard = pageHost.shard
+            if (shard is Resetable) {
+                shard.reset()
+            }
+        }
     }
 }
