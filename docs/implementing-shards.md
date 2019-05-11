@@ -42,6 +42,16 @@ class MyShard: Shard() {
 }
 ```
 
+## Handle Back Presses
+
+You can handle back presses with the `OnBackPressedDispatcher`.
+
+```kotlin
+onBackPressedDispatcher.addCallback(this, enabled = true) {
+    remove()
+}
+```
+
 ## ActivityCallbacks
 
 Often times you want to interact with activity-level apis. `ActvityCallbacks` allows you to do so in
@@ -49,13 +59,7 @@ a composable way. You can access these with `getActivityCallbacks()`. Note: This
 available depending on how you set up your base activity, see
 [Getting Started](/docs/getting-started.md).
 
-You can handle back presses
-
-```kotlin
-activityCallbacks.addOnBackPressedCallback { false }
-```
-
-, start activities for result
+You can start activities for result
 
 ```kotlin
 const val REQUEST_CODE = 1
