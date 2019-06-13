@@ -20,6 +20,7 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavHost;
+import androidx.navigation.NavHostController;
 import androidx.navigation.Navigation;
 
 import me.tatarka.shard.app.ShardManager;
@@ -28,7 +29,7 @@ import me.tatarka.shard.app.ShardOwners;
 
 public class ShardNavHost extends FrameLayout implements NavHost {
 
-    private NavController navController;
+    private NavHostController navController;
     private ShardOwner owner;
     private int graphId;
 
@@ -41,7 +42,7 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         if (!isInEditMode()) {
             owner = ShardOwners.get(context);
         }
-        navController = new NavController(context);
+        navController = new NavHostController(context);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ShardNavHost);
             graphId = a.getResourceId(R.styleable.ShardNavHost_navGraph, 0);
@@ -60,10 +61,12 @@ public class ShardNavHost extends FrameLayout implements NavHost {
             if (graphId != 0 && !ShardManager.isRestoringState(owner)) {
                 navController.setGraph(graphId);
             }
-            navController.setHostViewModelStore(owner.getViewModelStore());
 
             ViewLifecycleOwner lifecycleOwner = new ViewLifecycleOwner(owner);
-            navController.setHostOnBackPressedDispatcherOwner(lifecycleOwner);
+            navController.setLifecycleOwner(lifecycleOwner);
+            navController.setViewModelStore(owner.getViewModelStore());
+            navController.setOnBackPressedDispatcher(owner.getOnBackPressedDispatcher());
+
             addOnAttachStateChangeListener(lifecycleOwner);
         }
     }
@@ -133,7 +136,7 @@ public class ShardNavHost extends FrameLayout implements NavHost {
      * Wraps the parent's lifecycle so that this lifecycle is stopped when the view is detached.
      */
     static class ViewLifecycleOwner implements
-            OnBackPressedDispatcherOwner,
+            LifecycleOwner,
             LifecycleEventObserver,
             OnAttachStateChangeListener {
         private final ShardOwner owner;
@@ -143,12 +146,6 @@ public class ShardNavHost extends FrameLayout implements NavHost {
         ViewLifecycleOwner(ShardOwner owner) {
             this.owner = owner;
             owner.getLifecycle().addObserver(this);
-        }
-
-        @NonNull
-        @Override
-        public OnBackPressedDispatcher getOnBackPressedDispatcher() {
-            return owner.getOnBackPressedDispatcher();
         }
 
         @NonNull
