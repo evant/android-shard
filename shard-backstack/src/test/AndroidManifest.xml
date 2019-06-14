@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.tatarka.shard.backstack.test">
+
+    <application>
+        <activity android:name="test.me.tatarka.shard.widget.ShardBackStackActivity" />
+    </application>
+</manifest>

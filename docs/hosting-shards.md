@@ -149,6 +149,75 @@ You can manually dismiss the dialog with `DialogShard.dismiss()`. If you need to
 shard. The callbacks on the dialog itself will get overwritten by the `ShardDialogHost` 
 implementation.
 
+## ShardBackStackHost
+
+`ShardBackStackHost` hosts a simple back stack where you can push and pop shards. It is defined in
+`shard-backstack`.
+
+```xml
+<me.tatarka.shard.widget.ShardBackStackHost
+   android:id="@+id/back_stack"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   app:startingShard="com.example.MyShard1" />
+```
+
+You can push a new shard with `push()`.
+
+```kotlin
+val backStack = requireViewById<ShardBackStackHost>(R.id.back_stack).backStack
+backStack.push(MyShard2())
+```
+
+And pop it with `pop()`.
+
+```kotlin
+backStack.pop()
+```
+
+You can optionally give your back stack entries an id when pushing. This is useful for 2 reasons: 
+
+1. You can pop up to a specified id to clear out multiple back stack entries. 
+
+```kotlin
+backStack.push(MyShard2(), R.id.my_shard_2)
+backStack.push(MyShard3(), R.id.my_shard_3)
+backStack.popToId(R.id.my_shard_2, true) // inclusive
+// both shards are popped
+```
+
+2. You can specify singleTop to prevent multiple instances of the same shard on the back stack when,
+for example, you quickly tap a button multiple times to navigate.
+
+```kotlin
+backStack.push(MyShard2(), R.id.my_shard_2, true)
+backStack.push(MyShard2(), R.id.my_shard_2, true)
+// only 1 instance of MyShard2 is pushed
+```
+
+You can pass in a `NavShardTransition` to animate transitions when pushing and popping. This can be
+created from anim, animator, or transition resources.
+
+```kotlin
+backStack.push(MyShard2(), NavShardTransition.fromAnimRes(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit))
+```
+
+To allow optimization, all pushes and pops are executed asynchronously. For example, if you do
+
+```kotlin
+backStack.push(MyShard2()).push(MyShard3()).pop()
+```
+
+then only `MyShard2` will be pushed and no lifecycle methods or animations for MyShard3() will be
+executed.
+
+If you need any operations to happen synchronously, you can use `commit()`. At the end of your 
+operations.
+
+```kotlin
+backStack.push(MyShard2()).push(MyShard3()).pop().commit()
+```
+
 ## ShardNavHost
 
 `ShardNavHost` allows you to navigate to different destinations using the androidx 

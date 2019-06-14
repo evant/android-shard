@@ -135,6 +135,7 @@ public class Shard implements ShardOwner {
     }
 
     void remove() {
+        checkCreated();
         checkDestroyed();
         destroyed = true;
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
@@ -149,19 +150,19 @@ public class Shard implements ShardOwner {
 
     private void checkDestroyed() {
         if (destroyed) {
-            throw new IllegalStateException("Shard is already destroyed");
+            throw new IllegalStateException("Shard: " + this + " is already destroyed");
         }
     }
 
     private void checkCreated() {
         if (owner == null) {
-            throw new IllegalStateException("Shard is not created");
+            throw new IllegalStateException("Shard: " + this + " is not created");
         }
     }
 
     private void checkNotCreated() {
         if (this.owner != null) {
-            throw new IllegalStateException("Shard is already created");
+            throw new IllegalStateException("Shard: " + this + " is already created");
         }
     }
 

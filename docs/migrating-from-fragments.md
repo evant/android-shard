@@ -115,7 +115,7 @@ class MyDialogShard : DialogShard() {
 *Fragment (without navigation component)*
 ```kotlin
 fragmentManager.beginTransaction()
-    .replate(R.id.container, MyFragment2())
+    .replace(R.id.container, MyFragment2())
     .addToBackStack(null)
     .commit()
 ```
@@ -144,6 +144,20 @@ fragmentManager.beginTransaction()
 
 ```kotlin
 findNavController(view).navigate(R.id.my_fragment2)
+```
+
+*Shard (with shard-backstack)*
+```xml
+<me.tatarka.shard.backstack.ShardBackStackHost
+   android:id="@+id/container"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   app:startingShard="com.example.MyShard1" />
+```
+
+```kotlin
+val host: ShardBackStackHost = findViewById(R.id.container)
+host.backStack.push(MyShard2())
 ```
 
 *Shard (with navigation component)*

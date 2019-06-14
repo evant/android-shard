@@ -7,4 +7,5 @@ include ':app',
         ':shard-nav',
         ':shard-pager',
         ':shard-transition',
-        ':shard-fragment-interop'
+        ':shard-fragment-interop',
+        ':shard-backstack'
