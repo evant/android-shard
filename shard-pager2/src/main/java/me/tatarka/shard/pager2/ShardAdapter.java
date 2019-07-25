@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.CallSuper;
@@ -14,17 +15,15 @@ import androidx.collection.LongSparseArray;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
-import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
-import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelStore;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.savedstate.SavedStateRegistry;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.adapter.StatefulAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.app.Shard;
@@ -35,9 +34,9 @@ import me.tatarka.shard.app.ShardOwners;
 import me.tatarka.shard.content.ComponentCallbacks;
 
 /**
- * Implementation of {@link PagerAdapter} that represents each page as a {@link Shard}.
+ * Implementation of {@link RecyclerView.Adapter} that represents each page as a {@link Shard}.
  *
- * <p>Subclasses only need to implement {@link #getItem(int)}
+ * <p>Subclasses only need to implement {@link #createShard(int)}
  * and {@link #getItemCount()} to have a working adapter.
  *
  * <p>
@@ -47,48 +46,60 @@ import me.tatarka.shard.content.ComponentCallbacks;
  * {@link #getItemId(int)} and {@link #containsItem(long)} if you want to be able to dynamically
  * change the contents on a {@link #notifyDataSetChanged()}.
  */
-public abstract class ShardPagerAdapter extends RecyclerView.Adapter<ShardViewHolder> implements StatefulAdapter {
+public abstract class ShardAdapter extends RecyclerView.Adapter<ShardViewHolder> implements StatefulAdapter {
 
     private final ShardOwner owner;
     private long primaryId = -1;
     private final LongSparseArray<Page> pages = new LongSparseArray<>();
     private final LongSparseArray<Shard.State> pageState = new LongSparseArray<>();
-    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+
+    private final ViewPager2.OnPageChangeCallback onPageChangeCallback = new ViewPager2.OnPageChangeCallback() {
         @Override
-        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                int primaryPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
-                        .findFirstCompletelyVisibleItemPosition();
-                long primaryId = -1;
-                if (primaryPosition != RecyclerView.NO_POSITION) {
-                    primaryId = recyclerView.findViewHolderForLayoutPosition(primaryPosition).getItemId();
-                }
-                updatePrimaryPage(primaryId);
-            }
+        public void onPageSelected(int position) {
+            long primaryId = getItemId(position);
+            updatePrimaryPage(primaryId);
         }
     };
 
-    public ShardPagerAdapter(Context context) {
+    public ShardAdapter(Context context) {
         this(ShardOwners.get(context));
     }
 
-    public ShardPagerAdapter(ShardOwner owner) {
+    public ShardAdapter(ShardOwner owner) {
         this.owner = owner;
         super.setHasStableIds(true);
     }
 
     @Override
     public final void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.addOnScrollListener(onScrollListener);
+        ViewPager2 viewPager = inferViewPager(recyclerView);
+        viewPager.registerOnPageChangeCallback(onPageChangeCallback);
     }
 
     @Override
     public final void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.removeOnScrollListener(onScrollListener);
+        ViewPager2 viewPager = inferViewPager(recyclerView);
+        viewPager.unregisterOnPageChangeCallback(onPageChangeCallback);
     }
 
     @NonNull
-    public abstract Shard getItem(int position);
+    private ViewPager2 inferViewPager(@NonNull RecyclerView recyclerView) {
+        ViewParent parent = recyclerView.getParent();
+        if (parent instanceof ViewPager2) {
+            return (ViewPager2) parent;
+        }
+        throw new IllegalStateException("Expected ViewPager2 instance. Got: " + parent);
+    }
+
+    /**
+     * Provide a new Shard associated with the specified position.
+     * <p>
+     * The Shard will be destroyed when it gets too far from the viewport, and its state
+     * will be saved. When the item is close to the viewport again, a new Shard will be
+     * requested, and a previously saved state will be used to initialize it.
+     */
+    @NonNull
+    public abstract Shard createShard(int position);
 
     @NonNull
     @Override
@@ -98,7 +109,7 @@ public abstract class ShardPagerAdapter extends RecyclerView.Adapter<ShardViewHo
 
     @Override
     public final void onBindViewHolder(@NonNull final ShardViewHolder holder, int position) {
-        Shard shard = getItem(position);
+        Shard shard = createShard(position);
         long itemId = getItemId(position);
         holder.page = new Page(owner, shard, pageState.get(itemId));
         holder.page.setPrimary(itemId == primaryId);
@@ -156,11 +167,26 @@ public abstract class ShardPagerAdapter extends RecyclerView.Adapter<ShardViewHo
         pages.remove(itemId);
     }
 
+    /**
+     * Default implementation works for collections that don't add, move, remove items.
+     * <p>
+     * When overriding, also override {@link #containsItem(long)}.
+     * <p>
+     * If the item is not a part of the collection, return {@link RecyclerView#NO_ID}.
+     *
+     * @param position Adapter position
+     * @return stable item id {@link RecyclerView.Adapter#hasStableIds()}
+     */
     @Override
     public long getItemId(int position) {
         return position;
     }
 
+    /**
+     * Default implementation works for collections that don't add, move, remove items.
+     * <p>
+     * When overriding, also override {@link #getItemId(int)}
+     */
     public boolean containsItem(long itemId) {
         return itemId >= 0 && itemId < getItemCount();
     }

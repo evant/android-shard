@@ -20,6 +20,8 @@ implementation "me.tatarka.shard:shard-host-ui:$shard_version"
 implementation "me.tatarka.shard:shard-nav:$shard_version"
 // For use in a ViewPager
 implementation "me.tatarka.shard:shard-pager:$shard_version"
+// For use in a ViewPager2
+implementation "me.tatarka.shard:shard-pager2:$shard_version"
 // For using androidx.transition
 implementation "me.tatarka.shard:shard-transition:$shard_version"
 // For interop with fragments

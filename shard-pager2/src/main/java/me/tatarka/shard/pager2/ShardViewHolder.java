@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public final class ShardViewHolder extends RecyclerView.ViewHolder {
-    ShardPagerAdapter.Page page;
+    ShardAdapter.Page page;
 
     ShardViewHolder(@NonNull View itemView) {
         super(itemView);
