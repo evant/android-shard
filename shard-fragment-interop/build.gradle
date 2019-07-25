@@ -2,9 +2,9 @@ apply from: '../library.gradle'
 
 dependencies {
     api project(':shard')
-    api 'androidx.fragment:fragment:1.1.0-beta01'
+    api 'androidx.fragment:fragment:1.1.0-rc03'
     api 'androidx.appcompat:appcompat:1.0.0'
 
-    testImplementation 'androidx.fragment:fragment-testing:1.1.0-beta01'
-    androidTestImplementation 'androidx.fragment:fragment-testing:1.1.0-beta01'
+    testImplementation 'androidx.fragment:fragment-testing:1.1.0-rc03'
+    androidTestImplementation 'androidx.fragment:fragment-testing:1.1.0-rc03'
 }

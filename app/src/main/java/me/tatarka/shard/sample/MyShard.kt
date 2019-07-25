@@ -5,7 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.TextView
-import androidx.lifecycle.SavedStateVMFactory
+import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.get
 import me.tatarka.shard.app.Shard
 import me.tatarka.shard.lifecycle.ViewModelProviders
@@ -30,7 +30,7 @@ class MyShard @Inject constructor(
         componentCallbacks.addOnConfigurationChangedListener(callbacksLogger)
         componentCallbacks.addOnTrimMemoryListener(callbacksLogger)
         lifecycle.addObserver(lifecycleLogger)
-        val vm = ViewModelProviders.of(this, SavedStateVMFactory(context.applicationContext as Application, this, args)).get<MyViewModel>()
+        val vm = ViewModelProviders.of(this, SavedStateViewModelFactory(context.applicationContext as Application, this, args)).get<MyViewModel>()
         requireViewById<TextView>(R.id.number).text = args.getInt(KEY_NUMBER).toString()
         requireViewById<EditText>(R.id.saved_text).addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
