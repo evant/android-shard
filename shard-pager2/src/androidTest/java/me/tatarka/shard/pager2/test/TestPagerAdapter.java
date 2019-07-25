@@ -1,0 +1,31 @@
+package me.tatarka.shard.pager2.test;
+
+import android.content.Context;
+
+import androidx.annotation.NonNull;
+
+import me.tatarka.shard.app.Shard;
+import me.tatarka.shard.pager2.ShardPagerAdapter;
+
+public class TestPagerAdapter extends ShardPagerAdapter {
+
+    public final Shard[] shards;
+    public int getItemCalledCount;
+
+    public TestPagerAdapter(Context context, Shard[] shards) {
+        super(context);
+        this.shards = shards;
+    }
+
+    @NonNull
+    @Override
+    public Shard getItem(int position) {
+        getItemCalledCount += 1;
+        return shards[position];
+    }
+
+    @Override
+    public int getItemCount() {
+        return shards.length;
+    }
+}

@@ -6,6 +6,7 @@ include ':app',
         ':shard-host-ui-ktx',
         ':shard-nav',
         ':shard-pager',
+        ':shard-pager2',
         ':shard-transition',
         ':shard-fragment-interop',
         ':shard-backstack'
