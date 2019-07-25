@@ -9,7 +9,7 @@ Shards are 'Fragments' with a simpler api built on top of the android architectu
 [![Sonatype Snapshot](https://img.shields.io/nexus/s/https/oss.sonatype.org/me.tatarka.shard/shard.svg)](https://oss.sonatype.org/content/repositories/snapshots/me/tatarka/shard/)
 
 ```groovy
-def shard_version = '1.0.0-alpha05'
+def shard_version = '1.0.0-beta01'
 // The core lib
 implementation "me.tatarka.shard:shard:$shard_version"
 // For use with appcompat
@@ -42,7 +42,7 @@ You can also follow the bleeding-edge with SNAPSHOT releases.
 repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
-def shard_version = '1.0.0-alpha06-SNAPSHOT'
+def shard_version = '1.0.0-beta02-SNAPSHOT'
 ```
 
 ## Usage

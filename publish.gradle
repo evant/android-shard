@@ -2,7 +2,7 @@ apply plugin: 'signing'
 apply plugin: 'digital.wup.android-maven-publish'
 
 group = 'me.tatarka.shard'
-version = '1.0.0-alpha06-SNAPSHOT'
+version = '1.0.0-beta01'
 
 task sourcesJar(type: Jar) {
     classifier = 'sources'
