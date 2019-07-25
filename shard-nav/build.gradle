@@ -4,5 +4,5 @@ dependencies {
     api project(':shard')
     implementation project(':shard-backstack')
     implementation project(':shard-transition')
-    api "androidx.navigation:navigation-runtime:2.1.0-alpha05"
+    api "androidx.navigation:navigation-runtime:2.1.0-beta02"
 }

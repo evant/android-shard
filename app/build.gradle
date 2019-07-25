@@ -40,16 +40,16 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
 
     implementation 'androidx.core:core-ktx:1.0.2'
-    implementation "androidx.activity:activity-ktx:1.0.0-beta01"
+    implementation "androidx.activity:activity-ktx:1.0.0-rc01"
     implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    implementation "androidx.navigation:navigation-common-ktx:2.0.0"
-    implementation "androidx.navigation:navigation-ui-ktx:2.0.0"
+    implementation "androidx.navigation:navigation-common-ktx:2.1.0-beta02"
+    implementation "androidx.navigation:navigation-ui-ktx:2.1.0-beta02"
 
     implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha01'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha02'
 
     implementation 'com.google.dagger:dagger:2.20'
     kapt 'com.google.dagger:dagger-compiler:2.20'
