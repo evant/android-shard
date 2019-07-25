@@ -306,11 +306,30 @@ pager.adapter = object : ShardPagerAdapter(this) {
 }
 ```
 
-Shards in a `ViewPager` have a custom lifecycle. The current shard will be in the resumed state, any
-other shards who's views are present will be in the started state. When a page is destroyed it's 
-shard will be as well, however the state will be saved and restored. By default the list of shards 
-is not expected to change. You can, however override `getItemPosition()` to support changing the 
-pages.
+`ShardAdapter` hosts shards in a `ViewPager2`. It is defined in `shard-pager2`.
+
+```kotlin
+val pager: ViewPager2 = requireViewById(R.id.pager)
+pager.adapter = object : ShardAdapter(this) {
+    override fun createShard(position: Int): Shard {
+        return when (position) {
+            case 0 -> MyShard1()
+            case 1 -> MyShard2()
+            case 2 -> MyShard3()
+            else -> throw AssertionError()
+        }
+    }
+
+    override fun getCount(): Int = 3
+}
+```
+
+Shards in a `ViewPager`/`ViewPager2` have a custom lifecycle. The current shard will be in the 
+resumed state, any other shards who's views are present will be in the started state. When a page 
+is destroyed it's shard will be as well, however the state will be saved and restored. By default 
+the list of shards is not expected to change. You can, however override
+(`getItemPosition()` for `ViewPager` or `getItemId()` and `containsItem()` for ViewPager2) to 
+support changing the pages.
 
 ## Custom Host
 
