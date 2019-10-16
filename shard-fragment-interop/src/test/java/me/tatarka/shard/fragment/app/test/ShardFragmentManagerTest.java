@@ -43,14 +43,6 @@ public class ShardFragmentManagerTest {
                     assertEquals(Lifecycle.State.STARTED, shard.fragment.getLifecycle().getCurrentState());
                 }
             });
-            scenario.moveToState(Lifecycle.State.CREATED);
-            scenario.onActivity(new ActivityScenario.ActivityAction<TestActivity>() {
-                @Override
-                public void perform(TestActivity activity) {
-                    TestShard shard = activity.getShard();
-                    assertEquals(Lifecycle.State.CREATED, shard.fragment.getLifecycle().getCurrentState());
-                }
-            });
             // We need to get a reference to the shard before destroying since the fragment will be gone afterwards
             final TestShard[] shard = new TestShard[1];
             scenario.onActivity(new ActivityScenario.ActivityAction<TestActivity>() {
