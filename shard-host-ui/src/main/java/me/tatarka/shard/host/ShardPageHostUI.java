@@ -6,6 +6,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
+
 import me.tatarka.shard.wiget.ShardPageHost;
 
 public final class ShardPageHostUI {
@@ -23,7 +24,10 @@ public final class ShardPageHostUI {
         host.setOnPageChangedListener(new ShardPageHost.OnPageChangedListener() {
             @Override
             public void onPageChanged(int id) {
-                view.setCheckedItem(id);
+                MenuItem item = view.getCheckedItem();
+                if (item == null || id != item.getItemId()) {
+                    view.setCheckedItem(id);
+                }
             }
         });
     }
@@ -39,7 +43,9 @@ public final class ShardPageHostUI {
         host.setOnPageChangedListener(new ShardPageHost.OnPageChangedListener() {
             @Override
             public void onPageChanged(int id) {
-                view.setSelectedItemId(id);
+                if (id != view.getSelectedItemId()) {
+                    view.setSelectedItemId(id);
+                }
             }
         });
     }

@@ -4,4 +4,8 @@ apply plugin: 'kotlin-android'
 dependencies {
     api project(':shard')
     api "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
+
+    def lifecycle_version = "2.2.0"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.fragment:fragment-ktx:1.2.0"
 }

@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.tatarka.shard.host.ui.test">
+
+    <application>
+        <activity
+            android:name="me.tatarka.shard.host.test.ShardPageHostUITest$ShardPageHostBottomNavActivity"
+            android:theme="@style/Theme.MaterialComponents" />
+    </application>
+</manifest>

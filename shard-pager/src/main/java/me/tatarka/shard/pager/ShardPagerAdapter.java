@@ -17,6 +17,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 import androidx.savedstate.SavedStateRegistry;
 import androidx.viewpager.widget.PagerAdapter;
@@ -231,6 +232,12 @@ public abstract class ShardPagerAdapter extends PagerAdapter {
         @Override
         public ViewModelStore getViewModelStore() {
             return parentOwner.getViewModelStore();
+        }
+
+        @NonNull
+        @Override
+        public ViewModelProvider.Factory getDefaultViewModelProviderFactory() {
+            return parentOwner.getDefaultViewModelProviderFactory();
         }
 
         @NonNull

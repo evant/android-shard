@@ -3,7 +3,9 @@ package me.tatarka.shard.test;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -13,7 +15,6 @@ import org.junit.runner.RunWith;
 
 import me.tatarka.shard.app.Shard;
 import me.tatarka.shard.app.ShardManager;
-import me.tatarka.shard.lifecycle.ViewModelProviders;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -34,7 +35,7 @@ public class ShardViewModelTest {
     public void canObtainViewModelAfterShardIsCreated() {
         Shard shard = new Shard();
         fm.add(shard, container);
-        TestViewModel viewModel = ViewModelProviders.of(shard).get(TestViewModel.class);
+        TestViewModel viewModel = new ViewModelProvider(shard).get(TestViewModel.class);
 
         assertNotNull(viewModel);
     }
@@ -43,12 +44,12 @@ public class ShardViewModelTest {
     public void viewModelIsRetainedAcrossConfigurationChange() {
         Shard shard = new Shard();
         fm.add(shard, container);
-        TestViewModel viewModel = ViewModelProviders.of(shard).get(TestViewModel.class);
+        TestViewModel viewModel = new ViewModelProvider(shard).get(TestViewModel.class);
         Shard.State state = fm.saveState(shard);
         Shard newShard = new Shard();
         fm.restoreState(newShard, state);
         fm.add(newShard, container);
-        TestViewModel newViewModel = ViewModelProviders.of(newShard).get(TestViewModel.class);
+        TestViewModel newViewModel = new ViewModelProvider(newShard).get(TestViewModel.class);
 
         assertSame(viewModel, newViewModel);
     }
@@ -57,13 +58,13 @@ public class ShardViewModelTest {
     public void viewModelIsNotRetainedWhenShardIsDestroyed() {
         Shard shard = new Shard();
         fm.add(shard, container);
-        TestViewModel viewModel = ViewModelProviders.of(shard).get(TestViewModel.class);
+        TestViewModel viewModel = new ViewModelProvider(shard).get(TestViewModel.class);
         Shard.State state = fm.saveState(shard);
         fm.remove(shard);
         Shard newShard = new Shard();
         fm.restoreState(newShard, state);
         fm.add(newShard, container);
-        TestViewModel newViewModel = ViewModelProviders.of(newShard).get(TestViewModel.class);
+        TestViewModel newViewModel = new ViewModelProvider(newShard).get(TestViewModel.class);
 
         assertNotSame(viewModel, newViewModel);
     }

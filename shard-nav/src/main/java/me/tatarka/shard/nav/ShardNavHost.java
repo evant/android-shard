@@ -58,14 +58,14 @@ public class ShardNavHost extends FrameLayout implements NavHost {
             navController.getNavigatorProvider().addNavigator(shardNavigator);
         }
         if (!isInEditMode()) {
-            if (graphId != 0 && !ShardManager.isRestoringState(owner)) {
-                navController.setGraph(graphId);
-            }
-
             ViewLifecycleOwner lifecycleOwner = new ViewLifecycleOwner(owner);
             navController.setLifecycleOwner(lifecycleOwner);
             navController.setViewModelStore(owner.getViewModelStore());
             navController.setOnBackPressedDispatcher(owner.getOnBackPressedDispatcher());
+
+            if (graphId != 0 && !ShardManager.isRestoringState(owner)) {
+                navController.setGraph(graphId);
+            }
 
             addOnAttachStateChangeListener(lifecycleOwner);
         }

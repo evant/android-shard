@@ -409,6 +409,7 @@ public class ShardBackStack {
                 throw new IllegalStateException("Shard isn't restored");
             }
             state = sm.saveState(shard);
+            shard = null;
         }
 
         void restore(ShardManager sm, Shard.Factory factory) {
