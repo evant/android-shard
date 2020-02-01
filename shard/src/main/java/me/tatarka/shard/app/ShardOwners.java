@@ -8,13 +8,13 @@ import android.content.IntentSender;
 import android.os.Bundle;
 
 import androidx.activity.ComponentActivity;
-import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
 import androidx.activity.OnBackPressedDispatcherOwner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.HasDefaultViewModelProviderFactory;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryOwner;
 
-import java.util.WeakHashMap;
+import java.util.IdentityHashMap;
 
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.activity.ActivityCallbacksOwner;
@@ -58,14 +58,15 @@ public final class ShardOwners {
         throw new IllegalArgumentException("Cannot obtain ShardOwner from context: " + context + ". Make sure your activity is a ComponentActivity or implements ShardOwner");
     }
 
-    static class WrappingShardOwner implements ShardOwner {
+    static class WrappingShardOwner implements ShardOwner, LifecycleEventObserver {
         static WrappingShardOwner of(Context context) {
             if (context instanceof Activity) {
                 Activity activity = (Activity) context;
-                WeakHashMap<Activity, WrappingShardOwner> map = MAP;
+                IdentityHashMap<Activity, WrappingShardOwner> map = MAP;
                 WrappingShardOwner owner = map.get(activity);
                 if (owner == null) {
                     owner = new WrappingShardOwner(context);
+                    ((LifecycleOwner) context).getLifecycle().addObserver(owner);
                     map.put(activity, owner);
                 }
                 return owner;
@@ -147,6 +148,13 @@ public final class ShardOwners {
         @Override
         public ComponentCallbacks getComponentCallbacks() {
             return callbacks;
+        }
+
+        @Override
+        public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                MAP.remove((Activity) source);
+            }
         }
     }
 
@@ -253,5 +261,5 @@ public final class ShardOwners {
         }
     }
 
-    static final WeakHashMap<Activity, WrappingShardOwner> MAP = new WeakHashMap<>();
+    static final IdentityHashMap<Activity, WrappingShardOwner> MAP = new IdentityHashMap<>();
 }

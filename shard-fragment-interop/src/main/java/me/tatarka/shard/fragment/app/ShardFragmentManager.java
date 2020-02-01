@@ -31,8 +31,8 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryOwner;
 
+import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import me.tatarka.shard.activity.ActivityCallbacks;
 import me.tatarka.shard.app.ActivityCallbacksNestedDispatcher;
@@ -44,13 +44,13 @@ public final class ShardFragmentManager {
 
     private static final String FRAGMENT_STATE_KEY = "me.tatarka.shard.FragmentShard";
     private static final String FRAGMENTS_TAG = "android:support:fragments";
-    private static WeakHashMap<Shard, ShardFragmentManager> fragmentManagers = new WeakHashMap<>();
+    private static IdentityHashMap<Shard, ShardFragmentManager> fragmentManagers = new IdentityHashMap<>();
 
     public static FragmentManager getFragmentManager(@NonNull Shard shard) {
         return getInstance(shard).getFragmentManager();
     }
 
-    static ShardFragmentManager getInstance(@NonNull Shard shard) {
+    static ShardFragmentManager getInstance(@NonNull final Shard shard) {
         SavedStateRegistry registry = shard.getSavedStateRegistry();
         if (!registry.isRestored()) {
             throw new IllegalStateException("Must not be called before onCreate()");
@@ -59,6 +59,14 @@ public final class ShardFragmentManager {
         if (fm == null) {
             fm = new ShardFragmentManager(shard);
             fragmentManagers.put(shard, fm);
+            shard.getLifecycle().addObserver(new LifecycleEventObserver() {
+                @Override
+                public void onStateChanged(@NonNull LifecycleOwner source, @NonNull Lifecycle.Event event) {
+                    if (event == Lifecycle.Event.ON_DESTROY) {
+                        fragmentManagers.remove((Shard) source);
+                    }
+                }
+            });
         }
         return fm;
     }
