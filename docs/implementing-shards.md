@@ -34,8 +34,9 @@ with components that utilize those.
 
 ```kotlin
 class MyShard: Shard() {
+    val vm by viewModels<MyViewModel>()
+
     override fun onCreate() {
-        val vm: MyViewModel = ViewModelProviders.of(this).get()
         // listen with LiveData
         vm.name.observe(this, Observer { value -> name.text = value })
     }

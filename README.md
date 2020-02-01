@@ -54,12 +54,13 @@ Creating a shard is as simple as
 class MyShard: Shard() {
     const val REQUEST_CODE = 1
 
+    // get a ViewModel
+    val vm by viewModels<MyViewModel>()
+
     override fun onCreate() {
         setContentView(R.layout.my_shard)
         // find a view
         val name: TextView = requireViewById(R.id.name)
-        // get a ViewModel
-        val vm: MyViewModel = ViewModelProviders.of(this).get()
         // listen with LiveData
         vm.name.observe(this, Observer { value -> name.text = value })
         // handle back presses
