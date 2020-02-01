@@ -1,5 +1,6 @@
 package me.tatarka.shard.app;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -24,6 +25,8 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.SavedStateViewModelFactory;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryController;
@@ -70,6 +73,8 @@ public class Shard implements ShardOwner {
     @Nullable
     private Shard.Factory shardFactory;
     private final CompositeLayoutInflater inflater = new CompositeLayoutInflater();
+    @Nullable
+    private ViewModelProvider.Factory defaultViewModeProviderFactory;
 
     void restoreState(@Nullable State state) {
         checkNotCreated();
@@ -220,7 +225,7 @@ public class Shard implements ShardOwner {
         restoreViewState(frame);
     }
 
-    public final CompositeLayoutInflater getCompositLayoutInflater() {
+    public final CompositeLayoutInflater getCompositeLayoutInflater() {
         return inflater;
     }
 
@@ -358,6 +363,17 @@ public class Shard implements ShardOwner {
         ShardManagerViewModel.get(owner.getViewModelStore()).remove(id);
     }
 
+    private ViewModelProvider.Factory getOrCreateDefaultViewModelProviderFactory() {
+        if (defaultViewModeProviderFactory == null) {
+            defaultViewModeProviderFactory = new SavedStateViewModelFactory(
+                    (Application) context.getApplicationContext(),
+                    this,
+                    getArgs()
+            );
+        }
+        return defaultViewModeProviderFactory;
+    }
+
     /**
      * Returns a {@link ViewModelStore} for holding onto {@link androidx.lifecycle.ViewModel}'s.
      * This must not be called before {@link #onCreate()}.
@@ -367,6 +383,13 @@ public class Shard implements ShardOwner {
     public ViewModelStore getViewModelStore() {
         checkCreated();
         return getOrCreateViewModelStore();
+    }
+
+    @NonNull
+    @Override
+    public ViewModelProvider.Factory getDefaultViewModelProviderFactory() {
+        checkCreated();
+        return getOrCreateDefaultViewModelProviderFactory();
     }
 
     /**

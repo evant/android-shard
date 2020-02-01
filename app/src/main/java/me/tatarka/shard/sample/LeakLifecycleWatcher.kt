@@ -1,10 +1,9 @@
 package me.tatarka.shard.sample
 
-import android.os.Bundle
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import com.squareup.leakcanary.LeakCanary
+import leakcanary.AppWatcher
 import me.tatarka.shard.app.Shard
 
 class LeakLifecycleWatcher(private val shard: Shard) : LifecycleObserver {
@@ -15,10 +14,10 @@ class LeakLifecycleWatcher(private val shard: Shard) : LifecycleObserver {
         // An animation might be running, wait a bit for it to finish.
         if (shard.view != null) {
             shard.view.postDelayed({
-                LeakCanary.installedRefWatcher().watch(shard, "Shard")
+                AppWatcher.objectWatcher.watch(shard, "Shard")
             }, 500)
         } else {
-            LeakCanary.installedRefWatcher().watch(shard, "Shard")
+            AppWatcher.objectWatcher.watch(shard, "Shard")
         }
     }
 

@@ -1,12 +1,12 @@
 package me.tatarka.shard.sample
 
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import me.tatarka.shard.app.newInstance
 import me.tatarka.shard.appcompat.app.ShardAppCompatActivity
 import me.tatarka.shard.host.setupWithPageHost
-import me.tatarka.shard.lifecycle.ViewModelProviders
 import me.tatarka.shard.sample.dagger.injector
 import me.tatarka.shard.wiget.ShardPageHost
 import me.tatarka.shard.wiget.ShardPageHost.Adapter
@@ -19,7 +19,7 @@ class MainActivity : ShardAppCompatActivity() {
         super.onCreate(savedInstanceState)
         shardFactory = LeakLifecycleWatcher.wrap(injector.shardFactory)
 
-        ViewModelProviders.of(this).get<MyViewModel>()
+        ViewModelProvider(this).get<MyViewModel>()
 
         setContentView(R.layout.activity_main)
         pageHost = findViewById(R.id.page_host)
@@ -33,13 +33,12 @@ class MainActivity : ShardAppCompatActivity() {
                 else -> null
             }
         }
-        bottomNav.setupWithPageHost(pageHost)
-
         bottomNav.setOnNavigationItemReselectedListener { item ->
             val shard = pageHost.shard
             if (shard is Resetable) {
                 shard.reset()
             }
         }
+        bottomNav.setupWithPageHost(pageHost)
     }
 }

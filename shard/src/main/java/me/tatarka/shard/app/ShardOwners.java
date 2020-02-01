@@ -13,8 +13,10 @@ import androidx.activity.OnBackPressedDispatcher;
 import androidx.activity.OnBackPressedDispatcherOwner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.HasDefaultViewModelProviderFactory;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.savedstate.SavedStateRegistry;
@@ -98,6 +100,12 @@ public final class ShardOwners {
         @Override
         public ViewModelStore getViewModelStore() {
             return ((ViewModelStoreOwner) context).getViewModelStore();
+        }
+
+        @NonNull
+        @Override
+        public ViewModelProvider.Factory getDefaultViewModelProviderFactory() {
+            return ((HasDefaultViewModelProviderFactory) context).getDefaultViewModelProviderFactory();
         }
 
         @NonNull

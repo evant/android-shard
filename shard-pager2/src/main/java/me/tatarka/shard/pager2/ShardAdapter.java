@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -278,6 +279,12 @@ public abstract class ShardAdapter extends RecyclerView.Adapter<ShardViewHolder>
         @Override
         public ViewModelStore getViewModelStore() {
             return parentOwner.getViewModelStore();
+        }
+
+        @NonNull
+        @Override
+        public ViewModelProvider.Factory getDefaultViewModelProviderFactory() {
+            return parentOwner.getDefaultViewModelProviderFactory();
         }
 
         @Override

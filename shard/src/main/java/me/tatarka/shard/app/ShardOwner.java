@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcherOwner;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.HasDefaultViewModelProviderFactory;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.savedstate.SavedStateRegistryOwner;
@@ -20,6 +21,7 @@ import me.tatarka.shard.content.ComponentCallbacksOwner;
 public interface ShardOwner extends
         OnBackPressedDispatcherOwner,
         ViewModelStoreOwner,
+        HasDefaultViewModelProviderFactory,
         SavedStateRegistryOwner,
         ActivityCallbacksOwner,
         ComponentCallbacksOwner,

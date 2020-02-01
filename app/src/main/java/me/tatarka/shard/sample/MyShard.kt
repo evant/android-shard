@@ -1,14 +1,11 @@
 package me.tatarka.shard.sample
 
-import android.app.Application
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.TextView
-import androidx.lifecycle.SavedStateViewModelFactory
-import androidx.lifecycle.get
 import me.tatarka.shard.app.Shard
-import me.tatarka.shard.lifecycle.ViewModelProviders
+import me.tatarka.shard.app.viewModels
 import javax.inject.Inject
 
 private const val KEY_NUMBER = "number"
@@ -23,6 +20,8 @@ class MyShard @Inject constructor(
         args.putInt(KEY_NUMBER, number)
     }
 
+    private val vm by viewModels<MyViewModel>()
+
     override fun onCreate() {
         setContentView(R.layout.shard)
         activityCallbacks.addOnMultiWindowModeChangedCallback(callbacksLogger)
@@ -30,7 +29,6 @@ class MyShard @Inject constructor(
         componentCallbacks.addOnConfigurationChangedListener(callbacksLogger)
         componentCallbacks.addOnTrimMemoryListener(callbacksLogger)
         lifecycle.addObserver(lifecycleLogger)
-        val vm = ViewModelProviders.of(this, SavedStateViewModelFactory(context.applicationContext as Application, this, args)).get<MyViewModel>()
         requireViewById<TextView>(R.id.number).text = args.getInt(KEY_NUMBER).toString()
         requireViewById<EditText>(R.id.saved_text).addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {

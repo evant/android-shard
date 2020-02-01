@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryController;
@@ -25,6 +26,7 @@ public class TestShardOwner implements ShardOwner {
 
     final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
     final ViewModelStore viewModelStore = new ViewModelStore();
+    final ViewModelProvider.Factory viewModelProviderFactory = new ViewModelProvider.NewInstanceFactory();
     final SavedStateRegistryController savedStateRegistryController = SavedStateRegistryController.create(this);
     final ActivityCallbacks activityCallbacks;
     final ComponentCallbacks componentCallbacks = new ComponentCallbacksDispatcher(this);
@@ -48,6 +50,12 @@ public class TestShardOwner implements ShardOwner {
     @Override
     public ViewModelStore getViewModelStore() {
         return viewModelStore;
+    }
+
+    @NonNull
+    @Override
+    public ViewModelProvider.Factory getDefaultViewModelProviderFactory() {
+        return viewModelProviderFactory;
     }
 
     @NonNull

@@ -52,6 +52,7 @@ public class ShardDialogHost {
         if (!registry.isRestored()) {
             throw new IllegalStateException("Must not be called before onCreate()");
         }
+
         ShardDialogHost host = hostsMap.get(owner);
         if (host != null) {
             return host;

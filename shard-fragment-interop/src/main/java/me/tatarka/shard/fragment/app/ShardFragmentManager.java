@@ -69,7 +69,7 @@ public final class ShardFragmentManager {
             @Override
             public <T extends Shard> T newInstance(@NonNull String name) {
                 final T shard = factory.newInstance(name);
-                shard.getCompositLayoutInflater().addFactory(new CompositeLayoutInflater.Factory() {
+                shard.getCompositeLayoutInflater().addFactory(new CompositeLayoutInflater.Factory() {
                     @Override
                     public View onCreateView(Next next, View parent, String name, Context context, AttributeSet attrs) {
                         View view = getInstance(shard).fragmentController.onCreateView(parent, name, context, attrs);
