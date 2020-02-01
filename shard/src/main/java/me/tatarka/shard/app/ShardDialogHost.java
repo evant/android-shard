@@ -11,14 +11,12 @@ import android.util.ArrayMap;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
-import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.OnLifecycleEvent;
 import androidx.savedstate.SavedStateRegistry;
 import androidx.savedstate.SavedStateRegistryOwner;
 
 import java.util.ArrayList;
-import java.util.WeakHashMap;
+import java.util.IdentityHashMap;
 
 /**
  * Responsible for showing {@link DialogShard}s and {@link AlertDialogShard}s, and restoring them
@@ -29,7 +27,7 @@ public class ShardDialogHost {
     private static final String DIALOG_STATE = "me.tatarka.shard.widget.ShardDialogHost";
     private static final String KEY = "key";
 
-    private static final WeakHashMap<ShardOwner, ShardDialogHost> hostsMap = new WeakHashMap<>();
+    private static final IdentityHashMap<ShardOwner, ShardDialogHost> hostsMap = new IdentityHashMap<>();
 
     private final ShardOwner owner;
     private final ShardManager fm;
@@ -157,6 +155,7 @@ public class ShardDialogHost {
                 for (BaseDialogShard shard : dialogShards) {
                     shard.destroyDialog();
                 }
+                hostsMap.remove((Shard) source);
             }
         }
     }
