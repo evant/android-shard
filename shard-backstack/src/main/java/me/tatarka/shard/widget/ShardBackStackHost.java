@@ -57,7 +57,7 @@ public class ShardBackStackHost extends FrameLayout {
                 }
             }
             if (isInEditMode()) {
-                int layout = a.getResourceId(R.styleable.ShardBackStackHost_layout, 0);
+                int layout = a.getResourceId(R.styleable.ShardBackStackHost_android_layout, 0);
                 if (layout != 0) {
                     inflate(context, layout, this);
                 }

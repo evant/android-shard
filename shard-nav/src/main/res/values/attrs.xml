@@ -5,6 +5,6 @@
     </declare-styleable>
     <declare-styleable name="ShardNavHost">
         <attr name="navGraph" format="reference" />
-        <attr name="layout" />
+        <attr name="android:layout" />
     </declare-styleable>
 </resources>

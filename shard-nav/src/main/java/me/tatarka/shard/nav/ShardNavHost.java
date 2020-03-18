@@ -47,7 +47,7 @@ public class ShardNavHost extends FrameLayout implements NavHost {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ShardNavHost);
             graphId = a.getResourceId(R.styleable.ShardNavHost_navGraph, 0);
             if (isInEditMode()) {
-                int layout = a.getResourceId(R.styleable.ShardNavHost_layout, 0);
+                int layout = a.getResourceId(R.styleable.ShardNavHost_android_layout, 0);
                 if (layout != 0) {
                     inflate(context, layout, this);
                 }

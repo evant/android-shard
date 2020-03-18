@@ -9,13 +9,13 @@
         <attr name="enterAnim" />
         <attr name="exitAnim" />
         <attr name="transition" />
-        <attr name="layout" />
+        <attr name="android:layout" />
     </declare-styleable>
     <declare-styleable name="ShardPageHost">
         <attr name="startPage" format="reference" />
         <attr name="enterAnim" />
         <attr name="exitAnim" />
         <attr name="transition" />
-        <attr name="layout" />
+        <attr name="android:layout" />
     </declare-styleable>
 </resources>

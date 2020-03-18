@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ShardBackStackHost">
-        <attr name="startingShard" />
+        <attr name="startingShard" format="string" />
         <attr name="startingId" format="reference|integer" />
-        <attr name="layout" />
+        <attr name="android:layout" />
     </declare-styleable>
 </resources>
